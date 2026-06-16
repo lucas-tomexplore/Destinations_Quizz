@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Destination — TomExplore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8fafb;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --accent: #25bec7;
+    --accent-soft: rgba(37,190,199,0.10);
+    --accent2: #f04f88;
+    --accent2-soft: rgba(240,79,136,0.08);
+    --navy: #0f172a;
+    --text: #1e293b;
+    --muted: #64748b;
+    --green: #10b981;
+    --warn: #f59e0b;
+    --shadow: 0 1px 3px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.06);
+    --shadow-lg: 0 4px 12px rgba(15,23,42,0.05), 0 12px 32px rgba(15,23,42,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  .bg-map {
+    position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;
+    opacity: 0.45;
+  }
+  .container { width:100%; max-width:640px; padding:24px; position:relative; z-index:1; }
+  h1 { font-size:1.5rem; font-weight:700; text-align:center; margin-bottom:8px; color:var(--navy); }
+  .subtitle { text-align:center; color:var(--muted); font-size:0.85rem; margin-bottom:32px; line-height:1.5; }
+
+  .progress-wrap { margin-bottom:28px; }
+  .progress-label { display:flex; justify-content:space-between; font-size:0.8rem; color:var(--muted); margin-bottom:8px; font-weight:500; }
+  .progress-bar { height:6px; background:var(--border); border-radius:100px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),#70bec6,var(--accent)); background-size:200% 100%; border-radius:100px; transition:width 0.4s ease; animation:shimmer 3s ease infinite; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  .bloc-badge { display:inline-block; padding:5px 14px; background:var(--accent-soft); color:var(--accent); border-radius:100px; font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px; }
+  .question-text { font-size:1.15rem; font-weight:600; line-height:1.5; margin-bottom:24px; color:var(--navy); }
+
+  .choices { display:flex; flex-direction:column; gap:12px; }
+  .choice-btn {
+    background:rgba(255,255,255,0.75); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--border); border-radius:1.5rem;
+    padding:18px 22px; color:var(--text); font-size:0.95rem; text-align:left;
+    cursor:pointer; transition:all 0.25s ease; line-height:1.5; box-shadow:var(--shadow);
+    font-family:inherit;
+  }
+  .choice-main { display:block; font-size:1.0rem; font-weight:600; color:var(--navy); }
+  .choice-sub { display:block; font-size:0.82rem; color:var(--muted); margin-top:3px; font-weight:400; }
+  .choice-btn:hover { border-color:var(--accent); box-shadow:var(--shadow-lg),0 0 0 3px var(--accent-soft); transform:translateY(-2px); }
+  .choice-btn:active { transform:translateY(0); box-shadow:var(--shadow); }
+
+  .skip-btn {
+    background:none; border:none; color:var(--muted); font-size:0.85rem;
+    cursor:pointer; padding:10px 0 0; font-family:inherit; transition:color 0.2s;
+    text-align:center;
+  }
+  .skip-btn:hover { color:var(--accent); }
+
+  .back-btn {
+    display:inline-flex; align-items:center; gap:6px; padding:6px 16px;
+    background:transparent; border:1px solid var(--border); border-radius:100px;
+    color:var(--muted); font-size:0.8rem; cursor:pointer; transition:all 0.2s; margin-bottom:16px;
+    font-family:inherit;
+  }
+  .back-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .back-btn.hidden { display:none; }
+
+  #results { display:none; }
+  .result-card { background:rgba(255,255,255,0.80); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid var(--border); border-radius:1.5rem; padding:24px; margin-bottom:16px; box-shadow:var(--shadow); }
+  .result-card.gold   { border-color:#f59e0b; border-width:2px; box-shadow:0 4px 20px rgba(245,158,11,0.15), 0 0 0 1px rgba(245,158,11,0.08); background:linear-gradient(135deg, rgba(255,255,255,0.90), rgba(254,243,199,0.40)); }
+  .result-card.silver { border-color:#94a3b8; border-width:2px; background:linear-gradient(135deg, rgba(255,255,255,0.90), rgba(241,245,249,0.50)); }
+  .result-card.bronze { border-color:#d97706; border-width:2px; background:linear-gradient(135deg, rgba(255,255,255,0.90), rgba(254,243,199,0.25)); }
+  .medal { font-size:2rem; margin-bottom:8px; }
+  .city-name { font-size:1.3rem; font-weight:700; margin-bottom:4px; color:var(--navy); }
+  .city-country { font-weight:400; font-size:0.85em; color:var(--muted); }
+  .score-val { color:var(--muted); font-size:0.85rem; margin-bottom:12px; }
+  .align-tag { display:inline-block; padding:4px 12px; background:var(--accent-soft); color:var(--accent); border-radius:100px; font-size:0.78rem; font-weight:600; margin:2px 4px 2px 0; }
+
+  .profile-section { margin-top:32px; }
+  .profile-title { font-size:1rem; font-weight:700; margin-bottom:16px; color:var(--navy); }
+  .axis-row { display:flex; align-items:center; margin-bottom:10px; font-size:0.82rem; }
+  .axis-label { width:130px; flex-shrink:0; color:var(--muted); }
+  .axis-bar-bg { flex:1; height:8px; background:var(--border); border-radius:100px; overflow:hidden; margin:0 10px; }
+  .axis-bar-fill { height:100%; border-radius:100px; transition:width 0.6s ease; }
+  .axis-value { width:36px; text-align:right; font-weight:600; font-size:0.8rem; color:var(--navy); }
+
+  .restart-btn {
+    display:block; margin:32px auto 0; padding:14px 36px;
+    background:linear-gradient(135deg, var(--navy), #1e293b); color:#fff; border:none; border-radius:100px;
+    font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.25s;
+    font-family:inherit; box-shadow:var(--shadow-lg);
+  }
+  .restart-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(15,23,42,0.18); }
+
+  .fade-in { animation:fadeIn 0.35s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .debug-info { margin-top:24px; padding:16px; background:var(--card); border:1px solid var(--border); border-radius:1rem; font-size:0.75rem; color:var(--muted); box-shadow:var(--shadow); }
+  .debug-info summary { cursor:pointer; font-weight:600; margin-bottom:8px; color:var(--text); }
+
+  /* ── Tabs ── */
+  .tabs { display:flex; gap:4px; margin-bottom:24px; background:rgba(255,255,255,0.70); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-radius:100px; padding:4px; box-shadow:var(--shadow); border:1px solid var(--border); }
+  .tab-btn {
+    flex:1; padding:10px 16px; border:none; border-radius:100px; background:transparent;
+    color:var(--muted); font-size:0.82rem; font-weight:600; cursor:pointer; transition:all 0.2s;
+    font-family:inherit;
+  }
+  .tab-btn.active { background:var(--navy); color:#fff; }
+  .tab-btn:hover:not(.active) { color:var(--text); background:rgba(15,23,42,0.04); }
+  .tab-section { display:none; }
+  .tab-section.active { display:block; }
+
+  /* ── Live Tracker ── */
+  .tracker { margin-top:24px; padding:18px; background:rgba(255,255,255,0.70); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid var(--border); border-radius:1.5rem; box-shadow:var(--shadow); }
+  .tracker-title { font-size:0.85rem; font-weight:700; margin-bottom:12px; color:var(--navy); }
+  .tracker-axes { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+  .tracker-axis { display:flex; align-items:center; gap:8px; font-size:0.75rem; }
+  .tracker-axis-label { width:100px; color:var(--muted); flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tracker-axis-bar { flex:1; height:6px; background:var(--border); border-radius:100px; overflow:hidden; position:relative; }
+  .tracker-axis-fill { height:100%; border-radius:100px; transition:width 0.4s ease; min-width:2px; }
+  .tracker-axis-val { width:30px; text-align:right; font-weight:600; color:var(--navy); font-size:0.7rem; }
+  .tracker-axis-conf { width:28px; text-align:right; color:var(--muted); font-size:0.65rem; }
+  .tracker-marker { position:absolute; top:-2px; width:2px; height:10px; background:var(--navy); border-radius:1px; transition:left 0.4s ease; opacity:0.3; }
+  .tracker-history { border-top:1px solid var(--border); padding-top:12px; }
+  .tracker-history-title { font-size:0.75rem; font-weight:600; color:var(--muted); margin-bottom:8px; }
+  .tracker-entry { padding:10px 12px; background:var(--bg); border-radius:12px; margin-bottom:6px; font-size:0.75rem; border-left:3px solid var(--accent); }
+  .tracker-entry-q { color:var(--navy); font-weight:600; margin-bottom:4px; }
+  .tracker-entry-choice { color:var(--accent2); font-size:0.7rem; margin-bottom:4px; }
+  .tracker-entry-impacts { display:flex; flex-wrap:wrap; gap:4px; }
+  .tracker-impact {
+    display:inline-flex; align-items:center; gap:4px; padding:3px 10px;
+    border-radius:100px; font-size:0.68rem; font-weight:600;
+  }
+  .tracker-impact .arrow { font-size:0.8rem; }
+  .tracker-empty { color:var(--muted); font-size:0.75rem; font-style:italic; }
+
+  /* ── Library ── */
+  .lib-stats { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .lib-stat { padding:6px 14px; background:var(--card); border:1px solid var(--border); border-radius:100px; font-size:0.75rem; color:var(--muted); box-shadow:var(--shadow); }
+  .lib-stat b { color:var(--navy); }
+  .lib-group { margin-bottom:24px; }
+  .lib-group-title { font-size:0.9rem; font-weight:700; margin-bottom:12px; padding-bottom:6px; border-bottom:2px solid var(--border); color:var(--navy); }
+  .lib-q { padding:14px 16px; background:var(--card); border:1px solid var(--border); border-radius:1rem; margin-bottom:8px; font-size:0.8rem; box-shadow:var(--shadow); }
+  .lib-q-id { color:var(--muted); font-size:0.7rem; font-weight:600; margin-bottom:4px; }
+  .lib-q-text { color:var(--navy); font-weight:600; margin-bottom:6px; line-height:1.4; }
+  .lib-q-choices { display:flex; flex-direction:column; gap:3px; margin-bottom:8px; }
+  .lib-q-choice { color:var(--muted); font-size:0.75rem; }
+  .lib-q-choice b { color:var(--accent); }
+  .lib-q-choice.choice-b b { color:var(--accent2); }
+  .lib-q-contribs { display:flex; flex-wrap:wrap; gap:4px; }
+  .lib-q-contrib {
+    padding:3px 10px; border-radius:100px; font-size:0.68rem; font-weight:600;
+    background:var(--bg);
+  }
+
+  /* ── Cities tab ── */
+  .cities-controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; align-items:center; }
+  .cities-search {
+    flex:1; min-width:180px; padding:10px 16px; background:var(--card); border:1px solid var(--border);
+    border-radius:100px; color:var(--text); font-size:0.85rem; outline:none; font-family:inherit;
+    box-shadow:var(--shadow);
+  }
+  .cities-search:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .cities-search::placeholder { color:var(--muted); }
+  .cities-sort {
+    padding:8px 14px; background:var(--card); border:1px solid var(--border);
+    border-radius:100px; color:var(--text); font-size:0.8rem; cursor:pointer; font-family:inherit;
+    box-shadow:var(--shadow); transition:all 0.2s;
+  }
+  .cities-sort:hover { border-color:var(--accent); }
+  .cities-sort.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .city-card { background:var(--card); border:1px solid var(--border); border-radius:1.5rem; padding:18px; margin-bottom:10px; box-shadow:var(--shadow); }
+  .city-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .city-card-name { font-size:1rem; font-weight:700; color:var(--navy); }
+  .city-card-rank { font-size:0.75rem; color:var(--muted); }
+  .city-bars { display:flex; flex-direction:column; gap:5px; }
+  .city-bar-row { display:flex; align-items:center; gap:8px; font-size:0.72rem; }
+  .city-bar-label { width:110px; flex-shrink:0; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .city-bar-bg { flex:1; height:8px; background:var(--border); border-radius:100px; overflow:hidden; }
+  .city-bar-fill { height:100%; border-radius:100px; }
+  .city-bar-val { width:32px; text-align:right; font-weight:600; font-size:0.72rem; color:var(--navy); }
+  .city-card-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+  .city-tag { padding:3px 10px; border-radius:100px; font-size:0.65rem; font-weight:600; }
+  .city-tag.high { background:rgba(16,185,129,0.10); color:var(--green); }
+  .city-tag.low { background:var(--accent2-soft); color:var(--accent2); }
+
+  /* ── Dark mode ── */
+  [data-theme="dark"] {
+    --bg: #0c1222;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0;
+    --navy: #f1f5f9;
+    --muted: #94a3b8;
+    --accent-soft: rgba(37,190,199,0.15);
+    --accent2-soft: rgba(240,79,136,0.12);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.4), 0 12px 32px rgba(0,0,0,0.5);
+  }
+  [data-theme="dark"] .choice-btn { background: rgba(30,41,59,0.75); }
+  [data-theme="dark"] .result-card { background: rgba(30,41,59,0.80); backdrop-filter:blur(16px); }
+  [data-theme="dark"] .result-card.gold { background: linear-gradient(135deg, rgba(30,41,59,0.90), rgba(120,80,0,0.20)); border-color:#b47e11; }
+  [data-theme="dark"] .result-card.silver { background: linear-gradient(135deg, rgba(30,41,59,0.90), rgba(100,116,139,0.20)); }
+  [data-theme="dark"] .result-card.bronze { background: linear-gradient(135deg, rgba(30,41,59,0.90), rgba(120,80,0,0.15)); }
+  [data-theme="dark"] .bg-map { opacity: 0.25; }
+  [data-theme="dark"] .tracker { background: rgba(30,41,59,0.70); }
+  [data-theme="dark"] .tracker-entry { background: rgba(15,23,42,0.50); }
+  [data-theme="dark"] .city-card { background: rgba(30,41,59,0.80); }
+  [data-theme="dark"] .cities-search { background: rgba(30,41,59,0.80); color: var(--text); }
+  [data-theme="dark"] .lib-q { background: rgba(30,41,59,0.80); }
+  [data-theme="dark"] .lib-stat { background: rgba(30,41,59,0.80); }
+  [data-theme="dark"] .tabs { background: rgba(30,41,59,0.70); }
+  [data-theme="dark"] .tab-btn.active { background: var(--accent); color: #fff; }
+  [data-theme="dark"] .back-btn { color: var(--muted); border-color: var(--border); }
+  [data-theme="dark"] .debug-info { background: var(--card); }
+
+  /* ── Theme toggle ── */
+  .header-row { display: flex; gap: 8px; align-items: center; margin-bottom: 24px; }
+  .header-row .tabs { margin-bottom: 0; flex: 1; min-width: 0; }
+  .theme-toggle {
+    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--card); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 1rem; transition: all 0.3s; flex-shrink: 0;
+    box-shadow: var(--shadow);
+  }
+  .theme-toggle:hover { border-color: var(--accent); transform: scale(1.1); }
+
+  /* ── Profile avatar ── */
+  .profile-avatar {
+    width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--accent);
+    background: var(--accent); color: #fff; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 0.85rem; font-weight: 700; transition: all 0.3s; flex-shrink: 0;
+    box-shadow: var(--shadow); text-transform: uppercase;
+  }
+  .profile-avatar:hover { transform: scale(1.1); box-shadow: var(--shadow-lg); }
+  .profile-avatar.no-profile { background: var(--muted); border-color: var(--border); }
+
+  /* ── Profiles tab ── */
+  .profiles-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .profile-item {
+    display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+    background: rgba(255,255,255,0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 2px solid var(--border); border-radius: 1.25rem; cursor: pointer;
+    transition: all 0.25s; box-shadow: var(--shadow);
+  }
+  .profile-item:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .profile-item.active { border-color: var(--accent); background: var(--accent-soft); }
+  .profile-item-avatar {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700;
+    flex-shrink: 0; text-transform: uppercase;
+  }
+  .profile-item-info { flex: 1; min-width: 0; }
+  .profile-item-name { font-weight: 600; color: var(--navy); font-size: 0.95rem; }
+  .profile-item-stats { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .profile-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .profile-action-btn {
+    width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; transition: all 0.2s; color: var(--muted);
+  }
+  .profile-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .profile-action-btn.danger:hover { border-color: #ef4444; color: #ef4444; }
+  .profile-add-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px;
+    background: none; border: 2px dashed var(--border); border-radius: 1.25rem;
+    color: var(--muted); font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; font-family: inherit;
+  }
+  .profile-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .profile-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.5);
+    display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(4px);
+  }
+  .profile-modal {
+    background: var(--card); border-radius: 1.5rem; padding: 28px; width: 90%; max-width: 360px;
+    box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+  }
+  .profile-modal h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--navy); }
+  .profile-modal input {
+    width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 100px;
+    font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.2s;
+    background: var(--bg); color: var(--text);
+  }
+  .profile-modal input:focus { border-color: var(--accent); }
+  .profile-modal-btns { display: flex; gap: 10px; margin-top: 16px; }
+  .profile-modal-btns button {
+    flex: 1; padding: 10px; border-radius: 100px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all 0.2s; border: none;
+  }
+  .profile-modal-btns .btn-cancel { background: var(--border); color: var(--text); }
+  .profile-modal-btns .btn-confirm { background: var(--accent); color: #fff; }
+  .profile-modal-btns .btn-cancel:hover { background: #cbd5e1; }
+  .profile-modal-btns .btn-confirm:hover { opacity: 0.9; }
+  [data-theme="dark"] .profile-item { background: rgba(30,41,59,0.70); }
+  [data-theme="dark"] .profile-action-btn { background: rgba(30,41,59,0.80); }
+  [data-theme="dark"] .profile-modal { background: #1e293b; }
+  [data-theme="dark"] .profile-modal input { background: #0f172a; }
+
+  /* ── Result card visuals ── */
+  .result-card-visual {
+    width: 100%; height: 180px; border-radius: 1rem; margin-bottom: 16px;
+    overflow: hidden; position: relative;
+    display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+  }
+  .result-card-img, .city-card-img {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; object-fit: cover; z-index: 1;
+  }
+  .result-match-text {
+    font-size: 0.85rem; color: var(--text); line-height: 1.6;
+    margin: 12px 0; padding: 12px 16px; background: var(--accent-soft);
+    border-radius: 12px; border-left: 3px solid var(--accent);
+  }
+
+  /* ── City card visuals ── */
+  .city-card-visual {
+    width: 100%; height: 120px; border-radius: 0.75rem; margin-bottom: 12px;
+    overflow: hidden; position: relative;
+    display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    body { padding-top: 16px; }
+    .container { padding: 12px; }
+    h1 { font-size: 1.25rem; }
+    .subtitle { font-size: 0.78rem; margin-bottom: 20px; }
+    .header-row { gap: 6px; }
+    .tabs { gap: 2px; padding: 3px; }
+    .tab-btn { padding: 8px 8px; font-size: 0.7rem; }
+    .theme-toggle { width: 34px; height: 34px; font-size: 0.9rem; }
+    .profile-avatar { width: 34px; height: 34px; font-size: 0.75rem; }
+    .choice-btn { padding: 14px 16px; font-size: 0.88rem; border-radius: 1rem; }
+    .question-text { font-size: 1rem; }
+    .result-card { padding: 16px; border-radius: 1rem; }
+    .result-card-visual { height: 140px; }
+    .city-name { font-size: 1.1rem; }
+    .tracker { padding: 12px; border-radius: 1rem; }
+    .tracker-axis-label { width: 80px; font-size: 0.68rem; }
+    .tracker-impact { font-size: 0.62rem; padding: 2px 7px; }
+    .lib-q { padding: 10px 12px; }
+    .lib-stat { font-size: 0.68rem; padding: 4px 10px; }
+    .cities-controls { flex-direction: column; }
+    .cities-search { min-width: 100%; }
+    .city-card { padding: 14px; border-radius: 1rem; }
+    .city-card-visual { height: 100px; }
+    .city-bar-label { width: 85px; font-size: 0.68rem; }
+    .axis-label { width: 100px; font-size: 0.75rem; }
+    .result-match-text { font-size: 0.8rem; padding: 10px 12px; }
+    .restart-btn { padding: 12px 28px; font-size: 0.88rem; }
+    .back-btn { font-size: 0.75rem; padding: 5px 12px; }
+    .bloc-badge { font-size: 0.7rem; padding: 4px 12px; }
+    .progress-label { font-size: 0.75rem; }
+  }
+  @media (max-width: 380px) {
+    .tab-btn { font-size: 0.62rem; padding: 7px 5px; }
+    .tracker-impact { font-size: 0.58rem; padding: 2px 5px; }
+    .tracker-axis { gap: 4px; }
+    .tracker-axis-label { width: 65px; }
+    .result-card-visual { height: 110px; }
+    .city-card-visual { height: 80px; }
+  }
+</style>
+</head>
+<body>
+<svg class="bg-map" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow-teal" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#25bec7" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#25bec7" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-pink" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f04f88" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#f04f88" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Aurora blobs -->
+  <ellipse cx="950" cy="120" rx="350" ry="280" fill="url(#glow-teal)"/>
+  <ellipse cx="200" cy="750" rx="300" ry="250" fill="url(#glow-pink)"/>
+  <ellipse cx="600" cy="400" rx="200" ry="180" fill="url(#glow-teal)" opacity="0.3"/>
+
+  <!-- Grid dots -->
+  <g fill="#94a3b8" opacity="0.18">
+    <circle cx="80" cy="80" r="1.2"/><circle cx="160" cy="80" r="1.2"/><circle cx="240" cy="80" r="1.2"/><circle cx="320" cy="80" r="1.2"/><circle cx="400" cy="80" r="1.2"/><circle cx="480" cy="80" r="1.2"/><circle cx="560" cy="80" r="1.2"/><circle cx="640" cy="80" r="1.2"/><circle cx="720" cy="80" r="1.2"/><circle cx="800" cy="80" r="1.2"/><circle cx="880" cy="80" r="1.2"/><circle cx="960" cy="80" r="1.2"/><circle cx="1040" cy="80" r="1.2"/><circle cx="1120" cy="80" r="1.2"/>
+    <circle cx="80" cy="160" r="1.2"/><circle cx="160" cy="160" r="1.2"/><circle cx="240" cy="160" r="1.2"/><circle cx="320" cy="160" r="1.2"/><circle cx="400" cy="160" r="1.2"/><circle cx="480" cy="160" r="1.2"/><circle cx="560" cy="160" r="1.2"/><circle cx="640" cy="160" r="1.2"/><circle cx="720" cy="160" r="1.2"/><circle cx="800" cy="160" r="1.2"/><circle cx="880" cy="160" r="1.2"/><circle cx="960" cy="160" r="1.2"/><circle cx="1040" cy="160" r="1.2"/><circle cx="1120" cy="160" r="1.2"/>
+    <circle cx="80" cy="240" r="1.2"/><circle cx="160" cy="240" r="1.2"/><circle cx="240" cy="240" r="1.2"/><circle cx="320" cy="240" r="1.2"/><circle cx="400" cy="240" r="1.2"/><circle cx="480" cy="240" r="1.2"/><circle cx="560" cy="240" r="1.2"/><circle cx="640" cy="240" r="1.2"/><circle cx="720" cy="240" r="1.2"/><circle cx="800" cy="240" r="1.2"/><circle cx="880" cy="240" r="1.2"/><circle cx="960" cy="240" r="1.2"/><circle cx="1040" cy="240" r="1.2"/><circle cx="1120" cy="240" r="1.2"/>
+    <circle cx="80" cy="320" r="1.2"/><circle cx="160" cy="320" r="1.2"/><circle cx="240" cy="320" r="1.2"/><circle cx="320" cy="320" r="1.2"/><circle cx="400" cy="320" r="1.2"/><circle cx="480" cy="320" r="1.2"/><circle cx="560" cy="320" r="1.2"/><circle cx="640" cy="320" r="1.2"/><circle cx="720" cy="320" r="1.2"/><circle cx="800" cy="320" r="1.2"/><circle cx="880" cy="320" r="1.2"/><circle cx="960" cy="320" r="1.2"/><circle cx="1040" cy="320" r="1.2"/><circle cx="1120" cy="320" r="1.2"/>
+    <circle cx="80" cy="400" r="1.2"/><circle cx="160" cy="400" r="1.2"/><circle cx="240" cy="400" r="1.2"/><circle cx="320" cy="400" r="1.2"/><circle cx="400" cy="400" r="1.2"/><circle cx="480" cy="400" r="1.2"/><circle cx="560" cy="400" r="1.2"/><circle cx="640" cy="400" r="1.2"/><circle cx="720" cy="400" r="1.2"/><circle cx="800" cy="400" r="1.2"/><circle cx="880" cy="400" r="1.2"/><circle cx="960" cy="400" r="1.2"/><circle cx="1040" cy="400" r="1.2"/><circle cx="1120" cy="400" r="1.2"/>
+    <circle cx="80" cy="480" r="1.2"/><circle cx="160" cy="480" r="1.2"/><circle cx="240" cy="480" r="1.2"/><circle cx="320" cy="480" r="1.2"/><circle cx="400" cy="480" r="1.2"/><circle cx="480" cy="480" r="1.2"/><circle cx="560" cy="480" r="1.2"/><circle cx="640" cy="480" r="1.2"/><circle cx="720" cy="480" r="1.2"/><circle cx="800" cy="480" r="1.2"/><circle cx="880" cy="480" r="1.2"/><circle cx="960" cy="480" r="1.2"/><circle cx="1040" cy="480" r="1.2"/><circle cx="1120" cy="480" r="1.2"/>
+    <circle cx="80" cy="560" r="1.2"/><circle cx="160" cy="560" r="1.2"/><circle cx="240" cy="560" r="1.2"/><circle cx="320" cy="560" r="1.2"/><circle cx="400" cy="560" r="1.2"/><circle cx="480" cy="560" r="1.2"/><circle cx="560" cy="560" r="1.2"/><circle cx="640" cy="560" r="1.2"/><circle cx="720" cy="560" r="1.2"/><circle cx="800" cy="560" r="1.2"/><circle cx="880" cy="560" r="1.2"/><circle cx="960" cy="560" r="1.2"/><circle cx="1040" cy="560" r="1.2"/><circle cx="1120" cy="560" r="1.2"/>
+    <circle cx="80" cy="640" r="1.2"/><circle cx="160" cy="640" r="1.2"/><circle cx="240" cy="640" r="1.2"/><circle cx="320" cy="640" r="1.2"/><circle cx="400" cy="640" r="1.2"/><circle cx="480" cy="640" r="1.2"/><circle cx="560" cy="640" r="1.2"/><circle cx="640" cy="640" r="1.2"/><circle cx="720" cy="640" r="1.2"/><circle cx="800" cy="640" r="1.2"/><circle cx="880" cy="640" r="1.2"/><circle cx="960" cy="640" r="1.2"/><circle cx="1040" cy="640" r="1.2"/><circle cx="1120" cy="640" r="1.2"/>
+    <circle cx="80" cy="720" r="1.2"/><circle cx="160" cy="720" r="1.2"/><circle cx="240" cy="720" r="1.2"/><circle cx="320" cy="720" r="1.2"/><circle cx="400" cy="720" r="1.2"/><circle cx="480" cy="720" r="1.2"/><circle cx="560" cy="720" r="1.2"/><circle cx="640" cy="720" r="1.2"/><circle cx="720" cy="720" r="1.2"/><circle cx="800" cy="720" r="1.2"/><circle cx="880" cy="720" r="1.2"/><circle cx="960" cy="720" r="1.2"/><circle cx="1040" cy="720" r="1.2"/><circle cx="1120" cy="720" r="1.2"/>
+    <circle cx="80" cy="800" r="1.2"/><circle cx="160" cy="800" r="1.2"/><circle cx="240" cy="800" r="1.2"/><circle cx="320" cy="800" r="1.2"/><circle cx="400" cy="800" r="1.2"/><circle cx="480" cy="800" r="1.2"/><circle cx="560" cy="800" r="1.2"/><circle cx="640" cy="800" r="1.2"/><circle cx="720" cy="800" r="1.2"/><circle cx="800" cy="800" r="1.2"/><circle cx="880" cy="800" r="1.2"/><circle cx="960" cy="800" r="1.2"/><circle cx="1040" cy="800" r="1.2"/><circle cx="1120" cy="800" r="1.2"/>
+  </g>
+
+  <!-- Flight routes (dashed arcs) -->
+  <g fill="none" stroke="#25bec7" stroke-width="1.5" stroke-dasharray="8 6" opacity="0.25">
+    <path d="M180,340 Q400,180 680,290"/>
+    <path d="M680,290 Q850,200 1020,320"/>
+    <path d="M300,580 Q500,400 680,290"/>
+    <path d="M100,200 Q300,100 480,180"/>
+    <path d="M680,290 Q750,450 900,520"/>
+    <path d="M900,520 Q1050,600 1100,700"/>
+    <path d="M480,180 Q580,220 680,290"/>
+    <path d="M180,340 Q150,500 300,580"/>
+  </g>
+
+  <!-- City dots -->
+  <g>
+    <circle cx="180" cy="340" r="5" fill="#25bec7" opacity="0.35"/>
+    <circle cx="680" cy="290" r="7" fill="#25bec7" opacity="0.45"/>
+    <circle cx="1020" cy="320" r="4.5" fill="#25bec7" opacity="0.30"/>
+    <circle cx="300" cy="580" r="5" fill="#f04f88" opacity="0.30"/>
+    <circle cx="480" cy="180" r="4" fill="#25bec7" opacity="0.30"/>
+    <circle cx="900" cy="520" r="5.5" fill="#f04f88" opacity="0.25"/>
+    <circle cx="1100" cy="700" r="4" fill="#f04f88" opacity="0.20"/>
+    <circle cx="100" cy="200" r="3.5" fill="#25bec7" opacity="0.25"/>
+  </g>
+
+  <!-- City rings (pulse effect via CSS) -->
+  <g fill="none" stroke-width="1" opacity="0.20">
+    <circle cx="680" cy="290" r="14" stroke="#25bec7"/>
+    <circle cx="180" cy="340" r="11" stroke="#25bec7"/>
+    <circle cx="300" cy="580" r="11" stroke="#f04f88"/>
+    <circle cx="900" cy="520" r="12" stroke="#f04f88"/>
+  </g>
+
+  <!-- Tiny plane icon on a route -->
+  <g transform="translate(430,220) rotate(-20)" opacity="0.30">
+    <polygon points="0,-6 3,6 0,3 -3,6" fill="#0f172a"/>
+  </g>
+  <g transform="translate(820,250) rotate(15)" opacity="0.25">
+    <polygon points="0,-5 2.5,5 0,2.5 -2.5,5" fill="#0f172a"/>
+  </g>
+</svg>
+
+<div class="container">
+  <div class="header-row">
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-btn-quiz" onclick="switchTab('quiz')">Quiz</button>
+      <button class="tab-btn" id="tab-btn-profiles" onclick="switchTab('profiles')">Profils</button>
+      <button class="tab-btn" id="tab-btn-library" onclick="switchTab('library')">Questions</button>
+      <button class="tab-btn" id="tab-btn-cities" onclick="switchTab('cities')">Villes</button>
+    </div>
+    <div class="profile-avatar no-profile" id="header-avatar" onclick="switchTab('profiles')" title="Profil actif">?</div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Mode sombre / clair">&#127769;</button>
+  </div>
+
+  <div id="tab-quiz" class="tab-section active">
+    <div id="quiz">
+      <div style="text-align:center;margin-bottom:4px;font-size:1.6rem;">&#9992;</div>
+      <h1>Trouve ta destination</h1>
+      <p class="subtitle" id="quiz-subtitle">2 questions d'amorce + 5 a 7 questions psycho<br>parmi 110 destinations dans le monde</p>
+      <div id="profile-indicator" style="text-align:center;margin-bottom:12px;font-size:0.78rem;color:var(--accent);font-weight:600;display:none"></div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="prog-bloc"></span>
+          <span id="prog-count"></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+      </div>
+      <div id="q-area" class="fade-in">
+        <button class="back-btn hidden" id="back-btn" onclick="goBack()">← Question precedente</button>
+        <div class="bloc-badge" id="q-bloc"></div>
+        <div class="question-text" id="q-text"></div>
+        <div class="choices">
+          <button class="choice-btn" id="btn-a" onclick="answer('A')"></button>
+          <button class="choice-btn" id="btn-b" onclick="answer('B')"></button>
+        </div>
+      </div>
+      <div id="live-tracker" class="tracker"></div>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <div id="tab-profiles" class="tab-section">
+    <h1>Profils voyageur</h1>
+    <p class="subtitle">Cree des profils pour personnaliser tes recommandations au fil des quiz</p>
+    <div id="profiles-content"></div>
+  </div>
+
+  <div id="tab-library" class="tab-section">
+    <h1>Bibliotheque de questions</h1>
+    <p class="subtitle">Les 50 questions disponibles, classees par axe psychographique</p>
+    <div id="library-content"></div>
+  </div>
+
+  <div id="tab-cities" class="tab-section">
+    <h1>Profils des villes</h1>
+    <p class="subtitle">110 destinations positionnees sur les 6 axes psychographiques</p>
+    <div class="cities-controls">
+      <input class="cities-search" type="text" id="cities-search" placeholder="Rechercher une ville..." oninput="renderCities()">
+      <button class="cities-sort active" id="sort-alpha" onclick="setCitySort('alpha')">A→Z</button>
+      <button class="cities-sort" id="sort-nouv" onclick="setCitySort('nouveaute')">Nouveaute</button>
+      <button class="cities-sort" id="sort-act" onclick="setCitySort('action')">Action</button>
+      <button class="cities-sort" id="sort-cult" onclick="setCitySort('culture')">Culture</button>
+      <button class="cities-sort" id="sort-urb" onclick="setCitySort('urbain')">Urbain</button>
+      <button class="cities-sort" id="sort-auth" onclick="setCitySort('authenticite')">Authenticite</button>
+      <button class="cities-sort" id="sort-struct" onclick="setCitySort('structure')">Structure</button>
+    </div>
+    <div id="cities-content"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  AXES PSYCHOGRAPHIQUES
+// ═══════════════════════════════════════════════════════════
+const AXES = ["nouveaute","action","culture","urbain","authenticite","structure"];
+const AXES_LABELS = {
+  nouveaute:    ["Familiarite",     "Depaysement"],
+  action:       ["Ressourcement",   "Exploration"],
+  culture:      ["Hedonisme",       "Culture / profondeur"],
+  urbain:       ["Nature / calme",  "Vie urbaine"],
+  authenticite: ["Confort",         "Authenticite locale"],
+  structure:    ["Tout planifie",   "Spontaneite"],
+};
+const AXIS_COLORS = {
+  nouveaute:"#7c3aed", action:"#e11d48", culture:"#d97706",
+  urbain:"#0891b2", authenticite:"#ea580c", structure:"#6366f1",
+};
+
+// ═══════════════════════════════════════════════════════════
+//  50 VILLES TOMEXPLORE — scoring [nouv, act, cult, urb, auth, struct]
+// ═══════════════════════════════════════════════════════════
+// Scoring calibre par grille structuree (point de vue voyageur francais)
+// Nouveaute : FR connues 0.10-0.20 | Capitales celebres 0.25-0.40 | Moderate 0.40-0.60 | Est/rare 0.65-0.85 | Tres exotique 0.85-0.95
+// Action    : Calme 0.25-0.40 | Modere 0.45-0.60 | Actif 0.60-0.75 | Intense 0.75-0.90
+// Culture   : Hedoniste 0.35-0.50 | Equilibre 0.50-0.65 | Heritage fort 0.65-0.80 | Exceptionnel 0.80-0.95
+// Urbain    : Petit/nature 0.25-0.45 | Moyen 0.50-0.65 | Urbain 0.65-0.80 | Mega-urbain 0.80-0.95
+// Authenticite : Tres touristique 0.25-0.40 | Modere 0.45-0.60 | Authentique 0.60-0.75 | Tres brut 0.75-0.90
+// Structure : Tres planifiable 0.25-0.40 | Modere 0.45-0.60 | Spontane 0.60-0.75 | Chaotique 0.75-0.90
+const VILLES = {
+  //                        nouv  act   cult  urb   auth  struct
+  // Amsterdam : connue mais liberale/surprenante, forte offre musees+fete, tres urbaine, assez touristique, facile a improviser
+  "Amsterdam":          [0.40, 0.70, 0.70, 0.85, 0.50, 0.70],
+  // Anvers : peu connue comme destination, rythme modere, tres forte scene art/mode, urbaine sans etre enorme, caractere belge authentique
+  "Anvers":          [0.35, 0.45, 0.85, 0.80, 0.55, 0.45],
+  // Athenes : moderement depaysante, beaucoup a explorer, patrimoine antique exceptionnel, urbaine et chaotique, quartiers locaux authentiques
+  "Athenes":        [0.60, 0.70, 0.95, 0.75, 0.80, 0.40],
+  // Barcelone : tres connue, enormement a faire, culture+hedonisme, mega-urbaine, tres touristique en centre, bien organisee pour touristes
+  "Barcelone":          [0.35, 0.85, 0.65, 0.90, 0.40, 0.65],
+  // Berlin : connue mais surprenante, scene alternative intense, plus subculture que patrimoine classique, tres urbaine, brute/authentique, tres spontanee
+  "Berlin":             [0.55, 0.85, 0.55, 0.85, 0.75, 0.80],
+  // Bordeaux : ville francaise tres connue, rythme modere, bon patrimoine+vin, urbaine moyenne, assez touristique centre
+  "Bordeaux":           [0.15, 0.45, 0.75, 0.60, 0.50, 0.40],
+  // Bruges : tres connue, tres calme/lente, fort patrimoine medieval, petite ville, tres touristique, tout est planifiable
+  "Bruges":             [0.25, 0.25, 0.80, 0.40, 0.35, 0.30],
+  // Bruxelles : familiere, activite moyenne, culture correcte, urbaine, authenticite moyenne
+  "Bruxelles":          [0.30, 0.55, 0.60, 0.80, 0.55, 0.60],
+  // Bucarest : peu connue des Francais, ville surprenante, culture modeste mais en devenir, urbaine, tres brute/authentique, spontanee
+  "Bucarest":      [0.75, 0.55, 0.50, 0.80, 0.80, 0.65],
+  // Budapest : assez connue, bains+ruin bars+visites, bon patrimoine, urbaine, encore authentique, spontanee
+  "Budapest":           [0.55, 0.80, 0.60, 0.80, 0.60, 0.80],
+  // Cluj-Napoca : tres peu connue, petite ville etudiante, peu de tourisme culturel, moderement urbaine, immersion locale totale
+  "Cluj-Napoca": [0.80, 0.50, 0.50, 0.60, 0.85, 0.55],
+  // Cologne : moyennement connue, rythme modere, cathedrale+musees, urbaine, authenticite moderee
+  "Cologne":            [0.30, 0.50, 0.55, 0.85, 0.50, 0.50],
+  // Copenhague : connue, design/food/velo, culture correcte, urbaine, polie/chere (moins authentique), bien organisee
+  "Copenhague":         [0.40, 0.55, 0.65, 0.75, 0.35, 0.45],
+  // Cracovie : moderement connue, rythme correct, patrimoine exceptionnel (vieille ville, Wieliczka), moy. urbaine, tres authentique
+  "Cracovie":           [0.70, 0.50, 0.85, 0.55, 0.80, 0.50],
+  // Dublin : connue, nightlife/ambiance sociale, plus pub que musee, urbaine, caractere irlandais, spontanee
+  "Dublin":             [0.35, 0.65, 0.50, 0.75, 0.60, 0.70],
+  // Dubrovnik : connue (GoT), rythme modere, bon patrimoine, petite ville, assez touristique, planifiable
+  "Dubrovnik":     [0.30, 0.50, 0.85, 0.45, 0.35, 0.35],
+  // Edimbourg : connue, bon rythme, fort patrimoine+festivals, moy. urbaine, caractere ecossais
+  "Edimbourg":          [0.55, 0.65, 0.80, 0.50, 0.70, 0.50],
+  // Florence : tres connue, rythme pose, patrimoine Renaissance exceptionnel, moy. urbaine, touristique en centre, planifiable
+  "Florence":           [0.35, 0.40, 0.95, 0.55, 0.50, 0.35],
+  // Aix-la-Chapelle : peu connue comme destination, calme, patrimoine Charlemagne, petite-moyenne, authentique ville allemande
+  "Aix-la-Chapelle": [0.60, 0.30, 0.85, 0.40, 0.70, 0.35],
+  // Hambourg : moyennement connue, port+nightlife, culture moderee, tres urbaine, authenticite moyenne
+  "Hambourg":           [0.40, 0.70, 0.50, 0.85, 0.55, 0.70],
+  // Istanbul : connue mais tres depaysante, intensite folle, patrimoine exceptionnel, mega-urbaine, tres authentique, spontanee/chaotique
+  "Istanbul":           [0.85, 0.70, 0.90, 0.80, 0.85, 0.60],
+  // La Rochelle : ville francaise tres connue, calme, culture modeste, petite, authenticite moderee, planifiable
+  "La Rochelle": [0.10, 0.35, 0.35, 0.40, 0.60, 0.40],
+  // Lille : ville francaise tres connue, rythme modere, culture correcte, urbaine, authenticite moderee
+  "Lille":              [0.20, 0.55, 0.60, 0.70, 0.65, 0.50],
+  // Lisbonne : assez connue mais charme intact, active, bonne culture, urbaine, tres authentique dans les quartiers, spontanee
+  "Lisbonne":           [0.55, 0.60, 0.65, 0.65, 0.85, 0.60],
+  // Londres : tres connue, enormement a faire, musees/theatre exceptionnels, mega-urbaine, polie/touristique, bien structuree
+  "Londres":            [0.30, 0.85, 0.85, 0.95, 0.35, 0.55],
+  // Lyon : ville francaise tres connue, rythme modere, gastronomie+patrimoine, urbaine, authenticite moderee
+  "Lyon":               [0.10, 0.60, 0.65, 0.80, 0.55, 0.50],
+  // Madrid : connue, tres active (nuits, energie), bon patrimoine (Prado), tres urbaine, authenticite correcte, spontanee
+  "Madrid":             [0.35, 0.85, 0.70, 0.80, 0.55, 0.75],
+  // Marseille : ville francaise connue, active, plus hedoniste que culturelle, urbaine, tres authentique/brute, spontanee
+  "Marseille":          [0.25, 0.60, 0.55, 0.75, 0.70, 0.65],
+  // Milan : connue, mode/design, culture correcte+hedonisme, tres urbaine, assez polie/luxe, structuree
+  "Milan":              [0.30, 0.60, 0.70, 0.80, 0.30, 0.45],
+  // Munich : connue, rythme modere, musees+architecture, urbaine, assez polie, structuree
+  "Munich":             [0.30, 0.55, 0.70, 0.75, 0.45, 0.40],
+  // Nantes : ville francaise tres connue, calme, culture correcte, moy. urbaine, authenticite moderee
+  "Nantes":             [0.15, 0.50, 0.55, 0.55, 0.65, 0.45],
+  // Naples : assez depaysante pour l'Italie, intense/chaotique, patrimoine tres riche, urbaine, tres authentique/brute, tres spontanee
+  "Naples":             [0.70, 0.55, 0.80, 0.60, 0.95, 0.60],
+  // Nice : ville francaise tres connue, rythme calme, culture modeste, moy. urbaine, touristique, planifiable
+  "Nice":             [0.20, 0.35, 0.60, 0.70, 0.45, 0.35],
+  // Paris : ultra-connue pour un Francais, enormement a faire, culture exceptionnelle, mega-urbaine, touristique, structuree
+  "Paris":              [0.10, 0.70, 0.95, 0.95, 0.35, 0.50],
+  // Porto : moyennement connue, rythme modere, bonne culture, urbaine, tres authentique (Ribeira, quartiers populaires)
+  "Porto":              [0.50, 0.55, 0.70, 0.70, 0.80, 0.70],
+  // Prague : connue, active, fort patrimoine, urbaine, centre touristique mais poches authentiques
+  "Prague":             [0.45, 0.70, 0.85, 0.70, 0.50, 0.55],
+  // Rennes : ville francaise tres connue, calme, culture modeste, moy. urbaine, caractere breton
+  "Rennes":             [0.10, 0.45, 0.45, 0.65, 0.55, 0.50],
+  // Reykjavik : tres depaysante, activites nature intenses, peu de culture classique, tres petite, authenticite unique, planification requise pour nature
+  "Reykjavik":          [0.90, 0.75, 0.30, 0.20, 0.70, 0.35],
+  // Rome : tres connue, beaucoup a faire, patrimoine exceptionnel, tres urbaine, centre touristique mais quartiers locaux
+  "Rome":               [0.30, 0.70, 0.95, 0.85, 0.50, 0.55],
+  // Rotterdam : peu connue, rythme modere, plus design/moderne que classique, urbaine, authenticite moderee, spontanee
+  "Rotterdam":    [0.50, 0.65, 0.40, 0.90, 0.45, 0.65],
+  // Seville : moyennement connue, active, patrimoine riche (Alcazar, flamenco), moy. urbaine, tres authentique, spontanee
+  "Seville":            [0.50, 0.70, 0.85, 0.55, 0.85, 0.55],
+  // Stockholm : connue, rythme modere, design+culture, urbaine, polie/chere, bien organisee
+  "Stockholm":          [0.45, 0.50, 0.70, 0.70, 0.40, 0.50],
+  // Strasbourg : ville francaise connue, calme, bon patrimoine (cathedrale, Petite France), moy. urbaine, authenticite alsacienne
+  "Strasbourg":   [0.20, 0.35, 0.80, 0.55, 0.70, 0.35],
+  // Tallinn : peu connue, rythme modere, patrimoine medieval, petite-moyenne, authentique, moderement spontanee
+  "Tallinn":            [0.75, 0.50, 0.65, 0.55, 0.70, 0.55],
+  // Toulouse : ville rose, aerospatiale, rugby, ambiance sud-ouest chaleureuse, plus dynamique/festive que Lille
+  "Toulouse":           [0.15, 0.60, 0.50, 0.75, 0.65, 0.60],
+  // Valence : moyennement connue, active (plage+ville), culture correcte, urbaine, authenticite correcte, spontanee
+  "Valence":            [0.40, 0.80, 0.45, 0.75, 0.55, 0.70],
+  // Vannes : ville francaise tres connue, tres calme, culture modeste, petite ville, caractere breton
+  "Vannes":             [0.10, 0.30, 0.50, 0.35, 0.60, 0.40],
+  // Venise : tres connue, rythme lent (a pied), patrimoine exceptionnel, moy. urbaine unique, tres touristique, tout se planifie
+  "Venise":             [0.35, 0.45, 0.90, 0.55, 0.30, 0.30],
+  // Vienne : connue, rythme modere, musique classique+musees exceptionnels, urbaine, polie/imperiale, structuree
+  "Vienne":             [0.30, 0.50, 0.90, 0.80, 0.40, 0.40],
+  // Varsovie : moderement connue, active, ville reconstruite (culture moyenne), urbaine, assez authentique, spontanee
+  "Varsovie":           [0.60, 0.60, 0.55, 0.80, 0.70, 0.65],
+
+  // ── NATURE / AVENTURE (action haute, urbain bas) ──
+  "Chamonix":           [0.15, 0.90, 0.15, 0.15, 0.55, 0.55],
+  "Interlaken":         [0.30, 0.85, 0.15, 0.15, 0.35, 0.30],
+
+  // ── PATRIMOINE HORS VILLE (culture haute, urbain bas) ──
+  "Sintra":             [0.40, 0.30, 0.85, 0.20, 0.65, 0.45],
+  "Bath":               [0.20, 0.30, 0.80, 0.40, 0.40, 0.30],
+
+  // ── DEPAYSANT ET CALME (nouveaute haute, action basse) ──
+  "Iles Lofoten":       [0.85, 0.45, 0.25, 0.15, 0.75, 0.55],
+  "Hallstatt":          [0.50, 0.20, 0.55, 0.10, 0.65, 0.35],
+
+  // ── CALME ET CONFORT (action basse, authenticite basse) ──
+  "Santorin":      [0.20, 0.15, 0.65, 0.20, 0.20, 0.30],
+  "Lac de Come": [0.05, 0.10, 0.70, 0.05, 0.15, 0.10],
+
+  // ── FETE ET SPONTANEITE (action haute, culture basse, structure haute) ──
+  "Ibiza":              [0.20, 0.75, 0.15, 0.35, 0.30, 0.90],
+
+  // ── URBAIN MODERNE SANS HERITAGE (urbain haut, culture basse, authenticite basse) ──
+  "Monaco":             [0.10, 0.45, 0.30, 0.70, 0.10, 0.20],
+
+  // ── DECOUVERTE NATURE POLAIRE ──
+  "Tromso":             [0.80, 0.70, 0.20, 0.20, 0.65, 0.50],
+
+  // ── FAMILIER, NATURE, CALME ──
+  "Annecy":          [0.05, 0.20, 0.35, 0.10, 0.75, 0.15],
+
+  // ── LITTORAL EUROPE (complement) ──
+  "Split":              [0.50, 0.65, 0.50, 0.45, 0.60, 0.55],
+  "Malaga":             [0.30, 0.65, 0.40, 0.60, 0.55, 0.65],
+  "Palermo":            [0.60, 0.50, 0.70, 0.55, 0.85, 0.65],
+  "Cinque Terre": [0.30, 0.45, 0.50, 0.10, 0.55, 0.40],
+  "Essaouira":          [0.75, 0.40, 0.50, 0.30, 0.85, 0.65],
+  "Tel Aviv":           [0.70, 0.80, 0.60, 0.80, 0.60, 0.70],
+
+  // ── NATURE EUROPE (complement) ──
+  "Innsbruck":    [0.30, 0.85, 0.25, 0.35, 0.40, 0.40],
+  "Bergen":         [0.70, 0.70, 0.25, 0.30, 0.70, 0.45],
+  "Lake Bled":          [0.55, 0.40, 0.30, 0.10, 0.65, 0.40],
+  "Funchal":        [0.60, 0.70, 0.25, 0.20, 0.65, 0.40],
+  "Lucerne":        [0.10, 0.20, 0.80, 0.20, 0.25, 0.15],
+
+  // ── PATRIMOINE EUROPE (complement) ──
+  "Colmar":             [0.10, 0.20, 0.65, 0.15, 0.55, 0.25],
+  "Gand":             [0.25, 0.40, 0.75, 0.60, 0.55, 0.55],
+  "Marrakech":    [0.90, 0.80, 0.70, 0.50, 0.95, 0.80],
+  "Fes":                [0.90, 0.50, 0.90, 0.55, 0.95, 0.80],
+
+  // ── URBAIN EUROPE (complement) ──
+  "Helsinki":           [0.40, 0.40, 0.50, 0.60, 0.40, 0.35],
+
+  // ── MONDE — ASIE ──
+  "Tokyo":              [0.75, 0.85, 0.80, 0.90, 0.60, 0.45],
+  "Kyoto":           [0.70, 0.40, 0.95, 0.40, 0.75, 0.40],
+  "Bangkok":       [0.90, 0.95, 0.55, 0.95, 0.85, 0.90],
+  "Seoul":              [0.75, 0.80, 0.65, 0.85, 0.55, 0.55],
+  "Hong Kong":          [0.70, 0.85, 0.55, 0.95, 0.50, 0.55],
+  "Singapour":          [0.55, 0.65, 0.55, 0.85, 0.35, 0.40],
+  "Bali":              [0.85, 0.35, 0.45, 0.20, 0.90, 0.80],
+  "Jaipur":             [0.90, 0.50, 0.90, 0.55, 0.90, 0.65],
+  "Kathmandu":   [0.95, 0.25, 0.90, 0.25, 0.95, 0.90],
+
+  // ── MONDE — AMERIQUES ──
+  "New York":           [0.45, 0.95, 0.85, 0.95, 0.40, 0.60],
+  "Buenos Aires": [0.70, 0.60, 0.85, 0.75, 0.90, 0.50],
+  "Mexico":          [0.90, 0.90, 0.80, 0.90, 0.85, 0.65],
+  "La Havane":    [0.90, 0.40, 0.75, 0.65, 0.95, 0.80],
+  "Cusco":              [0.90, 0.65, 0.90, 0.40, 0.90, 0.70],
+
+  // ── MONDE — AFRIQUE / MOYEN-ORIENT ──
+  "Le Cap":          [0.75, 0.95, 0.20, 0.35, 0.80, 0.30],
+  "Zanzibar":      [0.90, 0.30, 0.30, 0.15, 0.90, 0.75],
+  "Dubai":              [0.50, 0.70, 0.45, 0.85, 0.30, 0.45],
+
+  // ── MONDE — OCEANIE ──
+  "Sydney":         [0.55, 0.85, 0.50, 0.85, 0.35, 0.45],
+
+  // ── MONDE — LITTORAL (complement) ──
+  "Rio de Janeiro":     [0.55, 0.85, 0.50, 0.80, 0.55, 0.75],
+  "Phuket":          [0.45, 0.70, 0.10, 0.10, 0.25, 0.45],
+  "Cartagena":    [0.80, 0.45, 0.70, 0.45, 0.80, 0.60],
+
+  // ── MONDE — NATURE (complement) ──
+  "Patagonie":   [0.90, 0.75, 0.15, 0.10, 0.65, 0.45],
+  "Queenstown":         [0.60, 0.95, 0.10, 0.20, 0.35, 0.35],
+  "Costa Rica":         [0.80, 0.65, 0.20, 0.10, 0.70, 0.55],
+
+  // ── PROCHE — NATURE (complement) ──
+  "Zermatt":            [0.35, 0.75, 0.10, 0.05, 0.40, 0.35],
+  "Dolomites":          [0.40, 0.80, 0.15, 0.05, 0.50, 0.45],
+
+  // ── AJOUTS EQUILIBRAGE ──
+  "Corse":            [0.25, 0.80, 0.20, 0.10, 0.80, 0.55],
+  "Biarritz":      [0.15, 0.85, 0.15, 0.35, 0.55, 0.65],
+  "Sri Lanka":    [0.85, 0.80, 0.45, 0.20, 0.80, 0.65],
+  "Siem Reap":          [0.95, 0.45, 0.95, 0.25, 0.85, 0.45],
+  "Riga":               [0.75, 0.55, 0.70, 0.60, 0.70, 0.60],
+  "Ho Chi Minh": [0.90, 0.90, 0.45, 0.90, 0.85, 0.75],
+};
+
+// ═══════════════════════════════════════════════════════════
+//  TAGS & QUESTIONS D'AMORCE
+// ═══════════════════════════════════════════════════════════
+const CITY_TAGS = {
+  // ── PROCHE (train ou vol court < 3h depuis la France) ──
+  "Paris":{dist:"proche",cadre:"patrimoine"},"Lyon":{dist:"proche",cadre:"patrimoine"},
+  "Bordeaux":{dist:"proche",cadre:"patrimoine"},"Strasbourg":{dist:"proche",cadre:"patrimoine"},
+  "Colmar":{dist:"proche",cadre:"patrimoine"},"Bruges":{dist:"proche",cadre:"patrimoine"},
+  "Gand":{dist:"proche",cadre:"patrimoine"},"Bath":{dist:"proche",cadre:"patrimoine"},
+  "Marseille":{dist:"proche",cadre:"urbain"},"Nice":{dist:"proche",cadre:"urbain"},
+  "La Rochelle":{dist:"proche",cadre:"patrimoine"},"Vannes":{dist:"proche",cadre:"patrimoine"},
+  "Barcelone":{dist:"proche",cadre:"urbain"},"Monaco":{dist:"proche",cadre:"urbain"},
+  "Chamonix":{dist:"proche",cadre:"nature"},"Interlaken":{dist:"proche",cadre:"nature"},
+  "Annecy":{dist:"proche",cadre:"nature"},"Lac de Come":{dist:"proche",cadre:"nature"},
+  "Lucerne":{dist:"proche",cadre:"nature"},
+  "Amsterdam":{dist:"proche",cadre:"urbain"},"Rotterdam":{dist:"proche",cadre:"urbain"},
+  "Bruxelles":{dist:"proche",cadre:"urbain"},"Londres":{dist:"proche",cadre:"urbain"},
+  "Lille":{dist:"proche",cadre:"urbain"},"Nantes":{dist:"proche",cadre:"urbain"},
+  "Rennes":{dist:"proche",cadre:"urbain"},"Toulouse":{dist:"proche",cadre:"urbain"},
+  "Milan":{dist:"proche",cadre:"urbain"},"Cologne":{dist:"proche",cadre:"urbain"},
+  "Aix-la-Chapelle":{dist:"proche",cadre:"patrimoine"},"Anvers":{dist:"proche",cadre:"patrimoine"},
+  // ── EUROPE (vol 3-6h ou destinations mediterraneennes) ──
+  "Rome":{dist:"europe",cadre:"patrimoine"},"Florence":{dist:"europe",cadre:"patrimoine"},
+  "Venise":{dist:"europe",cadre:"patrimoine"},"Athenes":{dist:"europe",cadre:"patrimoine"},
+  "Istanbul":{dist:"europe",cadre:"patrimoine"},"Prague":{dist:"europe",cadre:"patrimoine"},
+  "Cracovie":{dist:"europe",cadre:"patrimoine"},"Edimbourg":{dist:"europe",cadre:"patrimoine"},
+  "Seville":{dist:"europe",cadre:"patrimoine"},"Vienne":{dist:"europe",cadre:"patrimoine"},
+  "Porto":{dist:"europe",cadre:"patrimoine"},
+  "Tallinn":{dist:"europe",cadre:"patrimoine"},"Dubrovnik":{dist:"europe",cadre:"patrimoine"},
+  "Sintra":{dist:"europe",cadre:"nature"},"Marrakech":{dist:"monde",cadre:"patrimoine"},
+  "Fes":{dist:"monde",cadre:"patrimoine"},
+  "Madrid":{dist:"europe",cadre:"urbain"},"Berlin":{dist:"europe",cadre:"urbain"},
+  "Budapest":{dist:"europe",cadre:"urbain"},"Dublin":{dist:"europe",cadre:"urbain"},
+  "Copenhague":{dist:"europe",cadre:"urbain"},"Stockholm":{dist:"europe",cadre:"urbain"},
+  "Helsinki":{dist:"europe",cadre:"urbain"},"Hambourg":{dist:"europe",cadre:"urbain"},
+  "Munich":{dist:"europe",cadre:"urbain"},"Varsovie":{dist:"europe",cadre:"urbain"},
+  "Bucarest":{dist:"europe",cadre:"urbain"},"Cluj-Napoca":{dist:"europe",cadre:"urbain"},
+  
+  "Lisbonne":{dist:"europe",cadre:"patrimoine"},"Valence":{dist:"europe",cadre:"urbain"},
+  "Naples":{dist:"europe",cadre:"patrimoine"},"Split":{dist:"europe",cadre:"patrimoine"},
+  "Malaga":{dist:"europe",cadre:"patrimoine"},"Palermo":{dist:"europe",cadre:"patrimoine"},
+  "Ibiza":{dist:"europe",cadre:"urbain"},
+  "Santorin":{dist:"europe",cadre:"nature"},"Cinque Terre":{dist:"europe",cadre:"nature"},
+  "Essaouira":{dist:"monde",cadre:"patrimoine"},
+  "Tel Aviv":{dist:"monde",cadre:"urbain"},
+  "Reykjavik":{dist:"europe",cadre:"nature"},"Tromso":{dist:"europe",cadre:"nature"},
+  "Iles Lofoten":{dist:"europe",cadre:"nature"},"Bergen":{dist:"europe",cadre:"nature"},
+  "Innsbruck":{dist:"europe",cadre:"nature"},"Hallstatt":{dist:"europe",cadre:"nature"},
+  "Lake Bled":{dist:"europe",cadre:"nature"},"Funchal":{dist:"europe",cadre:"nature"},
+  // ── MONDE (vol long, hors Europe) ──
+  "Tokyo":{dist:"monde",cadre:"urbain"},"New York":{dist:"monde",cadre:"urbain"},
+  "Bangkok":{dist:"monde",cadre:"urbain"},"Seoul":{dist:"monde",cadre:"urbain"},
+  "Hong Kong":{dist:"monde",cadre:"urbain"},"Buenos Aires":{dist:"monde",cadre:"urbain"},
+  "Singapour":{dist:"monde",cadre:"urbain"},"Dubai":{dist:"monde",cadre:"urbain"},
+  "Sydney":{dist:"monde",cadre:"urbain"},"Le Cap":{dist:"monde",cadre:"nature"},
+  "Zanzibar":{dist:"monde",cadre:"nature"},"Bali":{dist:"monde",cadre:"nature"},
+  "Kathmandu":{dist:"monde",cadre:"nature"},
+  "Kyoto":{dist:"monde",cadre:"patrimoine"},"Mexico":{dist:"monde",cadre:"patrimoine"},
+  "La Havane":{dist:"monde",cadre:"patrimoine"},"Cusco":{dist:"monde",cadre:"patrimoine"},
+  "Jaipur":{dist:"monde",cadre:"patrimoine"},
+  "Rio de Janeiro":{dist:"monde",cadre:"urbain"},"Phuket":{dist:"monde",cadre:"nature"},
+  "Cartagena":{dist:"monde",cadre:"patrimoine"},
+  "Patagonie":{dist:"monde",cadre:"nature"},"Queenstown":{dist:"monde",cadre:"nature"},
+  "Costa Rica":{dist:"monde",cadre:"nature"},
+  "Zermatt":{dist:"proche",cadre:"nature"},"Dolomites":{dist:"proche",cadre:"nature"},
+  "Corse":{dist:"proche",cadre:"nature"},"Biarritz":{dist:"proche",cadre:"nature"},
+  "Sri Lanka":{dist:"monde",cadre:"nature"},"Siem Reap":{dist:"monde",cadre:"patrimoine"},
+  "Riga":{dist:"europe",cadre:"patrimoine"},"Ho Chi Minh":{dist:"monde",cadre:"urbain"},
+};
+
+const AMORCE_QUESTIONS = [
+  {id:"a01", bloc:"Envies",
+   texte:"Jusqu'ou tu te vois partir ?",
+   tag:"dist",
+   options:[
+     {label:"\u{1F684} Pas trop loin|Train ou vol court",value:"proche"},
+     {label:"\u{2708}\u{FE0F} En Europe|Une escapade sur le continent",value:"europe"},
+     {label:"\u{1F30D} Au bout du monde|Depaysement total",value:"monde"},
+   ]},
+  {id:"a02", bloc:"Envies",
+   texte:"Qu'est-ce qui te fait rever ?",
+   tag:"cadre",
+   options:[
+     {label:"\u{1F3DB}\u{FE0F} Patrimoine|Architecture, histoire, culture",value:"patrimoine"},
+     {label:"\u{26F0}\u{FE0F} Nature|Grands espaces, evasion",value:"nature"},
+     {label:"\u{1F306} Vie urbaine|Energie, ambiance, animation",value:"urbain"},
+   ]},
+];
+
+let amorceChoices = {dist:null, cadre:null};
+let amorceIndex = 0;
+
+// ═══════════════════════════════════════════════════════════
+//  BANQUE DE 50 QUESTIONS — ~8 par axe, formats varies
+//  MaxDiff, scenarios projectifs, arbitrages situationnels
+// ═══════════════════════════════════════════════════════════
+const QUESTIONS = [
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  NOUVEAUTE — Familiarite ↔ Depaysement  (9 questions)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {id:"n01", bloc:"Decouverte",
+   texte:"Ta prochaine destination :",
+   A:"Un pays que tu adores|Tu y retournerais les yeux fermes",
+   B:"Un endroit totalement inconnu|Tu ne sais rien, et c est le but",
+   contributions:{nouveaute:{A:0.10,B:0.95,force:0.9}}},
+
+  {id:"n02", bloc:"Decouverte",
+   texte:"Les restos en voyage :",
+   A:"Un resto repute|Bien note, valeur sure",
+   B:"Un boui-boui local|Sans touristes, ambiance vraie",
+   contributions:{nouveaute:{A:0.15,B:0.90,force:0.85}}},
+
+  {id:"n03", bloc:"Decouverte",
+   texte:"Tu tombes sur un quartier non touristique :",
+   A:"Demi-tour|Tu preferes rester dans les coins recommandes",
+   B:"Tu t'y enfonces|Curiosite, envie de voir",
+   contributions:{nouveaute:{A:0.15,B:0.90,force:0.8}, authenticite:{A:0.25,B:0.75,force:0.4}}},
+
+  {id:"n04", bloc:"Decouverte",
+   texte:"On te propose un detour vers un village inconnu :",
+   A:"Non merci|Tu preferes suivre le programme",
+   B:"Oui, carrement !|Les meilleures decouvertes sont imprevues",
+   contributions:{nouveaute:{A:0.10,B:0.90,force:0.8}}},
+
+  {id:"n05", bloc:"Decouverte",
+   texte:"Voyage entre amis, tu proposes :",
+   A:"Destination classique|Valeur sure, tout le monde sera content",
+   B:"Un pays inconnu|Personne n'en a entendu parler",
+   contributions:{nouveaute:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"n06", bloc:"Decouverte",
+   texte:"Vol pas cher vers une ville inconnue :",
+   A:"Tu passes|Sans prep, ca ne t'interesse pas",
+   B:"Tu es tente|L'impro, c'est excitant",
+   contributions:{nouveaute:{A:0.15,B:0.85,force:0.75}, structure:{A:0.15,B:0.80,force:0.4}}},
+
+  {id:"n07", bloc:"Decouverte",
+   texte:"La langue locale t'est totalement etrangere :",
+   A:"Ca te stresse|Tu aurais prefere un pays francophone",
+   B:"Ca fait partie de l'aventure|Le depaysement total",
+   contributions:{nouveaute:{A:0.10,B:0.90,force:0.8}}},
+
+  {id:"n08", bloc:"Decouverte",
+   texte:"Le menu est dans un alphabet illisible :",
+   A:"Tu joues la securite|Un plat safe ou tu montres une photo",
+   B:"Tu pointes au hasard|Surprise !",
+   contributions:{nouveaute:{A:0.15,B:0.90,force:0.75}, authenticite:{A:0.30,B:0.70,force:0.35}}},
+
+  {id:"n09", bloc:"Decouverte",
+   texte:"Deux photos de voyage, tu choisis :",
+   A:"La jolie place dans le Sud|Charme et douceur de vivre",
+   B:"Le marche chaotique|Colore, vivant, Europe de l'Est",
+   contributions:{nouveaute:{A:0.10,B:0.90,force:0.85}}},
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  ACTION — Ressourcement ↔ Exploration  (8 questions)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {id:"a01", bloc:"Rythme",
+   texte:"Journee libre en voyage :",
+   A:"Flemmarder au cafe|Laisser venir, zero programme",
+   B:"Partir a l'aventure|Enchainer les decouvertes",
+   contributions:{action:{A:0.10,B:0.90,force:0.9}}},
+
+  {id:"a02", bloc:"Rythme",
+   texte:"Tu rentres epuise d'un voyage :",
+   A:"J'aurais du lever le pied|C'etait trop intense",
+   B:"C'etait intense|Exactement ce que je voulais",
+   contributions:{action:{A:0.15,B:0.85,force:0.85}}},
+
+  {id:"a03", bloc:"Rythme",
+   texte:"Dernier jour en ville :",
+   A:"Un dernier cafe avec vue|Savourer tranquillement",
+   B:"Tu cases tout le reste|Pas une minute a perdre",
+   contributions:{action:{A:0.10,B:0.90,force:0.85}, structure:{A:0.35,B:0.65,force:0.35}}},
+
+  {id:"a04", bloc:"Rythme",
+   texte:"7h du matin en vacances :",
+   A:"Tu dors encore|C'est les vacances apres tout",
+   B:"Deja debout|Profiter avant la foule",
+   contributions:{action:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"a05", bloc:"Rythme",
+   texte:"3 jours dans une grande ville :",
+   A:"Prendre ton temps|Moins de choses, mais mieux",
+   B:"En voir un maximum|Optimiser chaque minute",
+   contributions:{action:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"a06", bloc:"Rythme",
+   texte:"Un ami propose un week-end :",
+   A:"Spa ou gite au calme|Deconnecter completement",
+   B:"City-trip bien rempli|Energie et decouvertes",
+   contributions:{action:{A:0.10,B:0.90,force:0.9}, urbain:{A:0.20,B:0.75,force:0.4}}},
+
+  {id:"a07", bloc:"Rythme",
+   texte:"Un marche couvert immense :",
+   A:"Tu t'poses a un stand|Deguster tranquillement",
+   B:"Tu fais le tour complet|Gouter a droite a gauche",
+   contributions:{action:{A:0.15,B:0.85,force:0.75}}},
+
+  {id:"a08", bloc:"Rythme",
+   texte:"Grosse matinee de visites, l'apres-midi :",
+   A:"Pause|Sieste, piscine ou lecture",
+   B:"Tu enchaines|Direction un autre quartier",
+   contributions:{action:{A:0.10,B:0.90,force:0.8}}},
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  CULTURE — Hedonisme ↔ Profondeur  (9 questions)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {id:"c01", bloc:"Culture",
+   texte:"Ta demi-journee ideale en voyage :",
+   A:"Terrasse et apero|Bonne musique, on profite",
+   B:"Musee ou site historique|Plonger dans l'histoire",
+   contributions:{culture:{A:0.10,B:0.90,force:0.9}}},
+
+  {id:"c02", bloc:"Culture",
+   texte:"Le voyage parfait te laisse avec :",
+   A:"Fete, bouffe et plaisir|Des souvenirs de bons moments",
+   B:"Connaissances et profondeur|Des histoires a raconter",
+   contributions:{culture:{A:0.15,B:0.85,force:0.85}}},
+
+  {id:"c03", bloc:"Culture",
+   texte:"Une eglise historique magnifique :",
+   A:"Photo dehors et tu continues|Pas besoin d'entrer",
+   B:"Tu entres et tu explores|Panneaux, crypte, tout t'interesse",
+   contributions:{culture:{A:0.15,B:0.90,force:0.8}}},
+
+  {id:"c04", bloc:"Culture",
+   texte:"En souvenir, tu ramenes :",
+   A:"Bouffe et vin|Un truc local a deguster",
+   B:"Un beau livre ou objet artisanal|Quelque chose de culturel",
+   contributions:{culture:{A:0.20,B:0.85,force:0.75}}},
+
+  {id:"c05", bloc:"Culture",
+   texte:"Deux visites guidees, tu choisis :",
+   A:"Le food tour|Degustations locales",
+   B:"L'histoire secrete de la ville|Avec un historien passionne",
+   contributions:{culture:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"c06", bloc:"Culture",
+   texte:"Un soir en voyage :",
+   A:"Bar rooftop|Cocktails et musique live",
+   B:"Theatre ou concert|Spectacle local",
+   contributions:{culture:{A:0.10,B:0.90,force:0.8}}},
+
+  {id:"c07", bloc:"Culture",
+   texte:"Tu tombes sur un festival local :",
+   A:"Gastronomie et musique|Tu fonces directement",
+   B:"Cinema ou litterature|Tu regardes le programme",
+   contributions:{culture:{A:0.15,B:0.85,force:0.75}}},
+
+  {id:"c08", bloc:"Culture",
+   texte:"Dans ta valise :",
+   A:"Maillot et lunettes de soleil|Enceinte bluetooth dans la valise",
+   B:"Guide culturel et carnet|Un bon roman pour le trajet",
+   contributions:{culture:{A:0.10,B:0.90,force:0.8}, action:{A:0.55,B:0.35,force:0.3}}},
+
+  {id:"c09", bloc:"Culture",
+   texte:"Tu racontes tes vacances, tu parles surtout :",
+   A:"Restos, ambiance, soirees|Les bons moments avant tout",
+   B:"Monuments et architecture|Ce que tu as appris",
+   contributions:{culture:{A:0.15,B:0.85,force:0.8}}},
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  URBAIN — Nature/calme ↔ Vie urbaine  (8 questions)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {id:"u01", bloc:"Cadre",
+   texte:"Tu te ressources mieux :",
+   A:"Dans la nature|Loin de l'agitation",
+   B:"En plein coeur de la ville|L'animation t'energise",
+   contributions:{urbain:{A:0.10,B:0.90,force:0.95}}},
+
+  {id:"u02", bloc:"Cadre",
+   texte:"Jour 3, beau temps, apres-midi libre :",
+   A:"Tu files hors de la ville|Rando, plage ou lac",
+   B:"Tu te perds dans les rues|Vie locale et decouvertes",
+   contributions:{urbain:{A:0.15,B:0.85,force:0.85}}},
+
+  {id:"u03", bloc:"Cadre",
+   texte:"Ta vue ideale depuis l'hotel :",
+   A:"Mer, arbres, calme|On decroche completement",
+   B:"Toits de la ville et lumieres|Le bruit de fond urbain",
+   contributions:{urbain:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"u04", bloc:"Cadre",
+   texte:"Photo de profil en voyage :",
+   A:"Paysage naturel grandiose|Montagnes, mer ou foret",
+   B:"Ruelle typique ou cafe urbain|Ambiance de ville",
+   contributions:{urbain:{A:0.10,B:0.85,force:0.75}}},
+
+  {id:"u05", bloc:"Cadre",
+   texte:"Le bruit de fond ideal en vacances :",
+   A:"Vagues et oiseaux|Vent dans les arbres",
+   B:"Brouhaha de terrasse|Scooters, voix, vie urbaine",
+   contributions:{urbain:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"u06", bloc:"Cadre",
+   texte:"Logement de reve pour un week-end :",
+   A:"Maison isolee|Vue sur la campagne ou la cote",
+   B:"Appart en plein centre|Au-dessus d'un marche anime",
+   contributions:{urbain:{A:0.10,B:0.90,force:0.9}, authenticite:{A:0.40,B:0.65,force:0.3}}},
+
+  {id:"u07", bloc:"Cadre",
+   texte:"Deux excursions, tu choisis :",
+   A:"Rando le long des falaises|Pique-nique avec vue",
+   B:"Quartier creatif et street art|Cafes independants",
+   contributions:{urbain:{A:0.10,B:0.90,force:0.85}, culture:{A:0.40,B:0.55,force:0.3}}},
+
+  {id:"u08", bloc:"Cadre",
+   texte:"Fin de journee, tu te poses :",
+   A:"Banc face a un lac|Parc tranquille, on souffle",
+   B:"Place animee|Tu regardes les gens passer",
+   contributions:{urbain:{A:0.10,B:0.90,force:0.8}}},
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  AUTHENTICITE — Confort ↔ Immersion locale  (8 questions)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {id:"au01", bloc:"Immersion",
+   texte:"Pour l'hebergement :",
+   A:"Hotel confortable|Propre, sans surprise",
+   B:"Chez l'habitant|Logement dans un quartier local",
+   contributions:{authenticite:{A:0.10,B:0.90,force:0.9}}},
+
+  {id:"au02", bloc:"Immersion",
+   texte:"Premiere soiree dans une nouvelle ville :",
+   A:"Le resto le mieux note|Google Maps, valeur sure",
+   B:"Tu suis les locaux|Le premier endroit bonde du quartier",
+   contributions:{authenticite:{A:0.15,B:0.85,force:0.85}}},
+
+  {id:"au03", bloc:"Immersion",
+   texte:"Un local t'invite a un repas de famille :",
+   A:"Tu declines poliment|Tu preferes garder tes plans",
+   B:"Tu acceptes sans hesiter|Une opportunite en or",
+   contributions:{authenticite:{A:0.10,B:0.95,force:0.85}, nouveaute:{A:0.25,B:0.75,force:0.35}}},
+
+  {id:"au04", bloc:"Immersion",
+   texte:"Shopping en voyage :",
+   A:"Grandes enseignes|Rues commercantes classiques",
+   B:"Boutiques d'artisans|Marches de quartier",
+   contributions:{authenticite:{A:0.10,B:0.90,force:0.8}}},
+
+  {id:"au05", bloc:"Immersion",
+   texte:"Te deplacer en ville :",
+   A:"Taxi ou Uber|Pratique et confortable",
+   B:"Transports locaux|Metro, tram, comme les habitants",
+   contributions:{authenticite:{A:0.15,B:0.85,force:0.75}}},
+
+  {id:"au06", bloc:"Immersion",
+   texte:"Choisir un quartier ou dormir :",
+   A:"Centre touristique|Bien situe, tout a proximite",
+   B:"Quartier residentiel|Plus loin, mais plus vrai",
+   contributions:{authenticite:{A:0.10,B:0.90,force:0.85}, nouveaute:{A:0.30,B:0.70,force:0.3}}},
+
+  {id:"au07", bloc:"Immersion",
+   texte:"Pause cafe :",
+   A:"Starbucks|Tu sais ce que tu auras",
+   B:"Vieux cafe local|Meme si le menu est un mystere",
+   contributions:{authenticite:{A:0.10,B:0.90,force:0.8}, nouveaute:{A:0.20,B:0.75,force:0.35}}},
+
+  {id:"au08", bloc:"Immersion",
+   texte:"Tu photographies surtout :",
+   A:"Monuments et belles facades|Vues panoramiques",
+   B:"Scenes de rue et visages|Les petits details",
+   contributions:{authenticite:{A:0.15,B:0.85,force:0.75}}},
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //  STRUCTURE — Planifie ↔ Spontane  (8 questions)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {id:"s01", bloc:"Organisation",
+   texte:"Avant de partir :",
+   A:"Tout reserve|Vols, hotels, visites",
+   B:"Juste le vol|Et on voit sur place",
+   contributions:{structure:{A:0.10,B:0.90,force:0.9}}},
+
+  {id:"s02", bloc:"Organisation",
+   texte:"Le programme change en cours de route :",
+   A:"Ca te stresse|Tu preferes suivre le plan",
+   B:"Tant mieux !|Les meilleurs moments sont imprevus",
+   contributions:{structure:{A:0.15,B:0.85,force:0.85}}},
+
+  {id:"s03", bloc:"Organisation",
+   texte:"Naviguer dans une ville inconnue :",
+   A:"Itineraire prepare|Appli GPS, zero risque",
+   B:"Instinct et panneaux|Ca suffit largement",
+   contributions:{structure:{A:0.10,B:0.90,force:0.8}, nouveaute:{A:0.30,B:0.70,force:0.3}}},
+
+  {id:"s04", bloc:"Organisation",
+   texte:"Musee tres populaire :",
+   A:"Billets reserves en avance|Des semaines avant",
+   B:"Tu tentes sur place|Ca passe ou ca casse",
+   contributions:{structure:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"s05", bloc:"Organisation",
+   texte:"Ta valise avant de partir :",
+   A:"Faite la veille|Avec une checklist",
+   B:"Faite le matin meme|A l'arrache",
+   contributions:{structure:{A:0.10,B:0.90,force:0.75}}},
+
+  {id:"s06", bloc:"Organisation",
+   texte:"5 jours de vacances :",
+   A:"Une seule ville|Bien la decouvrir en profondeur",
+   B:"2-3 villes au feeling|On verra bien ou ca mene",
+   contributions:{structure:{A:0.20,B:0.85,force:0.8}, action:{A:0.35,B:0.70,force:0.35}}},
+
+  {id:"s07", bloc:"Organisation",
+   texte:"Un local te dit 'on verra demain' :",
+   A:"Ca te stresse|Tu aimes savoir a l'avance",
+   B:"Parfait !|C'est comme ca que tu aimes voyager",
+   contributions:{structure:{A:0.10,B:0.90,force:0.8}}},
+
+  {id:"s08", bloc:"Organisation",
+   texte:"Ton appli favorite en voyage :",
+   A:"Google Maps|Pins et listes sauvegardees",
+   B:"Pas d'appli|Tu demandes aux gens",
+   contributions:{structure:{A:0.10,B:0.90,force:0.75}, authenticite:{A:0.30,B:0.70,force:0.3}}},
+];
+
+// ═══════════════════════════════════════════════════════════
+//  MOTEUR ADAPTATIF — simulation A/B
+//
+//  Pour choisir la prochaine question, le moteur SIMULE les deux
+//  reponses possibles (A et B) et mesure a quel point elles
+//  produiraient des classements de villes differents.
+//
+//  La question qui separe le plus les resultats = celle qui
+//  apporte le plus d'information. Comme le classement depend
+//  du vecteur courant (qui depend des reponses precedentes),
+//  le quiz est reellement adaptatif.
+// ═══════════════════════════════════════════════════════════
+const MIN_Q = 5, MAX_Q = 7, MIN_Q_PROFILE = 3, MAX_Q_PROFILE = 5;
+const SIM_TOP = 6;
+
+let vecteur = {}, poidsTotal = {}, historique = [], posees = new Set();
+let questionCourante = null, nbPosees = 0, profileEnhanced = false;
+
+let trackerData = [];
+let stateHistory = [];
+
+function snapshotState() {
+  return {
+    vecteur: {...vecteur},
+    poidsTotal: {...poidsTotal},
+    posees: new Set(posees),
+    historique: historique.map(h => ({...h})),
+    nbPosees
+  };
+}
+
+function restoreState(snap) {
+  AXES.forEach(a => { vecteur[a] = snap.vecteur[a]; poidsTotal[a] = snap.poidsTotal[a]; });
+  posees = new Set(snap.posees);
+  historique = snap.historique.map(h => ({...h}));
+  nbPosees = snap.nbPosees;
+}
+
+function reset() {
+  AXES.forEach(a => { vecteur[a] = 0.5; poidsTotal[a] = 0.0; });
+  applyProfileToVecteur();
+  historique = []; posees = new Set(); questionCourante = null; nbPosees = 0;
+  trackerData = [];
+  stateHistory = [];
+  amorceChoices = {dist:null, cadre:null};
+  amorceIndex = 0;
+  document.getElementById("results").style.display = "none";
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("quiz").style.display = "block";
+  const indicator = document.getElementById("profile-indicator");
+  const subtitle = document.getElementById("quiz-subtitle");
+  const profile = getActiveProfile();
+  if (profile) {
+    indicator.innerHTML = profileEnhanced
+      ? '&#128100; ' + profile.name + ' — quiz adapte a ton profil'
+      : '&#128100; ' + profile.name;
+    indicator.style.display = 'block';
+    subtitle.innerHTML = profileEnhanced
+      ? '2 questions d\'amorce + 3 a 5 questions ciblees<br>parmi 110 destinations dans le monde'
+      : '2 questions d\'amorce + 5 a 7 questions psycho<br>parmi 110 destinations dans le monde';
+  } else {
+    indicator.style.display = 'none';
+    subtitle.innerHTML = '2 questions d\'amorce + 5 a 7 questions psycho<br>parmi 110 destinations dans le monde';
+  }
+  updateLiveTracker();
+  showAmorceQuestion(0);
+}
+
+// ── Mecanisme 1 : Ponderation dynamique de la force ──
+// Si la confiance sur un axe est deja haute, la force effective diminue
+// (rendements decroissants : inutile d'insister sur un axe deja cerne)
+function forceEffective(axe, forceBase) {
+  const conf = Math.min(poidsTotal[axe] / 1.6, 1.0);
+  return forceBase * (1 - conf * 0.7);
+}
+
+// ── Mecanisme 2 : Detection de contradiction intra-axe ──
+// Si la reponse contredit la tendance actuelle sur un axe,
+// la confiance est penalisee (le poids total diminue)
+function detectContradiction(axe, valReponse) {
+  if (poidsTotal[axe] < 0.3) return false;
+  const tendance = vecteur[axe];
+  const repHaut = valReponse > 0.5;
+  const vecHaut = tendance > 0.55;
+  const vecBas = tendance < 0.45;
+  return (repHaut && vecBas) || (!repHaut && vecHaut);
+}
+
+function updateVecteur(q, choix) {
+  for (const [axe, p] of Object.entries(q.contributions)) {
+    const val = p[choix];
+    const fEff = forceEffective(axe, p.force);
+    const wOld = poidsTotal[axe];
+
+    if (detectContradiction(axe, val)) {
+      poidsTotal[axe] = Math.max(0.1, wOld * 0.6);
+      const wNew = poidsTotal[axe];
+      vecteur[axe] = (vecteur[axe] * wNew + val * fEff) / (wNew + fEff);
+      poidsTotal[axe] = wNew + fEff;
+    } else {
+      vecteur[axe] = (vecteur[axe] * wOld + val * fEff) / (wOld + fEff);
+      poidsTotal[axe] += fEff;
+    }
+  }
+  posees.add(q.id);
+  historique.push({id:q.id, choix});
+  nbPosees++;
+}
+
+function confiance() {
+  const conf = {};
+  AXES.forEach(a => conf[a] = Math.min(poidsTotal[a] / 1.6, 1.0));
+  return conf;
+}
+
+function confianceGlobale() {
+  const c = confiance();
+  return Math.min(...AXES.map(a => c[a]));
+}
+
+// Compression douce : empeche le vecteur de coller aux murs
+// Le moteur interne garde les valeurs brutes (signal fort),
+// mais le matching ne penalise plus les villes moderees
+function compresser(vals) {
+  return vals.map(v => 0.5 + (v - 0.5) * 0.75);
+}
+
+// Classement des villes pour un vecteur donne
+function classementPour(vec) {
+  const u = compresser(AXES.map(a => vec[a]));
+  return Object.entries(VILLES)
+    .filter(([city]) => {
+      const tags = CITY_TAGS[city];
+      if (!tags) return true;
+      if (amorceChoices.dist && tags.dist !== amorceChoices.dist) return false;
+      if (amorceChoices.cadre && tags.cadre !== amorceChoices.cadre) return false;
+      return true;
+    })
+    .map(([city, v]) => ({city, score: cosine(u, compresser(v))}))
+    .sort((a,b) => b.score - a.score);
+}
+
+// Simule une reponse et retourne le vecteur resultant (avec force effective)
+function simuler(q, choix) {
+  const sv = {}, sp = {};
+  AXES.forEach(a => { sv[a] = vecteur[a]; sp[a] = poidsTotal[a]; });
+  for (const [axe, p] of Object.entries(q.contributions)) {
+    const conf = Math.min(sp[axe] / 1.6, 1.0);
+    const fEff = p.force * (1 - conf * 0.7);
+    sv[axe] = (sv[axe] * sp[axe] + p[choix] * fEff) / (sp[axe] + fEff);
+  }
+  return sv;
+}
+
+// Score adaptatif : a quel point repondre A vs B changerait le classement ?
+function gainAdaptatif(q) {
+  const vecA = simuler(q, "A");
+  const vecB = simuler(q, "B");
+
+  const topA = classementPour(vecA).slice(0, SIM_TOP);
+  const topB = classementPour(vecB).slice(0, SIM_TOP);
+
+  const nomsA = topA.map(c => c.city);
+  const nomsB = topB.map(c => c.city);
+  const setA = new Set(nomsA);
+
+  // 1. Combien de villes changent entre top-A et top-B ?
+  let villesChangees = 0;
+  for (const c of nomsB) { if (!setA.has(c)) villesChangees++; }
+
+  // 2. Combien de positions changent (meme ville, rang different) ?
+  let positionsChangees = 0;
+  for (let i = 0; i < SIM_TOP; i++) {
+    if (nomsA[i] !== nomsB[i]) positionsChangees++;
+  }
+
+  // 3. Ecart de score du #1 entre les deux scenarios
+  const scoreDelta = Math.abs(topA[0].score - topB[0].score);
+
+  const base = (villesChangees / SIM_TOP) * 0.50
+             + (positionsChangees / SIM_TOP) * 0.35
+             + scoreDelta * 5.0 * 0.15;
+
+  // Bonus couverture : favorise les questions ciblant des axes peu ou pas mesures
+  const conf = confiance();
+  let coverageBonus = 0;
+  for (const [axe, p] of Object.entries(q.contributions)) {
+    const gap = Math.max(0, 0.5 - conf[axe]);
+    coverageBonus += gap * p.force;
+  }
+  coverageBonus *= 0.5;
+
+  // Malus profil : penalise les questions dont les 2 reponses poussent
+  // dans la direction deja connue du profil (confirmation sans info)
+  let profileMalus = 0;
+  if (profileEnhanced) {
+    for (const [axe, p] of Object.entries(q.contributions)) {
+      const ecart = Math.abs(vecteur[axe] - 0.5);
+      if (ecart > 0.15) {
+        const dir = vecteur[axe] > 0.5 ? 1 : -1;
+        const dirA = p.A > 0.5 ? 1 : p.A < 0.5 ? -1 : 0;
+        const dirB = p.B > 0.5 ? 1 : p.B < 0.5 ? -1 : 0;
+        if (dirA === dir || dirB === dir) {
+          const confirmStr = dirA === dir && dirB === dir ? 1.0 : 0.4;
+          profileMalus += ecart * p.force * confirmStr;
+        }
+      }
+    }
+    profileMalus *= 0.6;
+  }
+
+  return base + coverageBonus - profileMalus + Math.random() * 0.08;
+}
+
+function shouldStop() {
+  const minQ = profileEnhanced ? MIN_Q_PROFILE : MIN_Q;
+  const maxQ = profileEnhanced ? MAX_Q_PROFILE : MAX_Q;
+  if (nbPosees < minQ) return false;
+  if (nbPosees >= maxQ) return true;
+  const cl = classementPour(vecteur);
+  if (cl.length >= 4) {
+    const gap = cl[2].score - cl[3].score;
+    if (gap > 0.01 && nbPosees >= minQ) return true;
+  }
+  return false;
+}
+
+// ── Mecanisme 3 : Routage par bloc ──
+// Un axe avec confiance >= 0.85 est "cerne" : on evite les questions
+// qui ne ciblent QUE cet axe. Les questions multi-axes passent quand meme.
+function pickNextQuestion() {
+  const conf = confiance();
+  const disponibles = QUESTIONS.filter(q => {
+    if (posees.has(q.id)) return false;
+    const axes = Object.keys(q.contributions);
+    const axesNonCernes = axes.filter(a => conf[a] < 0.85);
+    if (axesNonCernes.length === 0) return false;
+    return true;
+  });
+  if (disponibles.length === 0) {
+    const fallback = QUESTIONS.filter(q => !posees.has(q.id));
+    if (fallback.length === 0) return null;
+    fallback.sort((a,b) => gainAdaptatif(b) - gainAdaptatif(a));
+    return fallback[0];
+  }
+  disponibles.sort((a,b) => gainAdaptatif(b) - gainAdaptatif(a));
+  return disponibles[0];
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MATCHING
+// ═══════════════════════════════════════════════════════════
+function cosine(a, b) {
+  let dot=0, na=0, nb=0;
+  for (let i=0; i<a.length; i++) { dot+=a[i]*b[i]; na+=a[i]*a[i]; nb+=b[i]*b[i]; }
+  return dot / (Math.sqrt(na)*Math.sqrt(nb));
+}
+
+function recommend(topN=3) {
+  return classementPour(vecteur).slice(0, topN);
+}
+
+const WIKI_NAMES = {
+  "Anvers":"Antwerp","Athenes":"Athens","Barcelone":"Barcelona",
+  "Bruxelles":"Brussels","Bucarest":"Bucharest","Copenhague":"Copenhagen",
+  "Cracovie":"Kraków","Edimbourg":"Edinburgh","Aix-la-Chapelle":"Aachen",
+  "Hambourg":"Hamburg","Lisbonne":"Lisbon","Londres":"London",
+  "Reykjavik":"Reykjavík",
+  "Valence":"Valencia","Venise":"Venice","Vienne":"Vienna","Varsovie":"Warsaw",
+  "Iles Lofoten":"Lofoten","Lac de Come":"Lake Como","Tromso":"Tromsø",
+  "Santorin":"Oia, Greece",
+  "Gand":"Ghent","Malaga":"Málaga","Cinque Terre":"Cinque Terre",
+  "Lake Bled":"Lake Bled","Funchal":"Funchal","Fes":"Fez, Morocco",
+  "Bath":"Bath, Somerset","Split":"Split, Croatia",
+  "Marrakech":"Marrakesh","Essaouira":"Essaouira","Tel Aviv":"Tel Aviv",
+  "New York":"New York City","Mexico":"Mexico City","La Havane":"Havana",
+  "Le Cap":"Cape Town","Singapour":"Marina Bay, Singapore","Bali":"Tanah Lot",
+  "Hong Kong":"Victoria Harbour","Monaco":"Monte Carlo","Zanzibar":"Stone Town",
+  "Seoul":"Seoul","Kyoto":"Kyoto","Jaipur":"Jaipur","Kathmandu":"Kathmandu",
+  "Rio de Janeiro":"Rio de Janeiro","Phuket":"Phang Nga Bay","Cartagena":"Cartagena, Colombia",
+  "Patagonie":"Torres del Paine National Park","Queenstown":"Queenstown, New Zealand",
+  "Costa Rica":"Arenal Volcano","Zermatt":"Zermatt","Dolomites":"Dolomites",
+  "Corse":"Bonifacio, Corse-du-Sud","Biarritz":"Biarritz","Sri Lanka":"Sigiriya",
+  "Ibiza":"Es Vedrà",
+  "Siem Reap":"Siem Reap","Riga":"Riga","Ho Chi Minh":"Ho Chi Minh City",
+};
+const CITY_COUNTRIES = {
+  "Amsterdam":"Pays-Bas","Anvers":"Belgique","Athenes":"Grece","Barcelone":"Espagne",
+  "Berlin":"Allemagne","Bordeaux":"France","Bruges":"Belgique","Bruxelles":"Belgique",
+  "Bucarest":"Roumanie","Budapest":"Hongrie","Cluj-Napoca":"Roumanie","Cologne":"Allemagne",
+  "Copenhague":"Danemark","Cracovie":"Pologne","Dublin":"Irlande","Dubrovnik":"Croatie",
+  "Edimbourg":"Ecosse","Florence":"Italie","Aix-la-Chapelle":"Allemagne","Hambourg":"Allemagne",
+  "Istanbul":"Turquie","La Rochelle":"France","Lille":"France","Lisbonne":"Portugal",
+  "Londres":"Angleterre","Lyon":"France","Madrid":"Espagne","Marseille":"France",
+  "Milan":"Italie","Munich":"Allemagne","Nantes":"France","Naples":"Italie",
+  "Nice":"France","Paris":"France","Porto":"Portugal","Prague":"Tchequie",
+  "Rennes":"France","Reykjavik":"Islande","Rome":"Italie","Rotterdam":"Pays-Bas",
+  "Seville":"Espagne","Stockholm":"Suede","Strasbourg":"France","Tallinn":"Estonie",
+  "Toulouse":"France","Valence":"Espagne","Vannes":"France","Venise":"Italie",
+  "Vienne":"Autriche","Varsovie":"Pologne","Chamonix":"France","Interlaken":"Suisse",
+  "Sintra":"Portugal","Bath":"Angleterre","Iles Lofoten":"Norvege","Hallstatt":"Autriche",
+  "Santorin":"Grece","Lac de Come":"Italie","Ibiza":"Espagne","Monaco":"Monaco",
+  "Tromso":"Norvege","Annecy":"France","Split":"Croatie","Malaga":"Espagne",
+  "Palermo":"Italie","Cinque Terre":"Italie","Essaouira":"Maroc","Tel Aviv":"Israel",
+  "Innsbruck":"Autriche","Bergen":"Norvege","Lake Bled":"Slovenie","Funchal":"Portugal",
+  "Lucerne":"Suisse","Colmar":"France","Gand":"Belgique","Marrakech":"Maroc",
+  "Fes":"Maroc","Helsinki":"Finlande","Tokyo":"Japon","Kyoto":"Japon",
+  "Bangkok":"Thailande","Seoul":"Coree du Sud","Hong Kong":"Chine","Singapour":"Singapour",
+  "Bali":"Indonesie","Jaipur":"Inde","Kathmandu":"Nepal","New York":"Etats-Unis",
+  "Buenos Aires":"Argentine","Mexico":"Mexique","La Havane":"Cuba","Cusco":"Perou",
+  "Le Cap":"Afrique du Sud","Zanzibar":"Tanzanie","Dubai":"Emirats arabes unis","Sydney":"Australie",
+  "Rio de Janeiro":"Bresil","Phuket":"Thailande","Cartagena":"Colombie",
+  "Patagonie":"Argentine","Queenstown":"Nouvelle-Zelande","Costa Rica":"Costa Rica",
+  "Zermatt":"Suisse","Dolomites":"Italie","Corse":"France","Biarritz":"France",
+  "Sri Lanka":"Sri Lanka","Siem Reap":"Cambodge","Riga":"Lettonie","Ho Chi Minh":"Vietnam",
+};
+const cityImageCache = {};
+
+function getCityGradient(scores) {
+  const indexed = scores.map((s,i)=>({s,i})).sort((a,b)=>b.s-a.s);
+  const c1 = AXIS_COLORS[AXES[indexed[0].i]];
+  const c2 = AXIS_COLORS[AXES[indexed[1].i]];
+  return `linear-gradient(135deg, ${c1}55, ${c2}40, ${c1}20)`;
+}
+
+function getCityVisualHTML(name, scores, size) {
+  const cls = size === 'large' ? 'result-card' : 'city-card';
+  const gradient = getCityGradient(scores);
+  const cached = cityImageCache[name];
+  const imgTag = cached ? `<img class="${cls}-img" src="${cached}" alt="${name}" onerror="this.remove()">` : '';
+  return `<div class="${cls}-visual" data-city-img="${name}" style="background:${gradient}">${imgTag}</div>`;
+}
+
+async function fetchAllCityImages() {
+  const cities = Object.keys(VILLES);
+  const wikiTitles = cities.map(c => WIKI_NAMES[c] || c);
+  for (let i = 0; i < cities.length; i += 50) {
+    const batchCities = cities.slice(i, i + 50);
+    const batchTitles = wikiTitles.slice(i, i + 50);
+    const titles = batchTitles.join('|');
+    try {
+      const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(titles)}&prop=pageimages&pithumbsize=600&format=json&origin=*`);
+      const d = await r.json();
+      if (!d.query?.pages) continue;
+      const normMap = {};
+      if (d.query.normalized) d.query.normalized.forEach(n => normMap[n.to] = n.from);
+      for (const page of Object.values(d.query.pages)) {
+        if (!page.thumbnail?.source) continue;
+        const fromTitle = normMap[page.title] || page.title;
+        const idx = batchTitles.indexOf(fromTitle);
+        if (idx >= 0) cityImageCache[batchCities[idx]] = page.thumbnail.source;
+      }
+    } catch(e) {}
+    updateCityImages();
+  }
+}
+
+function updateCityImages() {
+  document.querySelectorAll('[data-city-img]').forEach(el => {
+    const city = el.getAttribute('data-city-img');
+    const url = cityImageCache[city];
+    if (url && !el.querySelector('img')) {
+      const img = document.createElement('img');
+      img.className = el.classList.contains('result-card-visual') ? 'result-card-img' : 'city-card-img';
+      img.src = url;
+      img.alt = city;
+      img.onerror = function() { this.remove(); };
+      el.appendChild(img);
+    }
+  });
+}
+
+function generateMatchText(cityName, cityScores, userVec, rank) {
+  const phrases = {
+    nouveaute: {
+      hh:["Tu cherches le depaysement, et {v} te l'offre sans filtre.",
+          "L'inconnu te stimule : a {v}, chaque rue reserve une surprise.",
+          "{v} est un saut dans l'inconnu, exactement ce que tu recherches."],
+      ll:["Tu aimes les reperes familiers : {v} est accueillante des le premier jour.",
+          "Pas besoin de sortir de ta zone de confort — {v} te met a l'aise tout de suite.",
+          "{v} a ce cote rassurant qui te correspond, sans mauvaise surprise."],
+    },
+    action: {
+      hh:["Ton energie trouve son echo a {v}, ou il y a toujours quelque chose a faire.",
+          "{v} ne dort jamais, et toi non plus — le rythme est parfait.",
+          "Tu veux bouger, explorer, vivre a fond : {v} suit ta cadence."],
+      ll:["Tu veux ralentir, et {v} te le permet naturellement.",
+          "Le calme de {v} te correspond — ici, on prend le temps.",
+          "{v} est posee, sans pression, exactement ton rythme."],
+    },
+    culture: {
+      hh:["Tu es sensible au patrimoine : {v} en regorge, musees et histoire a chaque pas.",
+          "Art, architecture, histoire — {v} nourrit ta curiosite culturelle.",
+          "{v} parle a ton amour de la culture, entre musees et heritage vivant."],
+      ll:["Tu voyages pour le plaisir, pas pour les musees — {v} l'a bien compris.",
+          "A {v}, on profite de la vie : bonne bouffe, ambiance, plaisir des sens.",
+          "{v} mise sur l'hedonisme plutot que le patrimoine, et ca te va bien."],
+    },
+    urbain: {
+      hh:["Tu adores le buzz urbain : {v} est une ville qui vit intensement.",
+          "Le pouls de la ville te manque jamais — a {v}, il bat fort.",
+          "{v} t'offre cette energie urbaine que tu recherches."],
+      ll:["Tu veux respirer : a {v}, la nature n'est jamais loin.",
+          "Loin de l'agitation, {v} te rapproche des grands espaces.",
+          "{v} allie calme et verdure, parfait pour souffler."],
+    },
+    authenticite: {
+      hh:["Tu veux vivre comme les locaux : a {v}, l'authenticite est partout.",
+          "{v} est brute, vraie, sans vernis — c'est ce qui te plait.",
+          "L'immersion locale, c'est ton truc : {v} te met au coeur du quotidien."],
+      ll:["Tu aimes le confort d'un voyage bien rode : {v} est faite pour ca.",
+          "{v} rend tout simple pour le voyageur, et c'est ce que tu apprecies.",
+          "A {v}, l'experience est fluide et pensee pour toi."],
+    },
+    structure: {
+      hh:["Tu aimes te laisser porter : {v} est le terrain ideal pour l'impro.",
+          "Pas de plan rigide — a {v}, la spontaneite fait tout le charme.",
+          "{v} se vit au feeling, et c'est exactement ton style."],
+      ll:["Tu aimes que tout soit carre : {v} se planifie facilement de A a Z.",
+          "{v} est bien organisee, rassurante pour qui aime preparer son voyage.",
+          "A {v}, tout est accessible et previsible — ideal pour ton style."],
+    },
+  };
+
+  const match = AXES.map((a,i) => {
+    const cs = cityScores[i], us = userVec[a];
+    const bothHigh = cs > 0.55 && us > 0.55;
+    const bothLow = cs < 0.45 && us < 0.45;
+    const strength = bothHigh ? (cs + us) : bothLow ? (2 - cs - us) : 0;
+    return {a, side: bothHigh ? 'hh' : 'll', strength};
+  }).filter(m => m.strength > 0).sort((a,b) => b.strength - a.strength);
+
+  if (match.length === 0) {
+    const best = AXES.map((a,i) => ({a, prox: 1 - Math.abs(cityScores[i] - userVec[a])}))
+      .sort((a,b) => b.prox - a.prox)[0];
+    const side = cityScores[AXES.indexOf(best.a)] > 0.5 ? 'hh' : 'll';
+    match.push({a: best.a, side, strength: 1});
+  }
+
+  const pick = (axe, side) => {
+    const pool = phrases[axe][side];
+    const seed = cityName.length * 7 + axe.length * 13 + rank * 3;
+    return pool[seed % pool.length].replace(/\{v\}/g, cityName);
+  };
+
+  const m1 = match[0];
+  const p1 = pick(m1.a, m1.side);
+  if (match.length >= 2) {
+    const m2 = match[1];
+    return p1 + " " + pick(m2.a, m2.side);
+  }
+  return p1;
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('theme-btn').innerHTML = next === 'dark' ? '&#9728;&#65039;' : '&#127769;';
+  localStorage.setItem('quiz-theme', next);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UI
+// ═══════════════════════════════════════════════════════════
+function showAmorceQuestion(idx) {
+  amorceIndex = idx;
+  if (idx >= AMORCE_QUESTIONS.length) {
+    restoreABButtons();
+    pickAndShow();
+    return;
+  }
+  const aq = AMORCE_QUESTIONS[idx];
+  const area = document.getElementById("q-area");
+  area.classList.remove("fade-in");
+  void area.offsetWidth;
+  area.classList.add("fade-in");
+
+  document.getElementById("back-btn").classList.toggle("hidden", idx === 0);
+  document.getElementById("q-bloc").textContent = aq.bloc;
+  document.getElementById("q-text").textContent = aq.texte;
+  const total = AMORCE_QUESTIONS.length + (profileEnhanced ? MAX_Q_PROFILE : MAX_Q);
+  document.getElementById("prog-bloc").textContent = "Envies";
+  document.getElementById("prog-count").textContent = (idx+1) + " / " + total;
+  document.getElementById("prog-fill").style.width = (idx / total * 100) + "%";
+
+  const choicesDiv = area.querySelector(".choices");
+  choicesDiv.innerHTML = aq.options.map(o => {
+    const parts = o.label.split('|');
+    const inner = parts.length > 1
+      ? `<span class="choice-main">${parts[0]}</span><span class="choice-sub">${parts[1]}</span>`
+      : parts[0];
+    return `<button class="choice-btn" onclick="answerAmorce('${o.value}')">${inner}</button>`;
+  }).join("");
+}
+
+function answerAmorce(value) {
+  const aq = AMORCE_QUESTIONS[amorceIndex];
+  amorceChoices[aq.tag] = value;
+  showAmorceQuestion(amorceIndex + 1);
+}
+
+function restoreABButtons() {
+  const choicesDiv = document.querySelector("#q-area .choices");
+  choicesDiv.innerHTML = '<button class="choice-btn" id="btn-a" onclick="answer(\'A\')"></button>' +
+    '<button class="choice-btn" id="btn-b" onclick="answer(\'B\')"></button>' +
+    '<button class="skip-btn" onclick="skipQuestion()">Je passe</button>';
+}
+
+function pickAndShow() {
+  if (shouldStop()) return showResults();
+  const q = pickNextQuestion();
+  if (!q) return showResults();
+  questionCourante = q;
+  showQuestion(q);
+}
+
+function showQuestion(q) {
+  const area = document.getElementById("q-area");
+  area.classList.remove("fade-in");
+  void area.offsetWidth;
+  area.classList.add("fade-in");
+
+  document.getElementById("back-btn").classList.remove("hidden");
+
+  const axesPrinc = Object.keys(q.contributions).map(a => AXES_LABELS[a][1]).join(" / ");
+  document.getElementById("q-bloc").textContent = q.bloc;
+  document.getElementById("q-text").textContent = q.texte;
+  function formatChoice(txt) {
+    const p = txt.split('|');
+    return p.length > 1
+      ? `<span class="choice-main">${p[0]}</span><span class="choice-sub">${p[1]}</span>`
+      : txt;
+  }
+  document.getElementById("btn-a").innerHTML = formatChoice(q.A);
+  document.getElementById("btn-b").innerHTML = formatChoice(q.B);
+  document.getElementById("prog-bloc").textContent = axesPrinc;
+  const total = AMORCE_QUESTIONS.length + (profileEnhanced ? MAX_Q_PROFILE : MAX_Q);
+  const current = AMORCE_QUESTIONS.length + nbPosees + 1;
+  document.getElementById("prog-count").textContent = current + " / " + total;
+  document.getElementById("prog-fill").style.width = ((AMORCE_QUESTIONS.length + nbPosees) / total * 100) + "%";
+}
+
+function answer(choix) {
+  if (!questionCourante) return;
+  stateHistory.push({snapshot: snapshotState(), question: questionCourante});
+  const qBefore = {};
+  AXES.forEach(a => qBefore[a] = vecteur[a]);
+  const meta = {};
+  for (const [axe, p] of Object.entries(questionCourante.contributions)) {
+    const val = p[choix];
+    meta[axe] = {
+      forceBase: p.force,
+      forceEff: forceEffective(axe, p.force),
+      contradiction: detectContradiction(axe, val),
+      confAvant: Math.min(poidsTotal[axe] / 1.6, 1.0)
+    };
+  }
+  updateVecteur(questionCourante, choix);
+  const qAfter = {};
+  AXES.forEach(a => qAfter[a] = vecteur[a]);
+  trackerData.push({q: questionCourante, choix, before: qBefore, after: qAfter, meta});
+  updateLiveTracker();
+  questionCourante = null;
+  pickAndShow();
+}
+
+function skipQuestion() {
+  if (!questionCourante) return;
+  stateHistory.push({snapshot: snapshotState(), question: questionCourante, skipped: true});
+  const qBefore = {};
+  AXES.forEach(a => qBefore[a] = vecteur[a]);
+  for (const [axe, p] of Object.entries(questionCourante.contributions)) {
+    const fEff = forceEffective(axe, p.force) * 0.5;
+    const wOld = poidsTotal[axe];
+    vecteur[axe] = (vecteur[axe] * wOld + 0.5 * fEff) / (wOld + fEff);
+    poidsTotal[axe] += fEff;
+  }
+  posees.add(questionCourante.id);
+  historique.push({id: questionCourante.id, choix: 'skip'});
+  nbPosees++;
+  const qAfter = {};
+  AXES.forEach(a => qAfter[a] = vecteur[a]);
+  trackerData.push({q: questionCourante, choix: 'skip', before: qBefore, after: qAfter, meta: {}});
+  updateLiveTracker();
+  questionCourante = null;
+  pickAndShow();
+}
+
+function goBack() {
+  if (stateHistory.length > 0) {
+    const prev = stateHistory.pop();
+    restoreState(prev.snapshot);
+    trackerData.pop();
+    questionCourante = prev.question;
+    showQuestion(prev.question);
+    updateLiveTracker();
+    return;
+  }
+  if (amorceIndex > AMORCE_QUESTIONS.length) amorceIndex = AMORCE_QUESTIONS.length;
+  if (amorceIndex > 0) {
+    const prev = AMORCE_QUESTIONS[amorceIndex - 1];
+    amorceChoices[prev.tag] = null;
+    showAmorceQuestion(amorceIndex - 1);
+  }
+}
+
+function showResults() {
+  document.getElementById("quiz").style.display = "none";
+  const top3 = recommend(3);
+  const conf = confiance();
+  const medals = ["\u{1F947}","\u{1F948}","\u{1F949}"];
+  const classes = ["gold","silver","bronze"];
+
+  let html = '<div class="fade-in"><h1>Tes destinations</h1>';
+  html += `<p class="subtitle">${nbPosees} questions, ${Object.keys(VILLES).length} villes analysees</p>`;
+
+  top3.forEach((r, i) => {
+    const scores = VILLES[r.city];
+    const vecV = {};
+    AXES.forEach((a,j) => vecV[a] = scores[j]);
+    const prox = AXES.map(a => ({a, p:1-Math.abs(vecteur[a]-vecV[a])}))
+      .sort((x,y) => y.p - x.p).slice(0,3);
+
+    html += `<div class="result-card ${classes[i]}">
+      ${getCityVisualHTML(r.city, scores, 'large')}
+      <div class="medal">${medals[i]}</div>
+      <div class="city-name">${r.city}<span class="city-country">${CITY_COUNTRIES[r.city]?', '+CITY_COUNTRIES[r.city]:''}</span></div>
+      <div class="score-val">Compatibilite : ${(r.score*100).toFixed(1)}%</div>
+      <div class="result-match-text">${generateMatchText(r.city, scores, vecteur, i)}</div>
+      <div>${prox.map(p => {
+        const lbl = AXES_LABELS[p.a];
+        const tendance = vecteur[p.a] > 0.5 ? lbl[1] : lbl[0];
+        return `<span class="align-tag">${tendance}</span>`;
+      }).join("")}</div>
+    </div>`;
+  });
+
+  html += '<div class="profile-section"><div class="profile-title">Ton profil voyageur</div>';
+  [...AXES].sort((a, b) => vecteur[b] - vecteur[a]).forEach(a => {
+    const v = vecteur[a], c = conf[a];
+    const lbl = AXES_LABELS[a];
+    html += `<div class="axis-row">
+      <span class="axis-label">${v<=0.5 ? '<b>'+lbl[0]+'</b>' : lbl[0]} / ${v>0.5 ? '<b>'+lbl[1]+'</b>' : lbl[1]}</span>
+      <div class="axis-bar-bg"><div class="axis-bar-fill" style="width:${v*100}%;background:${AXIS_COLORS[a]}"></div></div>
+      <span class="axis-value">${(v*100).toFixed(0)}%</span>
+    </div>`;
+  });
+  html += '</div>';
+
+  html += `<details class="debug-info"><summary>Details du moteur adaptatif</summary>
+    <p>Questions posees : ${nbPosees} / max ${MAX_Q}</p>
+    <p>Confiance minimale : ${(confianceGlobale()*100).toFixed(0)}%</p>
+    <p>Parcours : ${historique.map(h => h.id + '(' + h.choix + ')').join(" → ")}</p>
+    <p>Confiance par axe :</p>
+    <ul>${AXES.map(a => `<li>${a}: ${(conf[a]*100).toFixed(0)}% — valeur: ${(vecteur[a]*100).toFixed(0)}%</li>`).join("")}</ul>
+    <p><em>Le moteur choisit chaque question en fonction des villes candidates du moment. Repondre differemment change le classement des villes, donc change les prochaines questions.</em></p>
+  </details>`;
+
+  html += '<button class="restart-btn" onclick="reset()">Recommencer</button></div>';
+  const el = document.getElementById("results");
+  el.innerHTML = html;
+  el.style.display = "block";
+  window.scrollTo({top:0, behavior:'smooth'});
+  saveProfileAxes();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LIVE TRACKER
+// ═══════════════════════════════════════════════════════════
+function updateLiveTracker() {
+  const el = document.getElementById("live-tracker");
+  if (!el) return;
+  const conf = confiance();
+
+  let html = '<div class="tracker-title">Profil en construction</div>';
+
+  html += '<div class="tracker-axes">';
+  AXES.forEach(a => {
+    const v = vecteur[a];
+    const c = conf[a];
+    const lbl = AXES_LABELS[a];
+    const label = v <= 0.5 ? lbl[0] : lbl[1];
+    const saturated = c >= 0.85;
+    html += `<div class="tracker-axis">
+      <span class="tracker-axis-label" title="${lbl[0]} / ${lbl[1]}">${label}${saturated ? ' ✓' : ''}</span>
+      <div class="tracker-axis-bar">
+        <div class="tracker-axis-fill" style="width:${v*100}%;background:${AXIS_COLORS[a]};opacity:${0.3 + c*0.7}"></div>
+        <div class="tracker-marker" style="left:50%"></div>
+      </div>
+      <span class="tracker-axis-val">${(v*100).toFixed(0)}%</span>
+      <span class="tracker-axis-conf" title="Confiance : ${(c*100).toFixed(0)}%" style="${saturated?'color:var(--green)':''}">
+        ${saturated ? '✓' : '±' + ((1-c)*100).toFixed(0)}
+      </span>
+    </div>`;
+  });
+  html += '</div>';
+
+  html += '<div class="tracker-history">';
+  html += '<div class="tracker-history-title">Historique des reponses</div>';
+  if (trackerData.length === 0) {
+    html += '<div class="tracker-empty">Reponds a la premiere question...</div>';
+  } else {
+    for (let i = trackerData.length - 1; i >= 0; i--) {
+      const d = trackerData[i];
+      const rawChoice = d.choix === 'A' ? d.q.A : d.q.B;
+      const choiceText = rawChoice.split('|')[0];
+      html += `<div class="tracker-entry" style="border-left-color:${d.choix === 'A' ? 'var(--accent)' : 'var(--accent2)'}">`;
+      html += `<div class="tracker-entry-q">${i+1}. ${d.q.texte}</div>`;
+      html += `<div class="tracker-entry-choice">${d.choix} → ${choiceText}</div>`;
+      html += '<div class="tracker-entry-impacts">';
+      for (const [axe, p] of Object.entries(d.q.contributions)) {
+        const delta = d.after[axe] - d.before[axe];
+        const direction = delta > 0 ? '+' : '';
+        const color = AXIS_COLORS[axe];
+        const arrowSymbol = delta > 0 ? '↑' : delta < 0 ? '↓' : '→';
+        const val = p[d.choix];
+        const m = d.meta && d.meta[axe];
+        let detail = `val:${val} f:${p.force}`;
+        if (m) {
+          detail = `val:${val} f:${m.forceBase}→${m.forceEff.toFixed(2)}`;
+          if (m.contradiction) detail += ' ⚡contradiction';
+        }
+        html += `<span class="tracker-impact" style="background:${color}22;color:${color}">
+          ${AXES_LABELS[axe][1]}
+          <span class="arrow">${arrowSymbol}</span>
+          ${direction}${(delta*100).toFixed(1)}
+          <span style="opacity:0.6;font-size:0.6rem">(${detail})</span>
+        </span>`;
+      }
+      html += '</div></div>';
+    }
+  }
+  html += '</div>';
+
+  el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BIBLIOTHEQUE
+// ═══════════════════════════════════════════════════════════
+function renderLibrary() {
+  const el = document.getElementById("library-content");
+  if (!el) return;
+
+  const groups = {};
+  const axeOrder = {
+    nouveaute:"Decouverte", action:"Rythme", culture:"Culture",
+    urbain:"Cadre", authenticite:"Immersion", structure:"Organisation"
+  };
+
+  QUESTIONS.forEach(q => {
+    const mainAxe = Object.keys(q.contributions)[0];
+    if (!groups[mainAxe]) groups[mainAxe] = [];
+    groups[mainAxe].push(q);
+  });
+
+  const counts = {};
+  AXES.forEach(a => counts[a] = groups[a] ? groups[a].length : 0);
+
+  let html = '<div class="lib-stats">';
+  html += `<div class="lib-stat"><b>${QUESTIONS.length}</b> questions</div>`;
+  AXES.forEach(a => {
+    html += `<div class="lib-stat" style="border-left:3px solid ${AXIS_COLORS[a]}">${AXES_LABELS[a][1]} : <b>${counts[a]}</b></div>`;
+  });
+  html += '</div>';
+
+  AXES.forEach(a => {
+    if (!groups[a] || groups[a].length === 0) return;
+    html += `<div class="lib-group">`;
+    html += `<div class="lib-group-title" style="border-color:${AXIS_COLORS[a]};color:${AXIS_COLORS[a]}">${AXES_LABELS[a][0]} ↔ ${AXES_LABELS[a][1]} — ${axeOrder[a]}</div>`;
+    groups[a].forEach(q => {
+      html += `<div class="lib-q">`;
+      html += `<div class="lib-q-id">${q.id} — bloc: ${q.bloc}</div>`;
+      html += `<div class="lib-q-text">${q.texte}</div>`;
+      html += `<div class="lib-q-choices">`;
+      html += `<div class="lib-q-choice"><b>A</b> ${q.A.split('|')[0]}</div>`;
+      html += `<div class="lib-q-choice choice-b"><b>B</b> ${q.B.split('|')[0]}</div>`;
+      html += `</div>`;
+      html += '<div class="lib-q-contribs">';
+      for (const [axe, p] of Object.entries(q.contributions)) {
+        html += `<span class="lib-q-contrib" style="background:${AXIS_COLORS[axe]}22;color:${AXIS_COLORS[axe]}">
+          ${AXES_LABELS[axe][1]} — A:${p.A} B:${p.B} force:${p.force}
+        </span>`;
+      }
+      html += '</div></div>';
+    });
+    html += '</div>';
+  });
+
+  el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CITIES
+// ═══════════════════════════════════════════════════════════
+let citySort = 'alpha';
+
+function setCitySort(mode) {
+  citySort = mode;
+  document.querySelectorAll('.cities-sort').forEach(b => b.classList.remove('active'));
+  if (mode === 'alpha') document.getElementById('sort-alpha').classList.add('active');
+  else {
+    const map = {nouveaute:'sort-nouv',action:'sort-act',culture:'sort-cult',urbain:'sort-urb',authenticite:'sort-auth',structure:'sort-struct'};
+    document.getElementById(map[mode]).classList.add('active');
+  }
+  renderCities();
+}
+
+function renderCities() {
+  const el = document.getElementById("cities-content");
+  if (!el) return;
+
+  const search = (document.getElementById("cities-search").value || "").toLowerCase();
+  let entries = Object.entries(VILLES);
+  if (search) entries = entries.filter(([name]) => name.toLowerCase().includes(search));
+
+  if (citySort === 'alpha') {
+    entries.sort((a,b) => a[0].localeCompare(b[0]));
+  } else {
+    const idx = AXES.indexOf(citySort);
+    entries.sort((a,b) => b[1][idx] - a[1][idx]);
+  }
+
+  let html = '';
+  entries.forEach(([name, scores], rank) => {
+    const highAxes = [];
+    const lowAxes = [];
+    AXES.forEach((a, i) => {
+      if (scores[i] >= 0.75) highAxes.push(AXES_LABELS[a][1]);
+      else if (scores[i] <= 0.35) lowAxes.push(AXES_LABELS[a][0]);
+    });
+
+    html += `<div class="city-card">`;
+    html += getCityVisualHTML(name, scores, 'small');
+    html += `<div class="city-card-header">`;
+    html += `<span class="city-card-name">${name}<span class="city-country">${CITY_COUNTRIES[name]?', '+CITY_COUNTRIES[name]:''}</span></span>`;
+    if (citySort !== 'alpha') {
+      const idx = AXES.indexOf(citySort);
+      html += `<span class="city-card-rank" style="color:${AXIS_COLORS[citySort]}">${AXES_LABELS[citySort][1]} : ${(scores[idx]*100).toFixed(0)}%</span>`;
+    }
+    html += `</div>`;
+    html += '<div class="city-bars">';
+    AXES.forEach((a, i) => {
+      const v = scores[i];
+      const lbl = AXES_LABELS[a];
+      const highlight = citySort === a;
+      html += `<div class="city-bar-row">
+        <span class="city-bar-label" style="${highlight?'color:var(--text);font-weight:600':''}">${v<=0.5?lbl[0]:lbl[1]}</span>
+        <div class="city-bar-bg"><div class="city-bar-fill" style="width:${v*100}%;background:${AXIS_COLORS[a]}${highlight?'':'99'}"></div></div>
+        <span class="city-bar-val" style="${highlight?'color:'+AXIS_COLORS[a]:''}">${(v*100).toFixed(0)}</span>
+      </div>`;
+    });
+    html += '</div>';
+
+    if (highAxes.length || lowAxes.length) {
+      html += '<div class="city-card-tags">';
+      highAxes.forEach(t => html += `<span class="city-tag high">${t}</span>`);
+      lowAxes.forEach(t => html += `<span class="city-tag low">${t}</span>`);
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+
+  if (entries.length === 0) {
+    html = '<div class="tracker-empty">Aucune ville trouvee</div>';
+  }
+
+  el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PROFILS
+// ═══════════════════════════════════════════════════════════
+const PROFILE_COLORS = ['#25bec7','#7c3aed','#e11d48','#d97706','#0891b2','#ea580c','#6366f1','#10b981'];
+
+function loadProfiles() {
+  try { return JSON.parse(localStorage.getItem('quiz-profiles')) || []; }
+  catch { return []; }
+}
+function saveProfiles(profiles) {
+  localStorage.setItem('quiz-profiles', JSON.stringify(profiles));
+}
+function getActiveProfileId() {
+  return localStorage.getItem('quiz-active-profile') || null;
+}
+function setActiveProfileId(id) {
+  if (id) localStorage.setItem('quiz-active-profile', id);
+  else localStorage.removeItem('quiz-active-profile');
+}
+function getActiveProfile() {
+  const profiles = loadProfiles();
+  const id = getActiveProfileId();
+  return id ? profiles.find(p => p.id === id) || null : null;
+}
+
+function updateHeaderAvatar() {
+  const el = document.getElementById('header-avatar');
+  const profile = getActiveProfile();
+  if (profile) {
+    el.textContent = profile.name.charAt(0);
+    el.style.background = profile.color;
+    el.style.borderColor = profile.color;
+    el.classList.remove('no-profile');
+    el.title = profile.name;
+  } else {
+    el.textContent = '?';
+    el.style.background = '';
+    el.style.borderColor = '';
+    el.classList.add('no-profile');
+    el.title = 'Aucun profil';
+  }
+}
+
+function saveProfileAxes() {
+  const profile = getActiveProfile();
+  if (!profile) return;
+  const profiles = loadProfiles();
+  const p = profiles.find(x => x.id === profile.id);
+  if (!p) return;
+  AXES.forEach(a => p.axes[a] = vecteur[a]);
+  p.quizCount = (p.quizCount || 0) + 1;
+  saveProfiles(profiles);
+}
+
+function applyProfileToVecteur() {
+  profileEnhanced = false;
+  const profile = getActiveProfile();
+  if (profile && profile.axes && profile.quizCount > 0) {
+    const hasData = AXES.some(a => profile.axes[a] !== undefined && profile.axes[a] !== 0.5);
+    if (hasData) {
+      profileEnhanced = true;
+      AXES.forEach(a => {
+        const v = profile.axes[a] !== undefined ? profile.axes[a] : 0.5;
+        vecteur[a] = v;
+        const ecart = Math.abs(v - 0.5);
+        poidsTotal[a] = ecart > 0.15 ? 0.8 : ecart > 0.05 ? 0.5 : 0.0;
+      });
+    }
+  }
+}
+
+function showProfileModal(editId) {
+  const existing = editId ? loadProfiles().find(p => p.id === editId) : null;
+  const overlay = document.createElement('div');
+  overlay.className = 'profile-modal-overlay';
+  overlay.innerHTML = `<div class="profile-modal">
+    <h2>${existing ? 'Renommer le profil' : 'Nouveau profil'}</h2>
+    <input type="text" id="profile-name-input" placeholder="Prenom ou surnom" maxlength="20" value="${existing ? existing.name : ''}">
+    <div class="profile-modal-btns">
+      <button class="btn-cancel" onclick="this.closest('.profile-modal-overlay').remove()">Annuler</button>
+      <button class="btn-confirm" id="profile-modal-confirm">${existing ? 'Renommer' : 'Creer'}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const input = document.getElementById('profile-name-input');
+  input.focus();
+  input.select();
+
+  function confirm() {
+    const name = input.value.trim();
+    if (!name) return;
+    const profiles = loadProfiles();
+    if (existing) {
+      const p = profiles.find(x => x.id === editId);
+      if (p) p.name = name;
+    } else {
+      const id = 'p_' + Date.now();
+      const color = PROFILE_COLORS[profiles.length % PROFILE_COLORS.length];
+      profiles.push({ id, name, color, axes: {}, quizCount: 0 });
+      setActiveProfileId(id);
+    }
+    saveProfiles(profiles);
+    overlay.remove();
+    renderProfiles();
+    updateHeaderAvatar();
+  }
+
+  document.getElementById('profile-modal-confirm').onclick = confirm;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); });
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+
+function resetProfile(id) {
+  const profiles = loadProfiles();
+  const p = profiles.find(x => x.id === id);
+  if (!p) return;
+  if (!confirm('Reinitialiser le profil "' + p.name + '" ? Ses axes reviendront a 50%.')) return;
+  p.axes = {};
+  p.quizCount = 0;
+  saveProfiles(profiles);
+  renderProfiles();
+}
+
+function deleteProfile(id) {
+  const profiles = loadProfiles();
+  const p = profiles.find(x => x.id === id);
+  if (!p) return;
+  if (!confirm('Supprimer le profil "' + p.name + '" ?')) return;
+  const filtered = profiles.filter(x => x.id !== id);
+  saveProfiles(filtered);
+  if (getActiveProfileId() === id) {
+    setActiveProfileId(filtered.length > 0 ? filtered[0].id : null);
+  }
+  renderProfiles();
+  updateHeaderAvatar();
+}
+
+function selectProfile(id) {
+  setActiveProfileId(id);
+  renderProfiles();
+  updateHeaderAvatar();
+}
+
+function renderProfiles() {
+  const el = document.getElementById('profiles-content');
+  if (!el) return;
+  const profiles = loadProfiles();
+  const activeId = getActiveProfileId();
+
+  let html = '<div class="profiles-list">';
+
+  profiles.forEach(p => {
+    const isActive = p.id === activeId;
+    const hasAxes = p.axes && AXES.some(a => p.axes[a] !== undefined && p.axes[a] !== 0.5);
+
+    let statsText = '';
+    if (p.quizCount > 0) {
+      statsText = p.quizCount + ' quiz effectue' + (p.quizCount > 1 ? 's' : '');
+    } else {
+      statsText = 'Aucun quiz pour le moment';
+    }
+
+    html += `<div class="profile-item ${isActive ? 'active' : ''}" onclick="selectProfile('${p.id}')">
+      <div class="profile-item-avatar" style="background:${p.color}">${p.name.charAt(0).toUpperCase()}</div>
+      <div class="profile-item-info">
+        <div class="profile-item-name">${p.name}${isActive ? ' <span style="font-size:0.75rem;color:var(--accent)">&#x2713; actif</span>' : ''}</div>
+        <div class="profile-item-stats">${statsText}</div>`;
+
+    if (hasAxes) {
+      html += '<div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">';
+      AXES.forEach(a => {
+        const v = p.axes[a] !== undefined ? p.axes[a] : 0.5;
+        const lbl = AXES_LABELS[a];
+        const label = v <= 0.5 ? lbl[0] : lbl[1];
+        html += `<span style="font-size:0.65rem;padding:2px 8px;background:${AXIS_COLORS[a]}20;color:${AXIS_COLORS[a]};border-radius:100px;font-weight:600">${label} ${(v*100).toFixed(0)}%</span>`;
+      });
+      html += '</div>';
+    }
+
+    html += `</div>
+      <div class="profile-item-actions" onclick="event.stopPropagation()">
+        <button class="profile-action-btn" onclick="showProfileModal('${p.id}')" title="Renommer">&#9998;</button>
+        <button class="profile-action-btn" onclick="resetProfile('${p.id}')" title="Reinitialiser">&#8634;</button>
+        <button class="profile-action-btn danger" onclick="deleteProfile('${p.id}')" title="Supprimer">&#10005;</button>
+      </div>
+    </div>`;
+  });
+
+  html += '</div>';
+  html += '<button class="profile-add-btn" onclick="showProfileModal()">+ Creer un profil</button>';
+
+  if (profiles.length === 0) {
+    html = '<div style="text-align:center;padding:32px 0;color:var(--muted)">' +
+      '<div style="font-size:2rem;margin-bottom:12px">&#128100;</div>' +
+      '<p style="margin-bottom:8px">Aucun profil pour le moment</p>' +
+      '<p style="font-size:0.8rem;margin-bottom:20px">Cree un profil pour que le quiz retienne tes preferences</p>' +
+      '<button class="profile-add-btn" onclick="showProfileModal()">+ Creer mon premier profil</button></div>';
+  }
+
+  el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TAB SWITCHING
+// ═══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-btn-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'library') renderLibrary();
+  if (tab === 'cities') renderCities();
+  if (tab === 'profiles') renderProfiles();
+}
+
+reset();
+renderLibrary();
+fetchAllCityImages();
+updateHeaderAvatar();
+(function initTheme() {
+  const saved = localStorage.getItem('quiz-theme');
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('theme-btn').innerHTML = '&#9728;&#65039;';
+  }
+})();
+</script>
+</body>
+</html>
