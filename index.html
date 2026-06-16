@@ -314,6 +314,35 @@
   [data-theme="dark"] .profile-modal { background: #1e293b; }
   [data-theme="dark"] .profile-modal input { background: #0f172a; }
 
+  /* ── Visual question ── */
+  .choices-visual { display: flex; gap: 12px; }
+  .choice-visual-btn {
+    flex: 1; border: 2px solid var(--border); border-radius: 1.25rem;
+    overflow: hidden; cursor: pointer; transition: all 0.25s ease;
+    background: var(--card); box-shadow: var(--shadow);
+    display: flex; flex-direction: column;
+    font-family: inherit;
+  }
+  .choice-visual-btn:hover { border-color: var(--accent); box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+  .choice-visual-img {
+    width: 100%; height: 140px; object-fit: cover; display: block;
+  }
+  .choice-visual-text {
+    padding: 12px 14px; text-align: center;
+  }
+  .choice-visual-text .choice-main { font-size: 0.88rem; }
+  .choice-visual-text .choice-sub { font-size: 0.75rem; }
+  @media (max-width: 640px) {
+    .choices-visual { gap: 8px; }
+    .choice-visual-img { height: 110px; }
+    .choice-visual-text { padding: 10px 10px; }
+    .choice-visual-text .choice-main { font-size: 0.8rem; }
+    .choice-visual-text .choice-sub { font-size: 0.68rem; }
+  }
+  @media (max-width: 380px) {
+    .choice-visual-img { height: 90px; }
+  }
+
   /* ── Result card visuals ── */
   .result-card-visual {
     width: 100%; height: 180px; border-radius: 1rem; margin-bottom: 16px;
@@ -1171,6 +1200,59 @@ const QUESTIONS = [
 ];
 
 // ═══════════════════════════════════════════════════════════
+//  QUESTIONS VISUELLES (1 par quiz, remplace une question texte)
+// ═══════════════════════════════════════════════════════════
+const VISUAL_QUESTIONS = [
+  {id:"vn01", bloc:"Decouverte", visual:true,
+   texte:"Quelle image t'attire le plus ?",
+   A:"L'allee familiere|Charme et douceur de vivre",
+   imgA:"https://images.unsplash.com/photo-1555993539-1732b0258235?w=600&h=400&fit=crop",
+   B:"La ruelle inconnue|Depaysement et mystere",
+   imgB:"https://images.unsplash.com/photo-1504109586057-7a2ae83d1338?w=600&h=400&fit=crop",
+   contributions:{nouveaute:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"va01", bloc:"Rythme", visual:true,
+   texte:"Quel moment te fait le plus envie ?",
+   A:"Le hamac au bord de l'eau|Tout ralentit enfin",
+   imgA:"https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&h=400&fit=crop",
+   B:"L'exploration en ville|Toujours quelque chose a decouvrir",
+   imgB:"https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&h=400&fit=crop",
+   contributions:{action:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"vc01", bloc:"Culture", visual:true,
+   texte:"Quel endroit te parle le plus ?",
+   A:"La table en terrasse|Bouffe, vin, bonne ambiance",
+   imgA:"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop",
+   B:"Le musee et ses tresors|Histoire, art, architecture",
+   imgB:"https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=600&h=400&fit=crop",
+   contributions:{culture:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"vu01", bloc:"Cadre", visual:true,
+   texte:"Ou te vois-tu te reveiller ?",
+   A:"Face a la nature|Calme, vert, on respire",
+   imgA:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop",
+   B:"Au coeur de la ville|Toits, lumieres, energie",
+   imgB:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&h=400&fit=crop",
+   contributions:{urbain:{A:0.10,B:0.90,force:0.90}}},
+
+  {id:"vau01", bloc:"Immersion", visual:true,
+   texte:"Quel lieu t'attire spontanement ?",
+   A:"L'hotel design|Confort, calme, tout est prevu",
+   imgA:"https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop",
+   B:"Le marche local|Odeurs, bruit, vie quotidienne",
+   imgB:"https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=600&h=400&fit=crop",
+   contributions:{authenticite:{A:0.10,B:0.90,force:0.85}}},
+
+  {id:"vs01", bloc:"Organisation", visual:true,
+   texte:"Quel style de voyage te ressemble ?",
+   A:"L'itineraire minutieux|Chaque etape est prevue",
+   imgA:"https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=600&h=400&fit=crop",
+   B:"Le sac a dos sans plan|On verra bien ou la route mene",
+   imgB:"https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&h=400&fit=crop",
+   contributions:{structure:{A:0.10,B:0.90,force:0.85}}},
+];
+
+// ═══════════════════════════════════════════════════════════
 //  MOTEUR ADAPTATIF — simulation A/B
 //
 //  Pour choisir la prochaine question, le moteur SIMULE les deux
@@ -1186,7 +1268,7 @@ const MIN_Q = 5, MAX_Q = 7, MIN_Q_PROFILE = 3, MAX_Q_PROFILE = 5;
 const SIM_TOP = 6;
 
 let vecteur = {}, poidsTotal = {}, historique = [], posees = new Set();
-let questionCourante = null, nbPosees = 0, profileEnhanced = false;
+let questionCourante = null, nbPosees = 0, profileEnhanced = false, visualUsed = false;
 
 let trackerData = [];
 let stateHistory = [];
@@ -1197,7 +1279,8 @@ function snapshotState() {
     poidsTotal: {...poidsTotal},
     posees: new Set(posees),
     historique: historique.map(h => ({...h})),
-    nbPosees
+    nbPosees,
+    visualUsed
   };
 }
 
@@ -1206,12 +1289,14 @@ function restoreState(snap) {
   posees = new Set(snap.posees);
   historique = snap.historique.map(h => ({...h}));
   nbPosees = snap.nbPosees;
+  visualUsed = snap.visualUsed;
 }
 
 function reset() {
   AXES.forEach(a => { vecteur[a] = 0.5; poidsTotal[a] = 0.0; });
   applyProfileToVecteur();
   historique = []; posees = new Set(); questionCourante = null; nbPosees = 0;
+  visualUsed = false;
   trackerData = [];
   stateHistory = [];
   amorceChoices = {dist:null, cadre:null};
@@ -1400,8 +1485,28 @@ function shouldStop() {
 // ── Mecanisme 3 : Routage par bloc ──
 // Un axe avec confiance >= 0.85 est "cerne" : on evite les questions
 // qui ne ciblent QUE cet axe. Les questions multi-axes passent quand meme.
+function pickVisualQuestion() {
+  if (visualUsed) return null;
+  const conf = confiance();
+  const dispo = VISUAL_QUESTIONS.filter(q => {
+    if (posees.has(q.id)) return false;
+    const axes = Object.keys(q.contributions);
+    return axes.some(a => conf[a] < 0.85);
+  });
+  if (dispo.length === 0) return null;
+  dispo.sort((a,b) => gainAdaptatif(b) - gainAdaptatif(a));
+  return dispo[0];
+}
+
 function pickNextQuestion() {
   const conf = confiance();
+
+  // Injecter une question visuelle a la question 2 ou 3
+  if (!visualUsed && nbPosees >= 1 && nbPosees <= 2) {
+    const vq = pickVisualQuestion();
+    if (vq) return vq;
+  }
+
   const disponibles = QUESTIONS.filter(q => {
     if (posees.has(q.id)) return false;
     const axes = Object.keys(q.contributions);
@@ -1542,57 +1647,154 @@ function updateCityImages() {
   });
 }
 
+const CITY_FLAVOR = {
+  "Paris":"ses musees de classe mondiale, ses bistrots et ses quais de Seine",
+  "Lyon":"sa gastronomie legendaire et ses traboules secretes",
+  "Marseille":"le Vieux-Port, ses calanques et son accent chantant",
+  "Bordeaux":"ses vignobles, ses quais reinventes et son art de vivre",
+  "Nice":"la promenade des Anglais, la vieille ville et la douceur mediterraneenne",
+  "Strasbourg":"son centre alsacien classe UNESCO et ses winstubs",
+  "Annecy":"son lac cristallin, ses canaux et les Alpes en toile de fond",
+  "Biarritz":"ses vagues, ses falaises et l'esprit surf de la cote basque",
+  "La Rochelle":"ses tours medievales, son port et son charme atlantique",
+  "Corse":"ses montagnes tombant dans la mer, ses sentiers sauvages et ses villages perches",
+  "Cinque Terre":"ses villages colores accroches aux falaises de la Riviera",
+  "Barcelone":"la Sagrada Familia, les Ramblas et l'energie nocturne catalane",
+  "Rome":"le Colisee, les trattorias et 3000 ans d'histoire vivante",
+  "Amsterdam":"ses canaux, ses velos et l'ambiance libre du Jordaan",
+  "Lisbonne":"ses collines, ses azulejos et les nuits du Bairro Alto",
+  "Prague":"ses ponts gothiques, ses bieres artisanales et son chateau",
+  "Vienne":"ses palais imperiaux, ses cafes viennois et ses concerts classiques",
+  "Berlin":"sa scene alternative, ses clubs legendaires et les traces du Mur",
+  "Londres":"ses pubs, ses marches et son melting-pot culturel",
+  "Dublin":"ses pubs chaleureux, sa musique live et l'humour irlandais",
+  "Copenhague":"Nyhavn, le hygge danois et la cuisine nordique reinventee",
+  "Stockholm":"ses iles, son design scandinave et la vieille ville de Gamla Stan",
+  "Edinburgh":"son chateau, ses ruelles medievales et le festival en aout",
+  "Florence":"la Renaissance a chaque coin de rue, le Duomo et les gelati",
+  "Seville":"le flamenco, l'Alcazar et les tapas sous les orangers",
+  "Naples":"ses pizzas mythiques, ses ruelles chaotiques et le Vesuve",
+  "Athenes":"l'Acropole, les tavernes d'Anafiotika et l'intensite grecque",
+  "Istanbul":"le Bosphore, les bazars et le choc Orient-Occident",
+  "Porto":"le Douro, les caves de porto et les facades en azulejos",
+  "Budapest":"ses thermes, le Danube de nuit et les ruin bars",
+  "Cracovie":"Kazimierz, la place centrale et les mines de sel",
+  "Bruges":"ses canaux immobiles, ses chocolats et le silence medieval",
+  "Gand":"son centre medieval vivant, son street art et sa scene etudiante",
+  "Anvers":"ses diamantaires, la gare monumentale et la mode belge",
+  "Munich":"ses biergartens, la Marienplatz et la proximite des Alpes",
+  "Dubrovnik":"ses remparts sur l'Adriatique et ses toits de tuiles oranges",
+  "Aix-la-Chapelle":"sa cathedrale carolingienne, ses thermes et son histoire imperiale",
+  "Split":"le palais de Diocletien, la Riva et l'Adriatique a portee de main",
+  "Kotor":"ses remparts dans les fjords, son calme medieval et la baie",
+  "Ljubljana":"son pont des dragons, ses bords de Ljubljanica et sa douceur slave",
+  "Tallinn":"sa vieille ville medievale parfaitement preservee",
+  "Riga":"son art nouveau, son marche central et l'ambiance balte",
+  "Gdansk":"son port hanseeatique, sa rue Dluga et l'ambre de la Baltique",
+  "Bergen":"ses maisons en bois du Bryggen et les fjords a perte de vue",
+  "Cluj-Napoca":"sa scene alternative, ses etudiants et l'authenticite transylvaine",
+  "Bucarest":"ses contrastes fous entre palais communistes et bars underground",
+  "Malte":"ses temples megalithiques, ses criques turquoise et La Valette",
+  "Santorin":"ses couchers de soleil sur la caldeira et ses villages blancs",
+  "Lac de Come":"ses villas somptueuses, ses eaux profondes et les Alpes en fond",
+  "Lucerne":"son pont de bois, le lac des Quatre-Cantons et le Pilatus",
+  "Innsbruck":"les Alpes autrichiennes en toile de fond et les sports d'altitude",
+  "Rotterdam":"son architecture avant-gardiste, le marche Markthal et l'energie portuaire",
+  "Helsinki":"ses saunas, son design minimaliste et la lumiere du Nord",
+  "Funchal":"ses levadas dans la brume, ses jardins tropicaux et l'ocean",
+  "Tokyo":"Shibuya, les izakayas et le choc technologie-tradition",
+  "Kyoto":"ses temples zen, ses jardins de mousses et les geishas de Gion",
+  "Bangkok":"ses temples dores, sa street food et son chaos magnifique",
+  "Ho Chi Minh":"ses scooters par millions, son pho de rue et sa folie urbaine",
+  "Bali":"ses rizieres en terrasses, ses temples hindous et l'esprit balinais",
+  "Phuket":"ses plages, ses longtails et les couchers de soleil d'Andaman",
+  "Sri Lanka":"ses plantations de the, ses bouddhas geants et ses plages sauvages",
+  "Kathmandu":"ses stupas, l'Himalaya en toile de fond et l'intensite spirituelle",
+  "New York":"Manhattan, Broadway, Central Park et l'energie qui ne dort jamais",
+  "Sydney":"l'Opera House, Bondi Beach et la lumiere australienne",
+  "Le Cap":"Table Mountain, les vignobles et les townships vibrants",
+  "Mexico":"ses pyramides, Frida Kahlo et la street food de Coyoacan",
+  "Buenos Aires":"le tango, les steaks de Palermo et la passion portena",
+  "Montreal":"le Plateau, la poutine et le melange franco-americain",
+  "La Havane":"les voitures vintage, le Malecon et le son cubain dans les rues",
+  "Cartagena":"ses murailles coloniales, ses couleurs et la chaleur caribbeenne",
+  "Zanzibar":"ses plages de sable blanc, ses epices et la vieille ville de Stone Town",
+  "Marrakech":"la place Jemaa el-Fna, les riads et le souk labyrinthique",
+  "Patagonie":"ses glaciers immenses, ses guanacos et le bout du monde",
+  "Petra":"la cite rose taillee dans la roche et le desert du Wadi Rum",
+  "Singapour":"Gardens by the Bay, les hawker centers et la proprete futuriste",
+  "Dubai":"ses tours demesures, ses malls et le desert aux portes de la ville",
+  "Reykjavik":"les aurores boreales, les sources chaudes et les paysages lunaires",
+  "Cusco":"les ruines incas, les marches colores et l'altitude andine",
+  "Chiang Mai":"ses temples dores, ses marches de nuit et la montagne thailandaise",
+  "Fes":"sa medina labyrinthe, ses tanneries et l'artisanat ancestral",
+  "Valence":"la Cite des Arts, ses horchatas et la plage en ville",
+  "Grenade":"l'Alhambra, les tapas gratuites et le flamenco dans les caves",
+  "Milan":"la Scala, le Duomo et le design italien a chaque vitrine",
+  "Venise":"ses gondoles, la place Saint-Marc et la magie d'une ville sur l'eau",
+  "Palerme":"ses marches bruyants, la street food sicilienne et les palais normands",
+  "Bologne":"ses arcades infinies, sa mortadelle et l'ambiance universitaire",
+  "Varsovie":"sa vieille ville reconstruite, ses bars sur les toits et son energie post-sovietique",
+  "Bratislava":"son petit centre baroque, ses cafes sur le Danube et sa simplicite",
+  "Sofia":"ses eglises orthodoxes, le mont Vitosha et les prix doux",
+  "Belgrade":"ses kafanas, la confluence Sava-Danube et la vie nocturne legendaire",
+  "Thessalonique":"son front de mer, la tour Blanche et les mezes grecs",
+  "Majorque":"ses criques, la Serra de Tramuntana et Palma entre plage et patrimoine",
+  "Sardaigne":"ses plages de reve, ses nuraghe et l'interieur sauvage",
+  "Madere":"ses sentiers entre nuages et ocean et ses jardins exotiques",
+  "Iles Canaries":"ses volcans, ses dunes et le printemps permanent",
+  "Cyclades":"ses moulins a vent, ses chapelles bleues et la lumiere egeenne",
+  "Crete":"ses gorges, le palais de Knossos et la cuisine cretoise",
+  "Rhodes":"sa cite medievale des chevaliers et ses plages dorees",
+  "Montenegro":"ses bouches de Kotor, la cote sauvage et Sveti Stefan",
+  "Lofoten":"ses cabanes de pecheurs rouges, les fjords et la lumiere arctique",
+  "Laponie":"ses rennes, la neige infinie et les nuits polaires",
+  "Cap-Vert":"ses iles volcaniques, la morna et l'Atlantique sauvage",
+  "Seychelles":"ses rochers de granit, ses eaux turquoise et la serenite tropicale",
+  "Maurice":"ses lagons, ses marches creooles et le melange culturel",
+  "Maldives":"ses bungalows sur pilotis, ses recifs et le bleu a perte de vue",
+  "Costa Rica":"ses volcans, sa foret tropicale et la pura vida",
+  "Colombie":"ses villes coloniales, ses rythmes et la chaleur humaine",
+  "Perou":"le Machu Picchu, les lignes de Nazca et la gastronomie andine",
+  "Jordanie":"Petra, la mer Morte et le desert du Wadi Rum",
+  "Oman":"ses wadis, ses forts et le desert de sable omanais",
+  "Bruxelles":"la Grand-Place, ses gaufres et l'ambiance bande dessinee",
+  "Cologne":"sa cathedrale gothique, ses bieres Kolsch et le Rhin",
+  "Edimbourg":"son chateau, ses ruelles medievales et le festival en aout",
+  "Hambourg":"son port, la Speicherstadt et les concerts de la Reeperbahn",
+  "Lille":"sa braderie legendaire, ses estaminets et la chaleur du Nord",
+  "Madrid":"le Prado, les tapas de La Latina et les nuits interminables",
+  "Nantes":"les Machines de l'ile, la Loire et la creativite urbaine",
+  "Rennes":"ses maisons a colombages, ses bars de la rue de la Soif et l'ambiance etudiante",
+  "Toulouse":"la ville rose, le Capitole et la douceur du Sud-Ouest",
+  "Vannes":"ses remparts, le golfe du Morbihan et le charme breton",
+  "Chamonix":"le Mont-Blanc, l'Aiguille du Midi et l'alpinisme au sommet",
+  "Interlaken":"ses lacs turquoise, la Jungfrau et les sports de montagne",
+  "Sintra":"ses palais feeriques, ses forets de brume et la magie portugaise",
+  "Bath":"ses thermes romains, son architecture georgienne et la campagne anglaise",
+  "Iles Lofoten":"ses cabanes de pecheurs rouges, les fjords et la lumiere arctique",
+  "Hallstatt":"son village miroir au bord du lac et les Alpes autrichiennes",
+  "Ibiza":"ses criques secretes, ses couchers de soleil et la fete legendaire",
+  "Monaco":"le rocher, le casino et le glamour mediterraneen",
+  "Tromso":"les aurores boreales, les fjords arctiques et la cathedrale de glace",
+  "Malaga":"Picasso, la plage en ville et les chiringuitos andalous",
+  "Palermo":"ses marches bruyants, la street food sicilienne et les palais normands",
+  "Essaouira":"ses remparts face a l'ocean, ses mouettes et l'esprit boheme",
+  "Tel Aviv":"le Bauhaus, les plages, la street food du Carmel et l'energie nocturne",
+  "Lake Bled":"son ile au milieu du lac, le chateau perche et les Alpes juliennes",
+  "Colmar":"ses maisons a colombages, la petite Venise et les vins d'Alsace",
+  "Seoul":"ses palais royaux, la K-pop omnipresente et la street food de Myeongdong",
+  "Hong Kong":"son skyline vertigineux, les dim sum et le Peak au coucher du soleil",
+  "Jaipur":"le palais des Vents, la ville rose et le Rajasthan royal",
+  "Rio de Janeiro":"le Pain de Sucre, les plages de Copacabana et la samba dans l'air",
+  "Queenstown":"les sports extremes, les lacs glaciaires et les montagnes de l'Otago",
+  "Zermatt":"le Cervin, les pistes et le village sans voitures",
+  "Dolomites":"ses pics calcaires, ses refuges de montagne et les via ferrata",
+  "Siem Reap":"les temples d'Angkor, les marches de nuit et l'ame khmere",
+};
+
 function generateMatchText(cityName, cityScores, userVec, rank) {
-  const phrases = {
-    nouveaute: {
-      hh:["Tu cherches le depaysement, et {v} te l'offre sans filtre.",
-          "L'inconnu te stimule : a {v}, chaque rue reserve une surprise.",
-          "{v} est un saut dans l'inconnu, exactement ce que tu recherches."],
-      ll:["Tu aimes les reperes familiers : {v} est accueillante des le premier jour.",
-          "Pas besoin de sortir de ta zone de confort — {v} te met a l'aise tout de suite.",
-          "{v} a ce cote rassurant qui te correspond, sans mauvaise surprise."],
-    },
-    action: {
-      hh:["Ton energie trouve son echo a {v}, ou il y a toujours quelque chose a faire.",
-          "{v} ne dort jamais, et toi non plus — le rythme est parfait.",
-          "Tu veux bouger, explorer, vivre a fond : {v} suit ta cadence."],
-      ll:["Tu veux ralentir, et {v} te le permet naturellement.",
-          "Le calme de {v} te correspond — ici, on prend le temps.",
-          "{v} est posee, sans pression, exactement ton rythme."],
-    },
-    culture: {
-      hh:["Tu es sensible au patrimoine : {v} en regorge, musees et histoire a chaque pas.",
-          "Art, architecture, histoire — {v} nourrit ta curiosite culturelle.",
-          "{v} parle a ton amour de la culture, entre musees et heritage vivant."],
-      ll:["Tu voyages pour le plaisir, pas pour les musees — {v} l'a bien compris.",
-          "A {v}, on profite de la vie : bonne bouffe, ambiance, plaisir des sens.",
-          "{v} mise sur l'hedonisme plutot que le patrimoine, et ca te va bien."],
-    },
-    urbain: {
-      hh:["Tu adores le buzz urbain : {v} est une ville qui vit intensement.",
-          "Le pouls de la ville te manque jamais — a {v}, il bat fort.",
-          "{v} t'offre cette energie urbaine que tu recherches."],
-      ll:["Tu veux respirer : a {v}, la nature n'est jamais loin.",
-          "Loin de l'agitation, {v} te rapproche des grands espaces.",
-          "{v} allie calme et verdure, parfait pour souffler."],
-    },
-    authenticite: {
-      hh:["Tu veux vivre comme les locaux : a {v}, l'authenticite est partout.",
-          "{v} est brute, vraie, sans vernis — c'est ce qui te plait.",
-          "L'immersion locale, c'est ton truc : {v} te met au coeur du quotidien."],
-      ll:["Tu aimes le confort d'un voyage bien rode : {v} est faite pour ca.",
-          "{v} rend tout simple pour le voyageur, et c'est ce que tu apprecies.",
-          "A {v}, l'experience est fluide et pensee pour toi."],
-    },
-    structure: {
-      hh:["Tu aimes te laisser porter : {v} est le terrain ideal pour l'impro.",
-          "Pas de plan rigide — a {v}, la spontaneite fait tout le charme.",
-          "{v} se vit au feeling, et c'est exactement ton style."],
-      ll:["Tu aimes que tout soit carre : {v} se planifie facilement de A a Z.",
-          "{v} est bien organisee, rassurante pour qui aime preparer son voyage.",
-          "A {v}, tout est accessible et previsible — ideal pour ton style."],
-    },
-  };
+  const flavor = CITY_FLAVOR[cityName] || '';
 
   const match = AXES.map((a,i) => {
     const cs = cityScores[i], us = userVec[a];
@@ -1609,19 +1811,33 @@ function generateMatchText(cityName, cityScores, userVec, rank) {
     match.push({a: best.a, side, strength: 1});
   }
 
-  const pick = (axe, side) => {
-    const pool = phrases[axe][side];
-    const seed = cityName.length * 7 + axe.length * 13 + rank * 3;
-    return pool[seed % pool.length].replace(/\{v\}/g, cityName);
+  const intros = {
+    nouveaute:  {hh:"Tu cherches le depaysement", ll:"Tu aimes les reperes familiers"},
+    action:     {hh:"Tu veux bouger et explorer", ll:"Tu veux ralentir et souffler"},
+    culture:    {hh:"Tu es sensible au patrimoine et a l'histoire", ll:"Tu voyages pour le plaisir avant tout"},
+    urbain:     {hh:"Tu adores l'energie urbaine", ll:"Tu veux de la nature et du calme"},
+    authenticite:{hh:"Tu cherches l'immersion locale", ll:"Tu aimes le confort d'un voyage fluide"},
+    structure:  {hh:"Tu aimes l'impro et la spontaneite", ll:"Tu aimes que tout soit bien organise"},
   };
 
-  const m1 = match[0];
-  const p1 = pick(m1.a, m1.side);
+  const a1 = match[0];
+  let text = intros[a1.a][a1.side];
+
   if (match.length >= 2) {
-    const m2 = match[1];
-    return p1 + " " + pick(m2.a, m2.side);
+    const connectors = {
+      nouveaute:  {hh:"le depaysement", ll:"le familier"},
+      action:     {hh:"l'exploration intense", ll:"la tranquillite"},
+      culture:    {hh:"la richesse culturelle", ll:"le plaisir des sens"},
+      urbain:     {hh:"le buzz urbain", ll:"la proximite de la nature"},
+      authenticite:{hh:"l'authenticite locale", ll:"le confort du voyageur"},
+      structure:  {hh:"la spontaneite totale", ll:"un cadre bien organise"},
+    };
+    const a2 = match[1];
+    text += " et " + connectors[a2.a][a2.side];
   }
-  return p1;
+
+  text += " : " + cityName + " te correspond avec " + flavor + ".";
+  return text;
 }
 
 function toggleTheme() {
@@ -1687,6 +1903,13 @@ function pickAndShow() {
   showQuestion(q);
 }
 
+function formatChoice(txt) {
+  const p = txt.split('|');
+  return p.length > 1
+    ? `<span class="choice-main">${p[0]}</span><span class="choice-sub">${p[1]}</span>`
+    : txt;
+}
+
 function showQuestion(q) {
   const area = document.getElementById("q-area");
   area.classList.remove("fade-in");
@@ -1698,14 +1921,29 @@ function showQuestion(q) {
   const axesPrinc = Object.keys(q.contributions).map(a => AXES_LABELS[a][1]).join(" / ");
   document.getElementById("q-bloc").textContent = q.bloc;
   document.getElementById("q-text").textContent = q.texte;
-  function formatChoice(txt) {
-    const p = txt.split('|');
-    return p.length > 1
-      ? `<span class="choice-main">${p[0]}</span><span class="choice-sub">${p[1]}</span>`
-      : txt;
+
+  const choicesDiv = area.querySelector(".choices");
+
+  if (q.visual) {
+    choicesDiv.className = 'choices choices-visual';
+    choicesDiv.innerHTML =
+      `<button class="choice-visual-btn" onclick="answer('A')">
+        <img class="choice-visual-img" src="${q.imgA}" alt="" onerror="this.style.display='none'">
+        <div class="choice-visual-text">${formatChoice(q.A)}</div>
+      </button>
+      <button class="choice-visual-btn" onclick="answer('B')">
+        <img class="choice-visual-img" src="${q.imgB}" alt="" onerror="this.style.display='none'">
+        <div class="choice-visual-text">${formatChoice(q.B)}</div>
+      </button>
+      <button class="skip-btn" onclick="skipQuestion()">Je passe</button>`;
+  } else {
+    choicesDiv.className = 'choices';
+    choicesDiv.innerHTML =
+      `<button class="choice-btn" id="btn-a" onclick="answer('A')">${formatChoice(q.A)}</button>
+       <button class="choice-btn" id="btn-b" onclick="answer('B')">${formatChoice(q.B)}</button>
+       <button class="skip-btn" onclick="skipQuestion()">Je passe</button>`;
   }
-  document.getElementById("btn-a").innerHTML = formatChoice(q.A);
-  document.getElementById("btn-b").innerHTML = formatChoice(q.B);
+
   document.getElementById("prog-bloc").textContent = axesPrinc;
   const total = AMORCE_QUESTIONS.length + (profileEnhanced ? MAX_Q_PROFILE : MAX_Q);
   const current = AMORCE_QUESTIONS.length + nbPosees + 1;
@@ -1728,6 +1966,7 @@ function answer(choix) {
       confAvant: Math.min(poidsTotal[axe] / 1.6, 1.0)
     };
   }
+  if (questionCourante.visual) visualUsed = true;
   updateVecteur(questionCourante, choix);
   const qAfter = {};
   AXES.forEach(a => qAfter[a] = vecteur[a]);
@@ -1739,6 +1978,7 @@ function answer(choix) {
 
 function skipQuestion() {
   if (!questionCourante) return;
+  if (questionCourante.visual) visualUsed = true;
   stateHistory.push({snapshot: snapshotState(), question: questionCourante, skipped: true});
   const qBefore = {};
   AXES.forEach(a => qBefore[a] = vecteur[a]);
