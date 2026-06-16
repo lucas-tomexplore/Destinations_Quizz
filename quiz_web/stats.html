@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stats — Chances Top 3</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0c1222; color: #e2e8f0; padding: 20px; }
+  h1 { font-size: 1.6rem; margin-bottom: 4px; }
+  .subtitle { color: #94a3b8; margin-bottom: 20px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .controls label { color: #94a3b8; font-size: 0.85rem; }
+  .controls select { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; border-radius: 6px; padding: 6px 10px; font-size: 0.85rem; }
+  .status { color: #25bec7; font-size: 0.85rem; margin-bottom: 16px; }
+  .summary { background: #1e293b; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; font-size: 0.85rem; display: flex; gap: 24px; flex-wrap: wrap; }
+  .summary-item { display: flex; flex-direction: column; }
+  .summary-item .label { color: #94a3b8; font-size: 0.75rem; margin-bottom: 2px; }
+  .summary-item .value { font-weight: 700; font-size: 1.1rem; }
+  .summary-item .good { color: #4ade80; }
+  .summary-item .warn { color: #f59e0b; }
+  .summary-item .bad { color: #ef4444; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { text-align: left; padding: 8px 10px; border-bottom: 2px solid #334155; color: #94a3b8; font-weight: 600; cursor: pointer; user-select: none; }
+  th:hover { color: #25bec7; }
+  td { padding: 7px 10px; border-bottom: 1px solid #1e293b; }
+  tr:hover td { background: #1e293b; }
+  .bar-cell { width: 200px; }
+  .bar-bg { background: #1e293b; border-radius: 4px; height: 18px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+  .bar-label { position: absolute; right: 6px; top: 1px; font-size: 0.75rem; color: #e2e8f0; font-weight: 600; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 500; }
+  .tag-proche { background: #164e63; color: #67e8f9; }
+  .tag-europe { background: #1e3a5f; color: #7dd3fc; }
+  .tag-monde { background: #3b1764; color: #c084fc; }
+  .tag-patrimoine { background: #78350f; color: #fbbf24; }
+  .tag-nature { background: #14532d; color: #4ade80; }
+  .tag-urbain { background: #831843; color: #f472b6; }
+  .axes-mini { display: flex; gap: 2px; align-items: flex-end; height: 20px; }
+  .axes-mini div { width: 8px; border-radius: 2px 2px 0 0; min-height: 2px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 0.8rem; color: #94a3b8; }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+  .bucket-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin-bottom: 20px; }
+  .bucket-card { background: #1e293b; border-radius: 6px; padding: 10px; font-size: 0.8rem; }
+  .bucket-card .bucket-title { font-weight: 600; margin-bottom: 4px; }
+  .bucket-card .bucket-count { color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<h1>Statistiques — Chances d'apparaitre en Top 3</h1>
+<p class="subtitle">Simulation Monte Carlo : 30 000 profils aleatoires × 9 couloirs — <strong>hard filter</strong> (elimination stricte)</p>
+
+<div class="controls">
+  <label>Distance :
+    <select id="filter-dist">
+      <option value="all">Toutes</option>
+      <option value="proche">Proche</option>
+      <option value="europe">Europe</option>
+      <option value="monde">Monde</option>
+    </select>
+  </label>
+  <label>Cadre :
+    <select id="filter-cadre">
+      <option value="all">Tous</option>
+      <option value="patrimoine">Patrimoine</option>
+      <option value="nature">Nature</option>
+      <option value="urbain">Urbain</option>
+    </select>
+  </label>
+  <label>Tri :
+    <select id="sort-by">
+      <option value="pct_match">% top 3 (couloir)</option>
+      <option value="pct_global">% top 3 (global)</option>
+      <option value="name">Nom</option>
+    </select>
+  </label>
+</div>
+
+<div class="summary" id="summary"></div>
+<div class="legend" id="legend"></div>
+<div class="status" id="status">Simulation en cours...</div>
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Ville</th>
+      <th>Dist</th>
+      <th>Cadre</th>
+      <th>Couloir (n)</th>
+      <th>Profil (6 axes)</th>
+      <th class="bar-cell">% Top 3 (dans son couloir)</th>
+      <th class="bar-cell">% Top 3 (global, sans amorce)</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+
+<script>
+const AXES = ["nouveaute","action","culture","urbain","authenticite","structure"];
+const AXIS_COLORS = {
+  nouveaute:"#7c3aed", action:"#e11d48", culture:"#d97706",
+  urbain:"#0891b2", authenticite:"#ea580c", structure:"#6366f1",
+};
+const AXES_SHORT = {nouveaute:"Nouv",action:"Act",culture:"Cult",urbain:"Urb",authenticite:"Auth",structure:"Struct"};
+
+const VILLES = {
+  "Amsterdam":[0.40, 0.70, 0.70, 0.85, 0.50, 0.70],
+  "Anvers":[0.35, 0.45, 0.85, 0.80, 0.55, 0.45],
+  "Athenes":[0.60, 0.70, 0.95, 0.75, 0.80, 0.40],
+  "Barcelone":[0.35, 0.85, 0.65, 0.90, 0.40, 0.65],
+  "Berlin":[0.55, 0.85, 0.55, 0.85, 0.75, 0.80],
+  "Bordeaux":[0.15, 0.45, 0.75, 0.60, 0.50, 0.40],
+  "Bruges":[0.25, 0.25, 0.80, 0.40, 0.35, 0.30],
+  "Bruxelles":[0.30, 0.55, 0.60, 0.80, 0.55, 0.60],
+  "Bucarest":[0.75, 0.55, 0.50, 0.80, 0.80, 0.65],
+  "Budapest":[0.55, 0.80, 0.60, 0.80, 0.60, 0.80],
+  "Cluj-Napoca":[0.80, 0.50, 0.50, 0.60, 0.85, 0.55],
+  "Cologne":[0.30, 0.50, 0.55, 0.85, 0.50, 0.50],
+  "Copenhague":[0.40, 0.55, 0.65, 0.75, 0.35, 0.45],
+  "Cracovie":[0.70, 0.50, 0.85, 0.55, 0.80, 0.50],
+  "Dublin":[0.35, 0.65, 0.50, 0.75, 0.60, 0.70],
+  "Dubrovnik":[0.30, 0.50, 0.85, 0.45, 0.35, 0.35],
+  "Edimbourg":[0.55, 0.65, 0.80, 0.50, 0.70, 0.50],
+  "Florence":[0.35, 0.40, 0.95, 0.55, 0.50, 0.35],
+  "Aix-la-Chapelle":[0.60, 0.30, 0.85, 0.40, 0.70, 0.35],
+  "Hambourg":[0.40, 0.70, 0.50, 0.85, 0.55, 0.70],
+  "Istanbul":[0.85, 0.70, 0.90, 0.80, 0.85, 0.60],
+  "La Rochelle":[0.10, 0.35, 0.35, 0.40, 0.60, 0.40],
+  "Lille":[0.20, 0.55, 0.60, 0.70, 0.65, 0.50],
+  "Lisbonne":[0.55, 0.60, 0.65, 0.65, 0.85, 0.60],
+  "Londres":[0.30, 0.85, 0.85, 0.95, 0.35, 0.55],
+  "Lyon":[0.10, 0.60, 0.65, 0.80, 0.55, 0.50],
+  "Madrid":[0.35, 0.85, 0.70, 0.80, 0.55, 0.75],
+  "Marseille":[0.25, 0.60, 0.55, 0.75, 0.70, 0.65],
+  "Milan":[0.30, 0.60, 0.70, 0.80, 0.30, 0.45],
+  "Munich":[0.30, 0.55, 0.70, 0.75, 0.45, 0.40],
+  "Nantes":[0.15, 0.50, 0.55, 0.55, 0.65, 0.45],
+  "Naples":[0.70, 0.55, 0.80, 0.60, 0.95, 0.60],
+  "Nice":[0.20, 0.35, 0.60, 0.70, 0.45, 0.35],
+  "Paris":[0.10, 0.70, 0.95, 0.95, 0.35, 0.50],
+  "Porto":[0.50, 0.55, 0.70, 0.70, 0.80, 0.70],
+  "Prague":[0.45, 0.70, 0.85, 0.70, 0.50, 0.55],
+  "Rennes":[0.10, 0.45, 0.45, 0.65, 0.55, 0.50],
+  "Reykjavik":[0.90, 0.75, 0.30, 0.20, 0.70, 0.35],
+  "Rome":[0.30, 0.70, 0.95, 0.85, 0.50, 0.55],
+  "Rotterdam":[0.50, 0.65, 0.40, 0.90, 0.45, 0.65],
+  "Seville":[0.50, 0.70, 0.85, 0.55, 0.85, 0.55],
+  "Stockholm":[0.45, 0.50, 0.70, 0.70, 0.40, 0.50],
+  "Strasbourg":[0.20, 0.35, 0.80, 0.55, 0.70, 0.35],
+  "Tallinn":[0.75, 0.50, 0.65, 0.55, 0.70, 0.55],
+  "Toulouse":[0.15, 0.60, 0.50, 0.75, 0.65, 0.60],
+  "Valence":[0.40, 0.80, 0.45, 0.75, 0.55, 0.70],
+  "Vannes":[0.10, 0.30, 0.50, 0.35, 0.60, 0.40],
+  "Venise":[0.35, 0.45, 0.90, 0.55, 0.30, 0.30],
+  "Vienne":[0.30, 0.50, 0.90, 0.80, 0.40, 0.40],
+  "Varsovie":[0.60, 0.60, 0.55, 0.80, 0.70, 0.65],
+  "Chamonix":[0.15, 0.90, 0.15, 0.15, 0.55, 0.55],
+  "Interlaken":[0.30, 0.85, 0.15, 0.15, 0.35, 0.30],
+  "Sintra":[0.40, 0.30, 0.85, 0.20, 0.65, 0.45],
+  "Bath":[0.20, 0.30, 0.80, 0.40, 0.40, 0.30],
+  "Iles Lofoten":[0.85, 0.45, 0.25, 0.15, 0.75, 0.55],
+  "Hallstatt":[0.50, 0.20, 0.55, 0.10, 0.65, 0.35],
+  "Santorin":[0.20, 0.15, 0.65, 0.20, 0.20, 0.30],
+  "Lac de Come":[0.05, 0.10, 0.70, 0.05, 0.15, 0.10],
+  "Ibiza":[0.20, 0.75, 0.15, 0.35, 0.30, 0.90],
+  "Monaco":[0.10, 0.45, 0.30, 0.70, 0.10, 0.20],
+  "Tromso":[0.80, 0.70, 0.20, 0.20, 0.65, 0.50],
+  "Annecy":[0.05, 0.20, 0.35, 0.10, 0.75, 0.15],
+  "Split":[0.50, 0.65, 0.50, 0.45, 0.60, 0.55],
+  "Malaga":[0.30, 0.65, 0.40, 0.60, 0.55, 0.65],
+  "Palermo":[0.60, 0.50, 0.70, 0.55, 0.85, 0.65],
+  "Cinque Terre":[0.30, 0.45, 0.50, 0.10, 0.55, 0.40],
+  "Essaouira":[0.75, 0.40, 0.50, 0.30, 0.85, 0.65],
+  "Tel Aviv":[0.70, 0.80, 0.60, 0.80, 0.60, 0.70],
+  "Innsbruck":[0.30, 0.85, 0.25, 0.35, 0.40, 0.40],
+  "Bergen":[0.70, 0.70, 0.25, 0.30, 0.70, 0.45],
+  "Lake Bled":[0.55, 0.40, 0.30, 0.10, 0.65, 0.40],
+  "Funchal":[0.60, 0.70, 0.25, 0.20, 0.65, 0.40],
+  "Lucerne":[0.10, 0.20, 0.80, 0.20, 0.25, 0.15],
+  "Colmar":[0.10, 0.20, 0.65, 0.15, 0.55, 0.25],
+  "Gand":[0.25, 0.40, 0.75, 0.60, 0.55, 0.55],
+  "Marrakech":[0.90, 0.80, 0.70, 0.50, 0.95, 0.80],
+  "Fes":[0.90, 0.50, 0.90, 0.55, 0.95, 0.80],
+  "Helsinki":[0.40, 0.40, 0.50, 0.60, 0.40, 0.35],
+  "Tokyo":[0.75, 0.85, 0.80, 0.90, 0.60, 0.45],
+  "Kyoto":[0.70, 0.40, 0.95, 0.40, 0.75, 0.40],
+  "Bangkok":[0.90, 0.95, 0.55, 0.95, 0.85, 0.90],
+  "Seoul":[0.75, 0.80, 0.65, 0.85, 0.55, 0.55],
+  "Hong Kong":[0.70, 0.85, 0.55, 0.95, 0.50, 0.55],
+  "Singapour":[0.55, 0.65, 0.55, 0.85, 0.35, 0.40],
+  "Bali":[0.85, 0.35, 0.45, 0.20, 0.90, 0.80],
+  "Jaipur":[0.90, 0.50, 0.90, 0.55, 0.90, 0.65],
+  "Kathmandu":[0.95, 0.25, 0.90, 0.25, 0.95, 0.90],
+  "New York":[0.45, 0.95, 0.85, 0.95, 0.40, 0.60],
+  "Buenos Aires":[0.70, 0.60, 0.85, 0.75, 0.90, 0.50],
+  "Mexico":[0.90, 0.90, 0.80, 0.90, 0.85, 0.65],
+  "La Havane":[0.90, 0.40, 0.75, 0.65, 0.95, 0.80],
+  "Cusco":[0.90, 0.65, 0.90, 0.40, 0.90, 0.70],
+  "Le Cap":[0.75, 0.95, 0.20, 0.35, 0.80, 0.30],
+  "Zanzibar":[0.90, 0.30, 0.30, 0.15, 0.90, 0.75],
+  "Dubai":[0.50, 0.70, 0.45, 0.85, 0.30, 0.45],
+  "Sydney":[0.55, 0.85, 0.50, 0.85, 0.35, 0.45],
+  "Rio de Janeiro":[0.55, 0.85, 0.50, 0.80, 0.55, 0.75],
+  "Phuket":[0.45, 0.70, 0.10, 0.10, 0.25, 0.45],
+  "Cartagena":[0.80, 0.45, 0.70, 0.45, 0.80, 0.60],
+  "Patagonie":[0.90, 0.75, 0.15, 0.10, 0.65, 0.45],
+  "Queenstown":[0.60, 0.95, 0.10, 0.20, 0.35, 0.35],
+  "Costa Rica":[0.80, 0.65, 0.20, 0.10, 0.70, 0.55],
+  "Zermatt":[0.35, 0.75, 0.10, 0.05, 0.40, 0.35],
+  "Dolomites":[0.40, 0.80, 0.15, 0.05, 0.50, 0.45],
+  "Corse":[0.25, 0.80, 0.20, 0.10, 0.80, 0.55],
+  "Biarritz":[0.15, 0.85, 0.15, 0.35, 0.55, 0.65],
+  "Sri Lanka":[0.85, 0.80, 0.45, 0.20, 0.80, 0.65],
+  "Siem Reap":[0.95, 0.45, 0.95, 0.25, 0.85, 0.45],
+  "Riga":[0.75, 0.55, 0.70, 0.60, 0.70, 0.60],
+  "Ho Chi Minh":[0.90, 0.90, 0.45, 0.90, 0.85, 0.75],
+};
+
+const CITY_TAGS = {
+  "Paris":{dist:"proche",cadre:"patrimoine"},"Lyon":{dist:"proche",cadre:"patrimoine"},
+  "Bordeaux":{dist:"proche",cadre:"patrimoine"},"Strasbourg":{dist:"proche",cadre:"patrimoine"},
+  "Colmar":{dist:"proche",cadre:"patrimoine"},"Bruges":{dist:"proche",cadre:"patrimoine"},
+  "Gand":{dist:"proche",cadre:"patrimoine"},"Bath":{dist:"proche",cadre:"patrimoine"},
+  "Marseille":{dist:"proche",cadre:"urbain"},"Nice":{dist:"proche",cadre:"urbain"},
+  "La Rochelle":{dist:"proche",cadre:"patrimoine"},"Vannes":{dist:"proche",cadre:"patrimoine"},
+  "Barcelone":{dist:"proche",cadre:"urbain"},"Monaco":{dist:"proche",cadre:"urbain"},
+  "Chamonix":{dist:"proche",cadre:"nature"},"Interlaken":{dist:"proche",cadre:"nature"},
+  "Annecy":{dist:"proche",cadre:"nature"},"Lac de Come":{dist:"proche",cadre:"nature"},
+  "Lucerne":{dist:"proche",cadre:"nature"},
+  "Amsterdam":{dist:"proche",cadre:"urbain"},"Rotterdam":{dist:"proche",cadre:"urbain"},
+  "Bruxelles":{dist:"proche",cadre:"urbain"},"Londres":{dist:"proche",cadre:"urbain"},
+  "Lille":{dist:"proche",cadre:"urbain"},"Nantes":{dist:"proche",cadre:"urbain"},
+  "Rennes":{dist:"proche",cadre:"urbain"},"Toulouse":{dist:"proche",cadre:"urbain"},
+  "Milan":{dist:"proche",cadre:"urbain"},"Cologne":{dist:"proche",cadre:"urbain"},
+  "Aix-la-Chapelle":{dist:"proche",cadre:"patrimoine"},"Anvers":{dist:"proche",cadre:"patrimoine"},
+  "Rome":{dist:"europe",cadre:"patrimoine"},"Florence":{dist:"europe",cadre:"patrimoine"},
+  "Venise":{dist:"europe",cadre:"patrimoine"},"Athenes":{dist:"europe",cadre:"patrimoine"},
+  "Istanbul":{dist:"europe",cadre:"patrimoine"},"Prague":{dist:"europe",cadre:"patrimoine"},
+  "Cracovie":{dist:"europe",cadre:"patrimoine"},"Edimbourg":{dist:"europe",cadre:"patrimoine"},
+  "Seville":{dist:"europe",cadre:"patrimoine"},"Vienne":{dist:"europe",cadre:"patrimoine"},
+  "Porto":{dist:"europe",cadre:"patrimoine"},
+  "Tallinn":{dist:"europe",cadre:"patrimoine"},"Dubrovnik":{dist:"europe",cadre:"patrimoine"},
+  "Sintra":{dist:"europe",cadre:"nature"},"Marrakech":{dist:"monde",cadre:"patrimoine"},
+  "Fes":{dist:"monde",cadre:"patrimoine"},
+  "Madrid":{dist:"europe",cadre:"urbain"},"Berlin":{dist:"europe",cadre:"urbain"},
+  "Budapest":{dist:"europe",cadre:"urbain"},"Dublin":{dist:"europe",cadre:"urbain"},
+  "Copenhague":{dist:"europe",cadre:"urbain"},"Stockholm":{dist:"europe",cadre:"urbain"},
+  "Helsinki":{dist:"europe",cadre:"urbain"},"Hambourg":{dist:"europe",cadre:"urbain"},
+  "Munich":{dist:"europe",cadre:"urbain"},"Varsovie":{dist:"europe",cadre:"urbain"},
+  "Bucarest":{dist:"europe",cadre:"urbain"},"Cluj-Napoca":{dist:"europe",cadre:"urbain"},
+  "Lisbonne":{dist:"europe",cadre:"patrimoine"},"Valence":{dist:"europe",cadre:"urbain"},
+  "Naples":{dist:"europe",cadre:"patrimoine"},"Split":{dist:"europe",cadre:"patrimoine"},
+  "Malaga":{dist:"europe",cadre:"patrimoine"},"Palermo":{dist:"europe",cadre:"patrimoine"},
+  "Ibiza":{dist:"europe",cadre:"urbain"},
+  "Santorin":{dist:"europe",cadre:"nature"},"Cinque Terre":{dist:"europe",cadre:"nature"},
+  "Essaouira":{dist:"monde",cadre:"patrimoine"},
+  "Tel Aviv":{dist:"monde",cadre:"urbain"},
+  "Reykjavik":{dist:"europe",cadre:"nature"},"Tromso":{dist:"europe",cadre:"nature"},
+  "Iles Lofoten":{dist:"europe",cadre:"nature"},"Bergen":{dist:"europe",cadre:"nature"},
+  "Innsbruck":{dist:"europe",cadre:"nature"},"Hallstatt":{dist:"europe",cadre:"nature"},
+  "Lake Bled":{dist:"europe",cadre:"nature"},"Funchal":{dist:"europe",cadre:"nature"},
+  "Tokyo":{dist:"monde",cadre:"urbain"},"New York":{dist:"monde",cadre:"urbain"},
+  "Bangkok":{dist:"monde",cadre:"urbain"},"Seoul":{dist:"monde",cadre:"urbain"},
+  "Hong Kong":{dist:"monde",cadre:"urbain"},"Buenos Aires":{dist:"monde",cadre:"urbain"},
+  "Singapour":{dist:"monde",cadre:"urbain"},"Dubai":{dist:"monde",cadre:"urbain"},
+  "Sydney":{dist:"monde",cadre:"urbain"},"Le Cap":{dist:"monde",cadre:"nature"},
+  "Zanzibar":{dist:"monde",cadre:"nature"},"Bali":{dist:"monde",cadre:"nature"},
+  "Kathmandu":{dist:"monde",cadre:"nature"},
+  "Kyoto":{dist:"monde",cadre:"patrimoine"},"Mexico":{dist:"monde",cadre:"patrimoine"},
+  "La Havane":{dist:"monde",cadre:"patrimoine"},"Cusco":{dist:"monde",cadre:"patrimoine"},
+  "Jaipur":{dist:"monde",cadre:"patrimoine"},
+  "Rio de Janeiro":{dist:"monde",cadre:"urbain"},"Phuket":{dist:"monde",cadre:"nature"},
+  "Cartagena":{dist:"monde",cadre:"patrimoine"},
+  "Patagonie":{dist:"monde",cadre:"nature"},"Queenstown":{dist:"monde",cadre:"nature"},
+  "Costa Rica":{dist:"monde",cadre:"nature"},
+  "Zermatt":{dist:"proche",cadre:"nature"},"Dolomites":{dist:"proche",cadre:"nature"},
+  "Corse":{dist:"proche",cadre:"nature"},"Biarritz":{dist:"proche",cadre:"nature"},
+  "Sri Lanka":{dist:"monde",cadre:"nature"},"Siem Reap":{dist:"monde",cadre:"patrimoine"},
+  "Riga":{dist:"europe",cadre:"patrimoine"},"Ho Chi Minh":{dist:"monde",cadre:"urbain"},
+};
+
+function cosine(a, b) {
+  let dot = 0, na = 0, nb = 0;
+  for (let i = 0; i < a.length; i++) { dot += a[i]*b[i]; na += a[i]*a[i]; nb += b[i]*b[i]; }
+  return dot / (Math.sqrt(na) * Math.sqrt(nb) + 1e-9);
+}
+function compresser(v) { return v.map(x => 0.5 + (x - 0.5) * 0.75); }
+
+function simulate() {
+  const cities = Object.keys(VILLES);
+  const N = 30000;
+  const distOptions = ["proche","europe","monde"];
+  const cadreOptions = ["patrimoine","nature","urbain"];
+  const combos = [];
+  for (const d of distOptions) for (const c of cadreOptions) combos.push({dist:d, cadre:c});
+
+  const bucketSizes = {};
+  const bucketCities = {};
+  for (const combo of combos) {
+    const key = combo.dist + "|" + combo.cadre;
+    bucketSizes[key] = 0;
+    bucketCities[key] = [];
+  }
+  cities.forEach(c => {
+    const t = CITY_TAGS[c];
+    const key = t.dist + "|" + t.cadre;
+    bucketSizes[key]++;
+    bucketCities[key].push(c);
+  });
+
+  const top3countGlobal = {};
+  cities.forEach(c => { top3countGlobal[c] = 0; });
+
+  const rng = (seed) => { let s = seed; return () => { s = (s * 1664525 + 1013904223) & 0x7fffffff; return s / 0x7fffffff; }; };
+  const rand = rng(42);
+
+  // Global ranking (no filter)
+  for (let t = 0; t < N; t++) {
+    const userVec = AXES.map(() => rand());
+    const u = compresser(userVec);
+    const ranked = cities.map(c => ({city: c, score: cosine(u, compresser(VILLES[c]))}))
+      .sort((a, b) => b.score - a.score);
+    for (let i = 0; i < 3; i++) top3countGlobal[ranked[i].city]++;
+  }
+
+  // Per-couloir: hard filter simulation
+  const comboTrials = {};
+  const comboTop3Count = {};
+  for (const combo of combos) {
+    const key = combo.dist + "|" + combo.cadre;
+    comboTrials[key] = N;
+    comboTop3Count[key] = {};
+  }
+
+  for (let t = 0; t < N; t++) {
+    const userVec = AXES.map(() => rand());
+    const u = compresser(userVec);
+
+    for (const combo of combos) {
+      const key = combo.dist + "|" + combo.cadre;
+      const pool = bucketCities[key];
+      if (pool.length === 0) continue;
+
+      const ranked = pool.map(c => ({city: c, score: cosine(u, compresser(VILLES[c]))}))
+        .sort((a, b) => b.score - a.score);
+
+      const top = Math.min(3, ranked.length);
+      for (let i = 0; i < top; i++) {
+        const c = ranked[i].city;
+        comboTop3Count[key][c] = (comboTop3Count[key][c] || 0) + 1;
+      }
+    }
+  }
+
+  const results = cities.map(city => {
+    const tags = CITY_TAGS[city];
+    const key = tags.dist + "|" + tags.cadre;
+    const trials = comboTrials[key];
+    const hits = comboTop3Count[key][city] || 0;
+    const pctMatch = trials > 0 ? (hits / trials * 100) : 0;
+    const pctGlobal = top3countGlobal[city] / N * 100;
+    const bucketSize = bucketSizes[key];
+    return { city, tags, scores: VILLES[city], pctMatch, pctGlobal, bucketSize, bucketKey: key };
+  });
+
+  return { results, bucketSizes };
+}
+
+let allResults = [];
+let bucketSizes = {};
+
+function render() {
+  const filterDist = document.getElementById("filter-dist").value;
+  const filterCadre = document.getElementById("filter-cadre").value;
+  const sortBy = document.getElementById("sort-by").value;
+
+  let data = allResults.filter(r => {
+    if (filterDist !== "all" && r.tags.dist !== filterDist) return false;
+    if (filterCadre !== "all" && r.tags.cadre !== filterCadre) return false;
+    return true;
+  });
+
+  if (sortBy === "pct_match") data.sort((a, b) => b.pctMatch - a.pctMatch);
+  else if (sortBy === "pct_global") data.sort((a, b) => b.pctGlobal - a.pctGlobal);
+  else data.sort((a, b) => a.city.localeCompare(b.city));
+
+  const maxMatch = Math.max(...data.map(d => d.pctMatch), 1);
+  const maxGlobal = Math.max(...data.map(d => d.pctGlobal), 1);
+
+  // Summary stats
+  const pcts = data.map(d => d.pctMatch);
+  const avg = pcts.reduce((a,b)=>a+b,0)/pcts.length;
+  const min = Math.min(...pcts);
+  const max = Math.max(...pcts);
+  const ratio = min > 0 ? (max / min).toFixed(1) : "∞";
+  const zeroCount = pcts.filter(p => p === 0).length;
+  const ratioClass = (max/min) < 3 ? "good" : (max/min) < 6 ? "warn" : "bad";
+  const zeroClass = zeroCount === 0 ? "good" : "bad";
+
+  document.getElementById("summary").innerHTML = `
+    <div class="summary-item"><span class="label">Villes affichees</span><span class="value">${data.length}</span></div>
+    <div class="summary-item"><span class="label">% moyen (couloir)</span><span class="value">${avg.toFixed(1)}%</span></div>
+    <div class="summary-item"><span class="label">Min</span><span class="value ${min < 5 ? 'warn' : 'good'}">${min.toFixed(1)}%</span></div>
+    <div class="summary-item"><span class="label">Max</span><span class="value">${max.toFixed(1)}%</span></div>
+    <div class="summary-item"><span class="label">Ratio max/min</span><span class="value ${ratioClass}">${ratio}x</span></div>
+    <div class="summary-item"><span class="label">Villes a 0%</span><span class="value ${zeroClass}">${zeroCount}</span></div>
+  `;
+
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = data.map((r, i) => {
+    const axesMini = AXES.map((a, j) => {
+      const h = Math.round(r.scores[j] * 18);
+      return `<div style="height:${h}px;background:${AXIS_COLORS[a]}" title="${AXES_SHORT[a]}: ${r.scores[j]}"></div>`;
+    }).join("");
+
+    const barMatch = Math.round(r.pctMatch / maxMatch * 100);
+    const barGlobal = Math.round(r.pctGlobal / maxGlobal * 100);
+    const idealPct = 3 / r.bucketSize * 100;
+    const colorMatch = r.pctMatch >= idealPct * 0.5 ? "#25bec7" : r.pctMatch > 0 ? "#f59e0b" : "#ef4444";
+    const colorGlobal = r.pctGlobal > 5 ? "#25bec7" : r.pctGlobal > 1 ? "#f59e0b" : "#ef4444";
+
+    return `<tr>
+      <td>${i + 1}</td>
+      <td><strong>${r.city}</strong></td>
+      <td><span class="tag tag-${r.tags.dist}">${r.tags.dist}</span></td>
+      <td><span class="tag tag-${r.tags.cadre}">${r.tags.cadre}</span></td>
+      <td style="color:#94a3b8;font-size:0.8rem">${r.bucketSize}</td>
+      <td><div class="axes-mini">${axesMini}</div></td>
+      <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${barMatch}%;background:${colorMatch}"></div><span class="bar-label">${r.pctMatch.toFixed(1)}%</span></div></td>
+      <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${barGlobal}%;background:${colorGlobal}"></div><span class="bar-label">${r.pctGlobal.toFixed(1)}%</span></div></td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("status").textContent =
+    `${data.length} villes affichees — simulation : 30 000 profils × 9 couloirs (hard filter)`;
+}
+
+// Legend
+document.getElementById("legend").innerHTML = AXES.map(a =>
+  `<span><span class="legend-dot" style="background:${AXIS_COLORS[a]}"></span>${AXES_SHORT[a]}</span>`
+).join("");
+
+// Run simulation
+setTimeout(() => {
+  const sim = simulate();
+  allResults = sim.results;
+  bucketSizes = sim.bucketSizes;
+  render();
+}, 50);
+
+document.getElementById("filter-dist").addEventListener("change", render);
+document.getElementById("filter-cadre").addEventListener("change", render);
+document.getElementById("sort-by").addEventListener("change", render);
+</script>
+</body>
+</html>
