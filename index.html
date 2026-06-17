@@ -2115,6 +2115,8 @@ function showResults() {
   </details>`;
 
   html += '<button class="restart-btn" onclick="reset()">Recommencer</button></div>';
+  localStorage.setItem('quiz-last-top3', JSON.stringify(top3.map(r => ({city: r.city, score: r.score}))));
+  localStorage.setItem('quiz-last-vecteur', JSON.stringify(vecteur));
   const el = document.getElementById("results");
   el.innerHTML = html;
   el.style.display = "block";
