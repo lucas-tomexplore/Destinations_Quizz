@@ -38,8 +38,6 @@ body {
   min-height: 100vh;
   transition: background .3s, color .3s;
 }
-
-/* Header */
 .header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 20px;
@@ -54,11 +52,7 @@ body {
   width: 36px; height: 36px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
 }
-
-/* Empty state */
-.empty-state {
-  text-align: center; padding: 80px 24px;
-}
+.empty-state { text-align: center; padding: 80px 24px; }
 .empty-state .icon { font-size: 4rem; margin-bottom: 16px; }
 .empty-state h2 { font-size: 1.3rem; margin-bottom: 8px; }
 .empty-state p { color: var(--text2); max-width: 400px; margin: 0 auto 24px; }
@@ -67,29 +61,22 @@ body {
   padding: 12px 28px; border-radius: 99px; text-decoration: none;
   font-weight: 700; font-size: 0.95rem;
 }
-
-/* Story cards */
 .stories-container { padding: 20px; max-width: 600px; margin: 0 auto; }
 .stories-intro { text-align: center; margin-bottom: 24px; }
 .stories-intro h2 { font-size: 1.2rem; margin-bottom: 4px; }
 .stories-intro p { color: var(--text2); font-size: 0.9rem; }
-
 .story-card {
   background: var(--card); border-radius: var(--radius);
   box-shadow: var(--shadow); overflow: hidden;
-  margin-bottom: 20px; cursor: pointer;
-  transition: transform .2s;
+  margin-bottom: 20px; cursor: pointer; transition: transform .2s;
 }
 .story-card:hover { transform: translateY(-2px); }
 .story-card-header {
   height: 140px; position: relative;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
 }
-.story-card-cities {
-  display: flex; gap: 8px; position: relative; z-index: 1;
-}
+.story-card-cities { display: flex; gap: 8px; position: relative; z-index: 1; flex-wrap: wrap; justify-content: center; }
 .story-card-cities span {
   background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
   padding: 6px 14px; border-radius: 99px; color: #fff;
@@ -98,20 +85,14 @@ body {
 .story-card-body { padding: 16px 20px; }
 .story-card-body h3 { font-size: 1.05rem; margin-bottom: 4px; }
 .story-card-body p { color: var(--text2); font-size: 0.85rem; }
-.story-card-meta {
-  display: flex; gap: 12px; margin-top: 10px; font-size: 0.8rem; color: var(--text2);
-}
+.story-card-meta { display: flex; gap: 12px; margin-top: 10px; font-size: 0.8rem; color: var(--text2); }
 .story-card-meta span { display: flex; align-items: center; gap: 4px; }
-
-/* Quiz screen */
 .quiz-screen { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
 .quiz-back {
   background: none; border: none; color: var(--text2); cursor: pointer;
   font-size: 0.9rem; font-family: inherit; margin-bottom: 16px;
   display: flex; align-items: center; gap: 6px;
 }
-
-/* Difficulty bar */
 .difficulty-bar {
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 16px; padding: 10px 16px;
@@ -122,16 +103,16 @@ body {
 .difficulty-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; position: relative; }
 .difficulty-fill { height: 100%; border-radius: 3px; transition: width .5s ease, background .5s ease; }
 .difficulty-text { font-size: 0.8rem; font-weight: 700; min-width: 60px; text-align: right; }
-
-/* Progress */
+.difficulty-steps { display: flex; justify-content: space-between; margin-top: 4px; }
+.difficulty-step { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all .3s; }
+.difficulty-step.active { background: var(--accent); transform: scale(1.3); }
+.difficulty-step.done { background: var(--green); }
 .quiz-progress {
   display: flex; align-items: center; gap: 8px;
   margin-bottom: 16px; font-size: 0.85rem; color: var(--text2);
 }
 .quiz-progress-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
 .quiz-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .4s ease; }
-
-/* Score display */
 .quiz-score {
   display: flex; align-items: center; justify-content: center; gap: 20px;
   margin-bottom: 16px;
@@ -141,16 +122,12 @@ body {
 .score-item .lbl { font-size: 0.7rem; color: var(--text2); text-transform: uppercase; }
 .score-correct .num { color: var(--green); }
 .score-streak .num { color: var(--orange); }
-
-/* Question card */
 .question-card {
   background: var(--card); border-radius: var(--radius);
   box-shadow: var(--shadow); padding: 24px;
-  margin-bottom: 16px;
-  animation: fadeIn .3s ease;
+  margin-bottom: 16px; animation: fadeIn .3s ease;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
 .question-city-tag {
   display: inline-block; background: var(--accent);
   color: #fff; padding: 3px 12px; border-radius: 99px;
@@ -166,11 +143,7 @@ body {
 [data-theme="dark"] .diff-easy { background: #166534; color: #dcfce7; }
 [data-theme="dark"] .diff-medium { background: #92400e; color: #fef3c7; }
 [data-theme="dark"] .diff-hard { background: #991b1b; color: #fee2e2; }
-
-.question-text {
-  font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; line-height: 1.4;
-}
-
+.question-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; line-height: 1.4; }
 .answers-grid { display: flex; flex-direction: column; gap: 10px; }
 .answer-btn {
   background: var(--card); border: 2px solid var(--border);
@@ -180,19 +153,10 @@ body {
   color: var(--text);
 }
 .answer-btn:hover { border-color: var(--accent); background: rgba(99,102,241,0.05); }
-.answer-btn.correct {
-  border-color: var(--green); background: rgba(34,197,94,0.1);
-  animation: pulse .3s ease;
-}
-.answer-btn.wrong {
-  border-color: var(--red); background: rgba(239,68,68,0.1);
-}
-.answer-btn.reveal-correct {
-  border-color: var(--green); background: rgba(34,197,94,0.08);
-}
+.answer-btn.correct { border-color: var(--green); background: rgba(34,197,94,0.1); animation: pulse .3s ease; }
+.answer-btn.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); }
+.answer-btn.reveal-correct { border-color: var(--green); background: rgba(34,197,94,0.08); }
 @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02); } }
-
-/* Anecdote */
 .anecdote {
   background: rgba(99,102,241,0.08); border-left: 3px solid var(--accent);
   border-radius: 0 12px 12px 0; padding: 14px 16px;
@@ -206,8 +170,6 @@ body {
   font-family: inherit; font-weight: 700; font-size: 0.9rem;
   cursor: pointer; margin-left: auto; margin-right: auto;
 }
-
-/* Results screen */
 .results-screen { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
 .results-card {
   background: var(--card); border-radius: var(--radius);
@@ -217,13 +179,10 @@ body {
 .results-emoji { font-size: 4rem; margin-bottom: 12px; }
 .results-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
 .results-subtitle { color: var(--text2); margin-bottom: 24px; }
-.results-stats {
-  display: flex; justify-content: center; gap: 24px; margin-bottom: 24px;
-}
+.results-stats { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; }
 .results-stat { text-align: center; }
 .results-stat .val { font-size: 2rem; font-weight: 800; }
 .results-stat .lbl { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; }
-
 .results-breakdown { text-align: left; margin-bottom: 24px; }
 .results-breakdown h4 { font-size: 0.85rem; color: var(--text2); margin-bottom: 10px; text-transform: uppercase; }
 .breakdown-row {
@@ -235,19 +194,13 @@ body {
 .breakdown-bar { flex: 1; height: 8px; background: var(--border); border-radius: 4px; }
 .breakdown-fill { height: 100%; border-radius: 4px; }
 .breakdown-val { font-size: 0.85rem; font-weight: 700; min-width: 45px; text-align: right; }
-
 .results-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 .results-btns button {
   background: var(--accent); color: #fff; border: none;
   border-radius: 99px; padding: 12px 24px;
-  font-family: inherit; font-weight: 700; font-size: 0.9rem;
-  cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer;
 }
-.results-btns .secondary {
-  background: transparent; color: var(--accent);
-  border: 2px solid var(--accent);
-}
-
+.results-btns .secondary { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
 @media (max-width: 480px) {
   .stories-container, .quiz-screen, .results-screen { padding: 12px; }
   .question-text { font-size: 1rem; }
@@ -255,19 +208,16 @@ body {
 </style>
 </head>
 <body>
-
 <div class="header">
   <h1><span>Tom</span>Explore Stories</h1>
   <button class="theme-toggle" onclick="toggleTheme()" aria-label="Changer de theme"></button>
 </div>
-
 <div id="empty-state" class="empty-state" style="display:none">
   <div class="icon">🧭</div>
   <h2>Pas encore de resultats</h2>
   <p>Fais d'abord le quiz de destination pour decouvrir tes villes, puis reviens ici pour les explorer en profondeur !</p>
   <a href="index.html">Faire le quiz →</a>
 </div>
-
 <div id="stories-list" class="stories-container" style="display:none">
   <div class="stories-intro">
     <h2>Tes quiz stories</h2>
@@ -275,7 +225,6 @@ body {
   </div>
   <div id="story-cards"></div>
 </div>
-
 <div id="quiz-screen" class="quiz-screen">
   <button class="quiz-back" onclick="backToStories()">← Retour</button>
   <div class="difficulty-bar">
@@ -294,7 +243,6 @@ body {
   </div>
   <div id="question-area"></div>
 </div>
-
 <div id="results-screen" class="results-screen"></div>
 
 <script>
@@ -314,252 +262,463 @@ function toggleTheme() {
 applyTheme();
 
 // ═══════════════════════════════════════════════════════════
-//  QUESTIONS DATABASE — par ville, avec difficulte 1-5
-//  Chaque question: { city, difficulty, question, answers, correct, anecdote }
+//  QUESTIONS DATABASE
+//  10 questions par ville, classees par difficulte croissante
+//  Index 0 = niveau 1 (tres facile), Index 9 = niveau 10 (expert)
 // ═══════════════════════════════════════════════════════════
-const QUESTIONS_DB = {
+const Q = {
 "Bucarest": [
-  {d:1,q:"Quel pays a pour capitale Bucarest ?",a:["Roumanie","Bulgarie","Hongrie","Moldavie"],c:0,t:"Bucarest est la 6e plus grande ville de l'UE par population, avec pres de 2 millions d'habitants."},
-  {d:2,q:"Quel surnom donnait-on a Bucarest dans les annees 1900 ?",a:["Le petit Paris","La perle des Balkans","La ville blanche","L'etoile de l'Est"],c:0,t:"Grace a son architecture Belle Epoque et ses grands boulevards haussmanniens, Bucarest etait surnommee 'le petit Paris'."},
-  {d:3,q:"Quel dictateur a fait construire le Palais du Parlement de Bucarest ?",a:["Nicolae Ceausescu","Ion Iliescu","Gheorghe Gheorghiu-Dej","Carol II"],c:0,t:"Le Palais du Parlement est le 2e plus grand batiment administratif au monde apres le Pentagone, avec 1 100 pieces."},
-  {d:4,q:"Combien de lacs compte le parc Herastrau (aujourd'hui Parc du Roi Michel Ier) ?",a:["1 seul grand lac","2 lacs","4 lacs","7 lacs"],c:0,t:"Le lac Herastrau fait 74 hectares et on peut le parcourir en bateau. Le parc entier fait 187 hectares."},
-  {d:5,q:"Quel architecte roumain, ne a Bucarest, a inspire le Centre Pompidou ?",a:["Ion Mincu","Horia Creanga","Marcel Iancu","Radu Patrulius"],c:2,t:"Marcel Iancu, architecte et artiste dadaiste ne a Bucarest, a profondement influence l'avant-garde architecturale europeenne."},
+  {q:"Quel pays a pour capitale Bucarest ?",a:["Roumanie","Bulgarie","Hongrie","Moldavie"],c:0,t:"Bucarest est la 6e plus grande ville de l'UE par population, avec pres de 2 millions d'habitants."},
+  {q:"Sur quel continent se trouve Bucarest ?",a:["Europe","Asie","Amerique","Afrique"],c:0,t:"Bucarest est situee dans le sud-est de l'Europe, dans la plaine de Valachie."},
+  {q:"Quel surnom donnait-on a Bucarest dans les annees 1900 ?",a:["Le petit Paris","La perle des Balkans","La ville blanche","L'etoile de l'Est"],c:0,t:"Grace a son architecture Belle Epoque et ses grands boulevards haussmanniens, Bucarest etait surnommee 'le petit Paris'."},
+  {q:"Quel fleuve traverse Bucarest ?",a:["La Dambovita","Le Danube","La Tisza","Le Prut"],c:0,t:"La Dambovita traverse Bucarest sur 8 km. Le Danube passe a 60 km au sud de la ville."},
+  {q:"Quel dictateur a fait construire le Palais du Parlement de Bucarest ?",a:["Nicolae Ceausescu","Ion Iliescu","Gheorghe Gheorghiu-Dej","Carol II"],c:0,t:"Le Palais du Parlement est le 2e plus grand batiment administratif au monde apres le Pentagone, avec 1 100 pieces."},
+  {q:"Quel pourcentage de l'ancien centre-ville a ete demoli pour construire le Palais du Parlement ?",a:["Un cinquieme","Un dixieme","La moitie","Un tiers"],c:0,t:"Un cinquieme du centre historique a ete rase, dont 7 000 maisons et une vingtaine d'eglises, pour creer le boulevard et le palais."},
+  {q:"Quel parc de Bucarest abrite un arc de triomphe miniature ?",a:["Parc Herastrau","Parc Cismigiu","Parc Tineretului","Parc Carol"],c:0,t:"Le parc Herastrau (aujourd'hui Parc du Roi Michel Ier) fait 187 hectares. L'arc de triomphe se trouve en realite sur la Kiseleff."},
+  {q:"Quelle revolution a renverse le regime communiste roumain en 1989 ?",a:["La Revolution roumaine","Le Printemps de Bucarest","La Revolte des Balkans","La Marche de la Liberte"],c:0,t:"La revolution de decembre 1989, la seule violente du bloc de l'Est, a conduit a l'execution de Ceausescu le 25 decembre."},
+  {q:"Quel musee de Bucarest est installe dans un palais Art Nouveau sur la Calea Victoriei ?",a:["Musee des Collections d'Art","Musee National d'Art","Musee Cotroceni","Musee du Paysan Roumain"],c:0,t:"La Calea Victoriei est la plus ancienne rue de Bucarest, bordee de palais et musees sur 2,7 km."},
+  {q:"Quel architecte roumain, ne a Bucarest, a co-fonde le mouvement Dada a Zurich en 1916 ?",a:["Marcel Iancu","Ion Mincu","Horia Creanga","Radu Patrulius"],c:0,t:"Marcel Iancu, architecte et artiste dadaiste, a co-fonde le Cabaret Voltaire avec Tristan Tzara, lui aussi roumain."},
 ],
 "Tokyo": [
-  {d:1,q:"Dans quel pays se trouve Tokyo ?",a:["Japon","Coree du Sud","Chine","Taiwan"],c:0,t:"L'agglomeration de Tokyo compte environ 37 millions d'habitants, c'est la plus grande du monde."},
-  {d:2,q:"Comment s'appelait Tokyo avant 1868 ?",a:["Edo","Osaka","Kyushu","Nara"],c:0,t:"Edo signifie 'la porte de la baie'. Le nom a change quand l'empereur s'y est installe pendant la restauration Meiji."},
-  {d:3,q:"Quel celebre marche aux poissons de Tokyo a demenage en 2018 ?",a:["Tsukiji","Ameyoko","Nishiki","Kuromon"],c:0,t:"Le marche de Tsukiji a demenage a Toyosu, mais le marche exterieur de Tsukiji existe toujours et reste tres populaire."},
-  {d:4,q:"Combien de lignes de metro compte Tokyo (metro + lignes privees urbaines) ?",a:["Environ 15","Environ 30","Environ 50","Environ 80"],c:2,t:"Tokyo a 13 lignes de metro plus des dizaines de lignes privees. Chaque jour, plus de 8 millions de passagers utilisent le metro."},
-  {d:5,q:"Quel quartier de Tokyo est connu pour son 'scramble crossing' iconique ?",a:["Shibuya","Shinjuku","Akihabara","Ginza"],c:0,t:"Le carrefour de Shibuya voit passer jusqu'a 3 000 personnes a chaque feu vert, soit environ 2,4 millions par jour."},
+  {q:"Dans quel pays se trouve Tokyo ?",a:["Japon","Coree du Sud","Chine","Taiwan"],c:0,t:"L'agglomeration de Tokyo compte environ 37 millions d'habitants, la plus grande du monde."},
+  {q:"Tokyo est-elle une ile ?",a:["Non, elle est sur Honshu","Oui, sa propre ile","Oui, sur Hokkaido","Non, c'est un archipel"],c:0,t:"Tokyo est situee sur Honshu, la plus grande ile du Japon, dans la region du Kanto."},
+  {q:"Comment s'appelait Tokyo avant 1868 ?",a:["Edo","Osaka","Kyushu","Nara"],c:0,t:"Edo signifie 'la porte de la baie'. Le nom a change quand l'empereur s'y est installe pendant la restauration Meiji."},
+  {q:"Quel celebre marche aux poissons de Tokyo a demenage en 2018 ?",a:["Tsukiji","Ameyoko","Nishiki","Kuromon"],c:0,t:"Le marche de Tsukiji a demenage a Toyosu, mais le marche exterieur existe toujours et reste populaire."},
+  {q:"Quel quartier de Tokyo est connu pour ses magasins d'electronique et la culture manga ?",a:["Akihabara","Shibuya","Shinjuku","Ginza"],c:0,t:"Akihabara, surnomme 'Electric Town', est le paradis des otaku avec ses centaines de boutiques de manga, anime et jeux."},
+  {q:"Combien de lignes de metro et trains urbains Tokyo compte-t-elle environ ?",a:["Plus de 50","Environ 15","Environ 30","Environ 80"],c:0,t:"Tokyo a 13 lignes de metro plus des dizaines de lignes privees. Plus de 8 millions de passagers par jour."},
+  {q:"Quel carrefour de Tokyo voit passer jusqu'a 3 000 personnes a chaque feu vert ?",a:["Shibuya Crossing","Shinjuku Station","Ginza Crossing","Ikebukuro Square"],c:0,t:"Le carrefour de Shibuya est le plus frequente au monde, avec environ 2,4 millions de pietons par jour."},
+  {q:"Quel jardin imperial est une oasis de calme au coeur de Tokyo ?",a:["Shinjuku Gyoen","Ueno Park","Meiji Jingu","Yoyogi Park"],c:0,t:"Shinjuku Gyoen combine trois styles de jardins : francais, anglais et japonais, sur 58 hectares en plein centre-ville."},
+  {q:"Combien d'etoiles Michelin Tokyo detient-elle, plus que toute autre ville au monde ?",a:["Plus de 200","Environ 50","Environ 100","Environ 150"],c:0,t:"Tokyo detient environ 200 etoiles Michelin, devancant Paris et Kyoto. Meme de petits comptoirs de ramen peuvent etre etoiles."},
+  {q:"Quel systeme d'alerte sismique precoce est unique au reseau ferroviaire japonais ?",a:["UrEDAS","ShakeAlert","QuakeWatch","SeismoNet"],c:0,t:"UrEDAS detecte les ondes P (rapides mais faibles) et freine les trains avant l'arrivee des ondes S destructrices, en quelques secondes."},
 ],
 "Cinque Terre": [
-  {d:1,q:"Dans quel pays se trouvent les Cinque Terre ?",a:["Italie","Espagne","Grece","Croatie"],c:0,t:"Les Cinque Terre sont un ensemble de cinq villages colores accroches aux falaises de la cote ligure."},
-  {d:2,q:"Combien de villages composent les Cinque Terre ?",a:["3","5","7","4"],c:1,t:"Les cinq villages sont : Monterosso, Vernazza, Corniglia, Manarola et Riomaggiore. 'Cinque' signifie 'cinq' en italien."},
-  {d:3,q:"Quel village des Cinque Terre est le seul sans acces direct a la mer ?",a:["Corniglia","Vernazza","Manarola","Riomaggiore"],c:0,t:"Corniglia est perche a 100m sur un promontoire rocheux. Il faut grimper 382 marches (la Lardarina) depuis la gare."},
-  {d:4,q:"Quel celebre sentier relie les cinq villages entre eux ?",a:["Sentiero Azzurro","Via Francigena","Alta Via","Sentiero Rosso"],c:0,t:"Le Sentiero Azzurro (sentier bleu) fait environ 12 km et offre des vues spectaculaires sur la Mediterranee."},
-  {d:5,q:"Quelle specialite viticole est produite aux Cinque Terre depuis le Moyen Age ?",a:["Sciacchetra","Prosecco","Limoncello","Chianti"],c:0,t:"Le Sciacchetra est un vin de dessert rare obtenu par sechage des raisins. Les vignes sont cultivees en terrasses depuis le XIIe siecle."},
+  {q:"Dans quel pays se trouvent les Cinque Terre ?",a:["Italie","Espagne","Grece","Croatie"],c:0,t:"Les Cinque Terre sont un ensemble de cinq villages colores accroches aux falaises de la cote ligure."},
+  {q:"Combien de villages composent les Cinque Terre ?",a:["5","3","7","4"],c:0,t:"Les cinq villages sont : Monterosso, Vernazza, Corniglia, Manarola et Riomaggiore."},
+  {q:"Sur quelle mer donnent les Cinque Terre ?",a:["Mer Mediterranee","Mer Adriatique","Mer Tyrrhenienne","Mer Ionienne"],c:0,t:"Plus precisement, les Cinque Terre donnent sur la mer Ligure, partie nord-ouest de la Mediterranee."},
+  {q:"Quel village des Cinque Terre est le seul sans acces direct a la mer ?",a:["Corniglia","Vernazza","Manarola","Riomaggiore"],c:0,t:"Corniglia est perche a 100m sur un promontoire rocheux. Il faut grimper 382 marches depuis la gare."},
+  {q:"Quel sentier relie les cinq villages entre eux ?",a:["Sentiero Azzurro","Via Francigena","Alta Via","Sentiero Rosso"],c:0,t:"Le Sentiero Azzurro (sentier bleu) fait environ 12 km et offre des vues spectaculaires."},
+  {q:"Quel village est le plus grand et le seul avec une vraie plage de sable ?",a:["Monterosso","Vernazza","Riomaggiore","Manarola"],c:0,t:"Monterosso al Mare a la seule plage de sable des Cinque Terre et le centre historique le plus etendu."},
+  {q:"Depuis quand les Cinque Terre sont-elles classees au patrimoine mondial UNESCO ?",a:["1997","2005","1989","2001"],c:0,t:"Le classement UNESCO en 1997 a lance le tourisme dans ces villages autrefois isoles et accessibles uniquement par train."},
+  {q:"Quel type de terrasses agricoles est caracteristique du paysage des Cinque Terre ?",a:["Terrasses de vigne en pierre seche","Rizieres en terrasses","Oliveraies en paliers","Jardins suspendus"],c:0,t:"Les murs en pierre seche des terrasses totaliseraient 6 700 km, soit plus que la Grande Muraille de Chine."},
+  {q:"Quelle sauce ligure originaire de la region est mondialement connue ?",a:["Le pesto","La bolognaise","L'arrabbiata","La carbonara"],c:0,t:"Le pesto alla genovese (basilic, pignons, parmesan, ail, huile) est ne en Ligurie. Aux Cinque Terre, on le sert avec les trofie."},
+  {q:"Quel vin de dessert rare est produit aux Cinque Terre depuis le Moyen Age ?",a:["Sciacchetra","Prosecco","Limoncello","Moscato"],c:0,t:"Le Sciacchetra est obtenu par sechage des raisins pendant des mois. Il faut 100 kg de raisins pour 20 litres de vin."},
 ],
 "Bali": [
-  {d:1,q:"Bali est une ile de quel pays ?",a:["Indonesie","Thailande","Philippines","Malaisie"],c:0,t:"Bali est surnommee 'l'ile des dieux' en raison de ses milliers de temples hindous."},
-  {d:2,q:"Quelle est la religion predominante a Bali ?",a:["Hindouisme","Islam","Bouddhisme","Christianisme"],c:0,t:"Bali est la seule ile a majorite hindoue en Indonesie, un pays a 87% musulman. L'hindouisme balinais est unique au monde."},
-  {d:3,q:"Comment s'appelle le volcan sacre de Bali ?",a:["Mont Agung","Mont Batur","Mont Rinjani","Mont Merapi"],c:0,t:"Le Mont Agung culmine a 3 142m. Les Balinais croient que c'est la demeure des dieux et orientent tout par rapport a lui."},
-  {d:4,q:"Quel est le nom de la fete balinaise du silence ou toute l'ile s'arrete ?",a:["Nyepi","Galungan","Kuningan","Odalan"],c:0,t:"Pendant Nyepi, l'aeroport ferme, personne ne sort, pas de lumiere ni bruit. Meme internet est coupe sur toute l'ile pendant 24h."},
-  {d:5,q:"Quel systeme d'irrigation balinais est inscrit au patrimoine mondial UNESCO ?",a:["Subak","Sawah","Terrazas","Paddy"],c:0,t:"Le Subak est un systeme cooperatif d'irrigation des rizieres vieux de 1 000 ans, base sur la philosophie Tri Hita Karana."},
+  {q:"Bali est une ile de quel pays ?",a:["Indonesie","Thailande","Philippines","Malaisie"],c:0,t:"Bali est surnommee 'l'ile des dieux' en raison de ses milliers de temples hindous."},
+  {q:"Quel ocean borde Bali ?",a:["Ocean Indien","Ocean Pacifique","Ocean Atlantique","Mer de Chine"],c:0,t:"Bali est bordee par l'ocean Indien au sud et la mer de Bali au nord."},
+  {q:"Quelle est la religion predominante a Bali ?",a:["Hindouisme","Islam","Bouddhisme","Christianisme"],c:0,t:"Bali est la seule ile a majorite hindoue en Indonesie, un pays a 87% musulman."},
+  {q:"Comment s'appelle le volcan sacre de Bali ?",a:["Mont Agung","Mont Batur","Mont Rinjani","Mont Merapi"],c:0,t:"Le Mont Agung culmine a 3 142m. Les Balinais orientent tout par rapport a lui."},
+  {q:"Quelles celebres rizieres en terrasses sont classees UNESCO a Bali ?",a:["Tegallalang","Ubud Palace","Tanah Lot","Uluwatu"],c:0,t:"Les rizieres de Tegallalang illustrent le systeme Subak d'irrigation cooperative vieux de 1 000 ans."},
+  {q:"Quel est le nom de la fete du silence ou toute l'ile s'arrete ?",a:["Nyepi","Galungan","Kuningan","Odalan"],c:0,t:"Pendant Nyepi, l'aeroport ferme, personne ne sort, pas de lumiere ni bruit. Internet est coupe pendant 24h."},
+  {q:"Quel temple est perche sur une falaise face a l'ocean a la pointe sud ?",a:["Uluwatu","Tanah Lot","Besakih","Tirta Empul"],c:0,t:"Le temple d'Uluwatu, a 70m au-dessus de l'ocean, est celebre pour ses spectacles de danse Kecak au coucher du soleil."},
+  {q:"Quel systeme d'irrigation balinais est inscrit au patrimoine mondial UNESCO ?",a:["Subak","Sawah","Paddy","Terrazas"],c:0,t:"Le Subak est un systeme cooperatif vieux de 1 000 ans, base sur la philosophie Tri Hita Karana."},
+  {q:"Quelle ceremonie balinaise consiste a limer les canines des adolescents ?",a:["Metatah","Ngaben","Melasti","Galungan"],c:0,t:"Le Metatah symbolise le passage a l'age adulte en limant les 'crocs', associes aux pulsions animales."},
+  {q:"Quel manuscrit sacre hindou-balinais est grave sur des feuilles de palmier lontar ?",a:["Les Lontar","Les Vedas","Les Sutras","Les Kakawin"],c:0,t:"Les Lontar sont graves manuellement avec un stylet sur des feuilles de palmier sechees. Certains datent du XIe siecle."},
 ],
 "Rotterdam": [
-  {d:1,q:"Dans quel pays se trouve Rotterdam ?",a:["Pays-Bas","Belgique","Allemagne","Luxembourg"],c:0,t:"Rotterdam possede le plus grand port d'Europe, s'etendant sur 40 km le long de la Meuse."},
-  {d:2,q:"Pourquoi Rotterdam a une architecture si moderne comparee a Amsterdam ?",a:["Bombardee en 1940","Construite recemment","Incendie au XIXe","Choix esthetique"],c:0,t:"Le bombardement du 14 mai 1940 a detruit la quasi-totalite du centre-ville, permettant une reconstruction radicalement moderne."},
-  {d:3,q:"Comment s'appellent les celebres maisons cubiques de Rotterdam ?",a:["Kubuswoningen","Blokhuizen","Vierkantwoningen","Dooshuizen"],c:0,t:"Conçues par Piet Blom en 1984, ces 38 maisons sont inclinees a 45 degres. Chaque cube represente un arbre, l'ensemble une foret."},
-  {d:4,q:"Quel celebre pont de Rotterdam est surnomme 'le cygne' ?",a:["Erasmusbrug","Willemsbrug","Van Brienenoordbrug","Koninginnebrug"],c:0,t:"L'Erasmusbrug, inaugure en 1996, mesure 802m. Son pylone asymetrique de 139m lui a valu le surnom de 'Le Cygne'."},
-  {d:5,q:"Quel marche couvert en forme de fer a cheval a ete inaugure en 2014 ?",a:["Markthal","Koopgoot","Blaak Markt","Fenix Food Factory"],c:0,t:"Le Markthal abrite 228 appartements dans son arche. Sa fresque interieure de 11 000m2 est la plus grande oeuvre d'art des Pays-Bas."},
+  {q:"Dans quel pays se trouve Rotterdam ?",a:["Pays-Bas","Belgique","Allemagne","Luxembourg"],c:0,t:"Rotterdam possede le plus grand port d'Europe, s'etendant sur 40 km."},
+  {q:"Quel fleuve traverse Rotterdam ?",a:["La Meuse","Le Rhin","L'Escaut","L'Elbe"],c:0,t:"La Meuse (Maas en neerlandais) divise Rotterdam en rive nord et rive sud."},
+  {q:"Pourquoi Rotterdam a une architecture si moderne ?",a:["Bombardee en 1940","Construite recemment","Choix esthetique","Incendie au XIXe"],c:0,t:"Le bombardement du 14 mai 1940 a detruit la quasi-totalite du centre-ville, permettant une reconstruction radicalement moderne."},
+  {q:"Comment s'appellent les celebres maisons cubiques de Rotterdam ?",a:["Kubuswoningen","Blokhuizen","Dooshuizen","Kantoorblokken"],c:0,t:"Concues par Piet Blom en 1984, ces 38 maisons sont inclinees a 45 degres. Chaque cube represente un arbre."},
+  {q:"Quel celebre pont est surnomme 'le cygne' ?",a:["Erasmusbrug","Willemsbrug","Van Brienenoordbrug","Koninginnebrug"],c:0,t:"L'Erasmusbrug, inaugure en 1996, mesure 802m. Son pylone asymetrique lui vaut ce surnom."},
+  {q:"Quel marche couvert spectaculaire a ete inaugure en 2014 ?",a:["Markthal","Koopgoot","Blaak Markt","Fenix Food Factory"],c:0,t:"Le Markthal abrite 228 appartements dans son arche. Sa fresque interieure de 11 000m2 est la plus grande des Pays-Bas."},
+  {q:"Quel celebre philosophe a donne son nom au pont et a l'universite de Rotterdam ?",a:["Erasme","Spinoza","Descartes","Grotius"],c:0,t:"Erasme de Rotterdam (1466-1536) etait un humaniste majeur de la Renaissance, celebre pour son Eloge de la Folie."},
+  {q:"Quel quartier portuaire reconverti abrite galeries et restaurants branchees ?",a:["Kop van Zuid","Delfshaven","Katendrecht","Kralingen"],c:0,t:"Kop van Zuid, ancien quartier portuaire, est devenu le cœur de la Rotterdam moderne avec l'Hotel New York, ancien siege de la Holland America Line."},
+  {q:"Quel musee de Rotterdam abrite une collection majeure d'art moderne et contemporain ?",a:["Museum Boijmans Van Beuningen","Rijksmuseum","Stedelijk Museum","Mauritshuis"],c:0,t:"Le Boijmans possede des oeuvres de Bosch, Bruegel, Dali et Magritte. Son depot ouvert (2021) est le premier au monde."},
+  {q:"Combien de metres sous le niveau de la mer se trouve une partie de Rotterdam ?",a:["Jusqu'a 6 metres","1 metre","3 metres","10 metres"],c:0,t:"Les Pays-Bas maitrisent l'eau depuis des siecles. Le barrage anti-tempete Maeslantkering protege Rotterdam avec deux bras de 210m chacun."},
 ],
 "Siem Reap": [
-  {d:1,q:"Siem Reap est la porte d'entree vers quel site celebre ?",a:["Angkor Wat","Borobudur","Bagan","Sukhothai"],c:0,t:"Angkor Wat est le plus grand monument religieux au monde, couvrant 162 hectares."},
-  {d:2,q:"Dans quel pays se trouve Siem Reap ?",a:["Cambodge","Vietnam","Laos","Thailande"],c:0,t:"'Siem Reap' signifie litteralement 'defaite des Siamois', en reference a une victoire historique contre la Thailande."},
-  {d:3,q:"Quelle civilisation a construit les temples d'Angkor ?",a:["L'empire khmer","L'empire mongol","Le royaume de Siam","L'empire Cham"],c:0,t:"L'empire khmer a domine l'Asie du Sud-Est du IXe au XVe siecle. A son apogee, Angkor comptait plus d'un million d'habitants."},
-  {d:4,q:"Quel temple d'Angkor est celebre pour ses visages de pierre geants ?",a:["Le Bayon","Ta Prohm","Banteay Srei","Preah Khan"],c:0,t:"Le Bayon compte 216 visages de pierre enigmatiques, probablement le roi Jayavarman VII avec un sourire bouddhique."},
-  {d:5,q:"Quel temple d'Angkor a ete laisse envahi par la vegetation et rendu celebre par un film ?",a:["Ta Prohm","Bayon","Angkor Thom","Beng Mealea"],c:0,t:"Ta Prohm est apparu dans Tomb Raider (2001). Les enormes fromagers qui englobent les ruines sont volontairement preserves."},
+  {q:"Siem Reap est la porte d'entree vers quel site celebre ?",a:["Angkor Wat","Borobudur","Bagan","Sukhothai"],c:0,t:"Angkor Wat est le plus grand monument religieux au monde, couvrant 162 hectares."},
+  {q:"Dans quel pays se trouve Siem Reap ?",a:["Cambodge","Vietnam","Laos","Thailande"],c:0,t:"'Siem Reap' signifie litteralement 'defaite des Siamois'."},
+  {q:"Quelle civilisation a construit les temples d'Angkor ?",a:["L'empire khmer","L'empire mongol","Le royaume de Siam","L'empire Cham"],c:0,t:"L'empire khmer a domine l'Asie du Sud-Est du IXe au XVe siecle. Angkor comptait plus d'un million d'habitants."},
+  {q:"Angkor Wat etait d'abord dedie a quel dieu hindou ?",a:["Vishnou","Shiva","Brahma","Ganesh"],c:0,t:"Construit au XIIe siecle par Suryavarman II, Angkor Wat a ensuite ete converti au bouddhisme."},
+  {q:"Quel temple est celebre pour ses 216 visages de pierre geants ?",a:["Le Bayon","Ta Prohm","Banteay Srei","Preah Khan"],c:0,t:"Les visages enigmatiques du Bayon representent probablement le roi Jayavarman VII avec un sourire bouddhique."},
+  {q:"Quel temple envahi par la vegetation est apparu dans Tomb Raider ?",a:["Ta Prohm","Bayon","Beng Mealea","Angkor Thom"],c:0,t:"Les enormes fromagers qui englobent les ruines de Ta Prohm sont volontairement preserves."},
+  {q:"Quel lac immense pres de Siem Reap change de taille selon la saison ?",a:["Le Tonle Sap","Le Mekong","Le Lac Inle","Le Lac Toba"],c:0,t:"Le Tonle Sap passe de 2 500 km2 en saison seche a 16 000 km2 pendant la mousson. Des villages entiers flottent dessus."},
+  {q:"Quel petit temple d'Angkor est surnomme 'la citadelle des femmes' ?",a:["Banteay Srei","Banteay Kdei","Banteay Samre","Banteay Thom"],c:0,t:"Banteay Srei, a 25 km d'Angkor, est celebre pour la finesse extreme de ses sculptures en gres rose."},
+  {q:"Quel systeme hydraulique sophistique alimentait la cite d'Angkor ?",a:["Les barays (reservoirs)","Les aqueducs romains","Les canaux chinois","Les puits artesiens"],c:0,t:"Le Baray occidental fait 8 km x 2,3 km. Ce systeme de reservoirs et canaux nourrissait plus d'un million de personnes."},
+  {q:"Quel explorateur francais a 'redecouvert' Angkor en 1860 ?",a:["Henri Mouhot","Auguste Pavie","Francis Garnier","Louis Delaporte"],c:0,t:"Mouhot n'a pas vraiment 'decouvert' Angkor (les locaux connaissaient le site), mais ses ecrits l'ont revele a l'Occident."},
 ],
 "Santorin": [
-  {d:1,q:"Santorin est une ile de quel pays ?",a:["Grece","Turquie","Italie","Croatie"],c:0,t:"Santorin accueille pres de 2 millions de touristes par an pour seulement 15 000 habitants permanents."},
-  {d:2,q:"Quelle catastrophe naturelle a forme la caldeira de Santorin ?",a:["Une eruption volcanique","Un tremblement de terre","Un tsunami","Un glissement de terrain"],c:0,t:"L'eruption minoenne vers 1600 av. J.-C. fut l'une des plus puissantes de l'histoire. Certains y voient l'origine du mythe de l'Atlantide."},
-  {d:3,q:"Quel village de Santorin est le plus celebre pour ses couchers de soleil ?",a:["Oia","Fira","Imerovigli","Kamari"],c:0,t:"Chaque soir, des centaines de personnes se rassemblent aux ruines du chateau d'Oia pour applaudir le coucher de soleil."},
-  {d:4,q:"De quelle couleur sont les plages volcaniques de Santorin ?",a:["Noires et rouges","Blanches","Dorees","Vertes"],c:0,t:"Santorin a des plages noires (Kamari, Perissa), une plage rouge (Red Beach) et meme une plage blanche, toutes d'origine volcanique."},
-  {d:5,q:"Quel site archeologique de Santorin est surnomme 'la Pompei grecque' ?",a:["Akrotiri","Thera","Pyrgos","Emporio"],c:0,t:"Akrotiri, ensevelie sous les cendres vers 1600 av. J.-C., a preserve des fresques minoennes exceptionnelles et un urbanisme avance."},
-],
-"La Rochelle": [
-  {d:1,q:"La Rochelle est une ville du littoral de quel ocean ?",a:["Atlantique","Mediterranee","Manche","Mer du Nord"],c:0,t:"La Rochelle est l'un des plus anciens ports de la facade atlantique francaise, actif depuis le XIIe siecle."},
-  {d:2,q:"Quel celebre siege de La Rochelle a ete ordonne par le Cardinal de Richelieu ?",a:["Le siege de 1627-1628","Le siege de 1573","Le siege de 1372","Le siege de 1224"],c:0,t:"Le siege de 14 mois par Richelieu visait a briser le dernier bastion protestant. La population passa de 28 000 a 5 000 habitants."},
-  {d:3,q:"Quel aquarium de La Rochelle est l'un des plus grands d'Europe ?",a:["L'Aquarium de La Rochelle","Oceanopolis","Nausicaa","Sea Life"],c:0,t:"L'Aquarium de La Rochelle abrite plus de 12 000 animaux marins de 600 especes differentes sur 8 000m2."},
-  {d:4,q:"Quelles tours medievales gardent l'entree du Vieux-Port ?",a:["Tour Saint-Nicolas et Tour de la Chaine","Tour de la Lanterne et Tour Blanche","Tour Richelieu et Tour Colbert","Tour du Port et Tour de Garde"],c:0,t:"Ces tours du XIVe siecle formaient un systeme de defense unique : une chaine pouvait etre tendue entre elles pour bloquer le port."},
-  {d:5,q:"Quel festival de cinema se tient chaque ete a La Rochelle ?",a:["Festival International du Film","Festival de Cannes","Festival Premiers Plans","Festival Cine Mer"],c:0,t:"Le Festival International du Film de La Rochelle, cree en 1973, est un evenement non competitif dedie au cinema d'auteur."},
-],
-"Phuket": [
-  {d:1,q:"Phuket est une ile de quel pays ?",a:["Thailande","Vietnam","Indonesie","Philippines"],c:0,t:"Phuket est la plus grande ile de Thailande, avec une superficie de 576 km2."},
-  {d:2,q:"Quelle mer borde Phuket ?",a:["Mer d'Andaman","Mer de Chine","Golfe de Thailande","Ocean Indien"],c:0,t:"La mer d'Andaman offre a Phuket une eau turquoise et une visibilite sous-marine pouvant atteindre 30 metres."},
-  {d:3,q:"Quel type de roche forme les celebres ilots de la baie de Phang Nga pres de Phuket ?",a:["Calcaire karstique","Granit","Basalte","Gres"],c:0,t:"Ces pitons karstiques emergent verticalement de l'eau. L'un d'eux, James Bond Island, est devenu celebre avec le film L'Homme au pistolet d'or."},
-  {d:4,q:"Quel festival vegetarien spectaculaire a lieu chaque annee a Phuket ?",a:["Le festival des Neuf Dieux","Songkran","Loy Krathong","Phi Ta Khon"],c:0,t:"Pendant 9 jours, des participants en transe marchent sur le feu et se percent les joues. C'est l'un des festivals les plus extremes au monde."},
-  {d:5,q:"Quelle industrie a fait la richesse de Phuket avant le tourisme ?",a:["L'extraction d'etain","La peche","Le caoutchouc","La soie"],c:0,t:"Les mines d'etain ont attire des travailleurs chinois au XIXe siecle, ce qui explique l'architecture sino-portugaise du vieux Phuket Town."},
-],
-"Sydney": [
-  {d:1,q:"Dans quel pays se trouve Sydney ?",a:["Australie","Nouvelle-Zelande","Afrique du Sud","Canada"],c:0,t:"Sydney est la plus grande ville d'Australie avec plus de 5 millions d'habitants, mais ce n'est pas la capitale."},
-  {d:2,q:"Quel celebre batiment en forme de voiles se trouve dans le port de Sydney ?",a:["L'Opera de Sydney","Le Harbour Bridge","Le Museum of Contemporary Art","Le Royal Botanic Garden"],c:0,t:"L'Opera de Sydney, concu par Jorn Utzon, a mis 16 ans a etre construit (1957-1973) au lieu des 4 ans prevus."},
-  {d:3,q:"Comment s'appelle le celebre pont en arc du port de Sydney ?",a:["Harbour Bridge","Sydney Bridge","Anzac Bridge","Victoria Bridge"],c:0,t:"Le Harbour Bridge est surnomme 'le cintre' (the Coathanger). On peut grimper jusqu'a son sommet a 134 metres de hauteur."},
-  {d:4,q:"Quelle plage iconique est situee dans la banlieue est de Sydney ?",a:["Bondi Beach","Manly Beach","Coogee Beach","Bronte Beach"],c:0,t:"La promenade cotiere de Bondi a Coogee fait 6 km le long des falaises. Bondi accueille plus de 2,7 millions de visiteurs par an."},
-  {d:5,q:"Quel peuple autochtone vivait dans la region de Sydney avant la colonisation ?",a:["Les Gadigal","Les Wiradjuri","Les Noongar","Les Yorta Yorta"],c:0,t:"Les Gadigal, du peuple Eora, vivent dans la region de Sydney depuis plus de 60 000 ans. Sydney Cove etait un lieu de peche sacre."},
-],
-"Stockholm": [
-  {d:1,q:"Stockholm est la capitale de quel pays ?",a:["Suede","Norvege","Finlande","Danemark"],c:0,t:"Stockholm est construite sur 14 iles reliees par 57 ponts, ce qui lui vaut le surnom de 'Venise du Nord'."},
-  {d:2,q:"Quel celebre musee de Stockholm abrite un navire du XVIIe siecle ?",a:["Musee Vasa","Musee Nobel","Moderna Museet","Skansen"],c:0,t:"Le Vasa a coule a 1 300 metres de son point de depart en 1628. Repche en 1961, il est conserve a 95% dans son etat d'origine."},
-  {d:3,q:"Comment s'appelle la vieille ville de Stockholm ?",a:["Gamla Stan","Sodermalm","Ostermalm","Norrmalm"],c:0,t:"Gamla Stan date du XIIIe siecle. Ses ruelles medievales abritent la plus petite rue de Stockholm : Marten Trotzigs Grand (90 cm de large)."},
-  {d:4,q:"Quel prix international est remis chaque annee a Stockholm ?",a:["Le Prix Nobel","Le Prix Pulitzer","La Medaille Fields","Le Prix Pritzker"],c:0,t:"Les Prix Nobel sont remis le 10 decembre, anniversaire de la mort d'Alfred Nobel. Le banquet au City Hall accueille 1 300 invites."},
-  {d:5,q:"Quel concept suedois designe la pause cafe rituelle pratiquee a Stockholm ?",a:["Fika","Hygge","Lagom","Smorgasbord"],c:0,t:"Le fika est bien plus qu'un cafe : c'est un rituel social sacre. Les Suedois en font en moyenne 2 par jour, souvent avec un kanelbulle."},
-],
-"Le Cap": [
-  {d:1,q:"Le Cap est une ville de quel pays ?",a:["Afrique du Sud","Kenya","Maroc","Egypte"],c:0,t:"Le Cap est consideree comme la 'ville mere' de l'Afrique du Sud, fondee en 1652 comme escale sur la route des epices."},
-  {d:2,q:"Quelle montagne emblematique surplombe Le Cap ?",a:["Table Mountain","Signal Hill","Lion's Head","Devil's Peak"],c:0,t:"Table Mountain a environ 600 millions d'annees, ce qui en fait l'une des plus anciennes montagnes du monde. Plus vieille que l'Himalaya."},
-  {d:3,q:"Quelle ile au large du Cap a servi de prison a Nelson Mandela ?",a:["Robben Island","Seal Island","Dassen Island","Bird Island"],c:0,t:"Mandela a passe 18 de ses 27 annees de detention sur Robben Island. Sa cellule de 4,5m2 est aujourd'hui un lieu de memoire."},
-  {d:4,q:"Quel quartier colore du Cap est symbole de resistance contre l'apartheid ?",a:["Bo-Kaap","Woodstock","Observatory","Langa"],c:0,t:"Bo-Kaap, avec ses maisons aux couleurs vives, est le quartier historique de la communaute malaise du Cap, installe depuis le XVIIe siecle."},
-  {d:5,q:"Quel courant oceanique froid longe la cote atlantique du Cap ?",a:["Le courant de Benguela","Le Gulf Stream","Le Kuroshio","Le courant des Aiguilles"],c:0,t:"Le courant de Benguela rend l'eau atlantique du Cap glaciale (12-14 C) meme en ete, tandis que la cote est (False Bay) est bien plus chaude."},
+  {q:"Santorin est une ile de quel pays ?",a:["Grece","Turquie","Italie","Croatie"],c:0,t:"Santorin accueille pres de 2 millions de touristes par an pour 15 000 habitants."},
+  {q:"De quelle couleur sont les toits iconiques de Santorin ?",a:["Bleu","Rouge","Vert","Jaune"],c:0,t:"Les coupoles bleues et murs blancs sont devenus le symbole de toute la Grece."},
+  {q:"Quelle catastrophe naturelle a forme la caldeira de Santorin ?",a:["Une eruption volcanique","Un tremblement de terre","Un tsunami","Un glissement"],c:0,t:"L'eruption minoenne vers 1600 av. J.-C. est peut-etre a l'origine du mythe de l'Atlantide."},
+  {q:"Quel village de Santorin est le plus celebre pour ses couchers de soleil ?",a:["Oia","Fira","Imerovigli","Kamari"],c:0,t:"Chaque soir, des centaines de personnes se rassemblent a Oia pour applaudir le coucher de soleil."},
+  {q:"De quelle couleur sont les plages volcaniques de Santorin ?",a:["Noires et rouges","Blanches","Dorees","Vertes"],c:0,t:"Santorin a des plages noires (Kamari), une plage rouge (Red Beach) et meme une plage blanche."},
+  {q:"Quel vin blanc sec est produit a Santorin avec le cepage Assyrtiko ?",a:["Assyrtiko de Santorin","Retsina","Ouzo","Moscato"],c:0,t:"Les vignes de Santorin poussent en forme de panier (kouloura) pour se proteger du vent, sans treillis."},
+  {q:"Quel site archeologique est surnomme 'la Pompei grecque' ?",a:["Akrotiri","Thera","Pyrgos","Emporio"],c:0,t:"Akrotiri, ensevelie sous les cendres vers 1600 av. J.-C., a preserve des fresques minoennes exceptionnelles."},
+  {q:"Comment s'appelle le petit ilot volcanique encore actif au centre de la caldeira ?",a:["Nea Kameni","Palea Kameni","Thirasia","Aspronisi"],c:0,t:"Nea Kameni est apparu lors d'eruptions entre 1570 et 1950. On peut encore sentir la chaleur du sol en marchant dessus."},
+  {q:"Quel systeme de transport relie le port de Fira au village en haut de la falaise ?",a:["Teleferique et anes","Bus et taxi","Funiculaire et bateau","Escalator"],c:0,t:"On peut monter les 588 marches a pied, a dos d'ane, ou en teleferique. Les anes font ce trajet depuis des siecles."},
+  {q:"Quelle civilisation avancee vivait a Santorin avant l'eruption de 1600 av. J.-C. ?",a:["Les Minoens","Les Myceniens","Les Doriens","Les Pheniciens"],c:0,t:"La civilisation minoenne, basee en Crete et a Santorin, avait l'eau courante et des fresques sophistiquees 1 500 ans avant les Romains."},
 ],
 "La Havane": [
-  {d:1,q:"La Havane est la capitale de quel pays ?",a:["Cuba","Porto Rico","Republique dominicaine","Jamaique"],c:0,t:"La Havane a ete fondee en 1519 et son centre historique est classe au patrimoine mondial de l'UNESCO."},
-  {d:2,q:"Quelle boisson celebre est originaire de La Havane ?",a:["Le mojito","La pina colada","La margarita","Le daiquiri"],c:0,t:"Ernest Hemingway avait ses bars fetiches a La Havane : La Bodeguita del Medio pour le mojito et El Floridita pour le daiquiri."},
-  {d:3,q:"Quel boulevard borde de batiments coloniaux longe le front de mer ?",a:["Le Malecon","La Rambla","Le Paseo del Prado","La Avenida de los Presidentes"],c:0,t:"Le Malecon fait 8 km de long. C'est le salon de La Havane : les habitants s'y retrouvent le soir pour jouer de la musique et discuter."},
-  {d:4,q:"Pourquoi voit-on autant de vieilles voitures americaines a La Havane ?",a:["Embargo americain depuis 1962","Passion des Cubains","Musee a ciel ouvert","Loi interdisant les voitures neuves"],c:0,t:"L'embargo a fige le parc automobile. Les Cubains entretiennent ces 'almendrones' avec ingeniosite, souvent avec des moteurs diesel adaptes."},
-  {d:5,q:"Quel systeme de monnaie double existait a Cuba jusqu'en 2021 ?",a:["CUP et CUC","Peso et Dollar","Real et Euro","Bolivar et Peso"],c:0,t:"Le CUC (peso convertible) valait 24 fois le CUP. Cette dualite creait une economie parallele complexe, abolie en janvier 2021."},
-],
-"Malaga": [
-  {d:1,q:"Malaga est une ville de quel pays ?",a:["Espagne","Portugal","Italie","Maroc"],c:0,t:"Malaga est la 2e plus grande ville d'Andalousie et beneficie de plus de 300 jours de soleil par an."},
-  {d:2,q:"Quel artiste celebre est ne a Malaga en 1881 ?",a:["Pablo Picasso","Salvador Dali","Joan Miro","Francisco Goya"],c:0,t:"La maison natale de Picasso, sur la Plaza de la Merced, est aujourd'hui un musee. Malaga abrite aussi un grand Musee Picasso."},
-  {d:3,q:"Quelle forteresse maure domine Malaga depuis une colline ?",a:["L'Alcazaba","L'Alhambra","L'Alcazar","Le Castillo"],c:0,t:"L'Alcazaba du XIe siecle est reliee au chateau de Gibralfaro par un chemin fortifie. C'est l'un des plus beaux palais-forteresses arabes d'Espagne."},
-  {d:4,q:"Quel vin doux est la specialite de Malaga ?",a:["Malaga Virgen","Manzanilla","Rioja","Cava"],c:0,t:"Le vin de Malaga, produit depuis l'epoque phenicienne, etait si repute qu'au XVIIIe siecle, la Russie des tsars en importait massivement."},
-  {d:5,q:"Quel peuple antique a fonde Malaga sous le nom de Malaka ?",a:["Les Pheniciens","Les Romains","Les Grecs","Les Carthaginois"],c:0,t:"Malaka a ete fondee vers 770 av. J.-C. par les Pheniciens. Le nom viendrait de 'malac' (sel), lie au sechage du poisson."},
-],
-"Dubrovnik": [
-  {d:1,q:"Dubrovnik est une ville de quel pays ?",a:["Croatie","Montenegro","Grece","Italie"],c:0,t:"Dubrovnik est surnommee 'la perle de l'Adriatique', un surnom attribue a Lord Byron au XIXe siecle."},
-  {d:2,q:"Quelle serie TV a utilise Dubrovnik comme decor principal ?",a:["Game of Thrones","The Witcher","Vikings","Rome"],c:0,t:"Dubrovnik represente Port-Real (King's Landing). La frequentation touristique a augmente de 53% apres le debut de la serie."},
-  {d:3,q:"Quelle est la longueur approximative des remparts de Dubrovnik ?",a:["2 km","500 m","5 km","800 m"],c:0,t:"Les remparts font 1 940 metres de long, jusqu'a 25 metres de haut et 6 metres d'epaisseur. Ils n'ont jamais ete perces par un envahisseur."},
-  {d:4,q:"Sous quel nom Dubrovnik etait-elle une republique maritime rivale de Venise ?",a:["Raguse","Ragusa","Epidaurum","Cavtat"],c:0,t:"La Republique de Raguse (1358-1808) a ete l'une des premieres a abolir l'esclavage en 1416, bien avant le reste de l'Europe."},
-  {d:5,q:"Quelle pharmacie de Dubrovnik, toujours en activite, est la 3e plus ancienne d'Europe ?",a:["Pharmacie des Franciscains","Pharmacie de Raguse","Pharmacie Sponza","Pharmacie du Rectorat"],c:0,t:"La pharmacie du monastere franciscain fonctionne sans interruption depuis 1317. On peut encore y voir des pots et instruments originaux."},
+  {q:"La Havane est la capitale de quel pays ?",a:["Cuba","Porto Rico","Republique dominicaine","Jamaique"],c:0,t:"La Havane a ete fondee en 1519 et son centre historique est classe UNESCO."},
+  {q:"Quel ocean borde La Havane ?",a:["Atlantique","Pacifique","Indien","Arctique"],c:0,t:"La Havane donne sur le detroit de Floride. Miami n'est qu'a 170 km."},
+  {q:"Quelle boisson celebre est associee aux bars de La Havane ?",a:["Le mojito","La pina colada","La margarita","Le daiquiri"],c:0,t:"Hemingway avait ses bars fetiches : La Bodeguita del Medio pour le mojito et El Floridita pour le daiquiri."},
+  {q:"Quel boulevard longe le front de mer de La Havane ?",a:["Le Malecon","La Rambla","Le Paseo","L'Avenida"],c:0,t:"Le Malecon fait 8 km. Les habitants s'y retrouvent le soir pour jouer de la musique."},
+  {q:"Pourquoi voit-on tant de vieilles voitures americaines a La Havane ?",a:["Embargo americain depuis 1962","Passion des Cubains","Loi locale","Musee a ciel ouvert"],c:0,t:"L'embargo a fige le parc automobile. Les Cubains entretiennent ces 'almendrones' avec ingeniosite."},
+  {q:"Quel celebre ecrivain americain a vecu a La Havane pendant 20 ans ?",a:["Ernest Hemingway","F. Scott Fitzgerald","Mark Twain","John Steinbeck"],c:0,t:"Hemingway a ecrit 'Le Vieil Homme et la Mer' dans sa propriete Finca Vigia pres de La Havane."},
+  {q:"Quel quartier historique de La Havane est classe au patrimoine mondial ?",a:["La Habana Vieja","Vedado","Miramar","Centro Habana"],c:0,t:"La Habana Vieja concentre des palais baroques, des places coloniales et des forteresses espagnoles du XVIe siecle."},
+  {q:"Quel style musical est ne a Cuba et a conquis le monde ?",a:["La salsa","Le reggae","Le merengue","La bachata"],c:0,t:"La salsa cubaine melange le son montuno, le mambo et le jazz. La Havane vibre de musique live dans chaque quartier."},
+  {q:"Quelle forteresse du XVIe siecle garde l'entree du port de La Havane ?",a:["El Morro","La Cabana","La Real Fuerza","San Salvador"],c:0,t:"Le Castillo de los Tres Reyes del Morro, construit en 1589, offre une vue panoramique sur la ville et le detroit de Floride."},
+  {q:"Quel systeme de monnaie double a existe a Cuba jusqu'en 2021 ?",a:["CUP et CUC","Peso et Dollar","Real et Euro","Bolivar et Peso"],c:0,t:"Le CUC valait 24 fois le CUP. Cette dualite creait une economie parallele complexe, abolie en janvier 2021."},
 ],
 "Ho Chi Minh": [
-  {d:1,q:"Comment s'appelait Ho Chi Minh-Ville avant 1975 ?",a:["Saigon","Hanoi","Da Nang","Hue"],c:0,t:"Beaucoup de locaux utilisent encore le nom 'Saigon' au quotidien, surtout pour le centre-ville (District 1)."},
-  {d:2,q:"Quel plat emblematique est la specialite du sud du Vietnam ?",a:["Pho","Bun cha","Banh mi","Com tam"],c:0,t:"Le pho du Sud est servi avec des herbes fraiches, des germes de soja et de la sauce hoisin — plus sucre que la version du Nord."},
-  {d:3,q:"Quel reseau de tunnels pres de Ho Chi Minh est devenu un site historique ?",a:["Tunnels de Cu Chi","Tunnels de Vinh Moc","Tunnels de Dong Hoi","Tunnels de Khe Sanh"],c:0,t:"Le reseau de Cu Chi fait 250 km. Il abritait des hopitaux, cuisines et salles de classe souterraines pendant la guerre."},
-  {d:4,q:"Quel batiment colonial est surnomme 'la cathedrale Notre-Dame de Saigon' ?",a:["Basilique Notre-Dame","Cathedrale Saint-Joseph","Eglise Tan Dinh","Pagode de l'Empereur de Jade"],c:0,t:"Construite en 1880 avec des briques importees de Marseille, la basilique ne montre aucun signe de mousse malgre le climat tropical."},
-  {d:5,q:"Quel marche couvert historique est le plus grand de Ho Chi Minh-Ville ?",a:["Ben Thanh","Binh Tay","An Dong","Tan Dinh"],c:0,t:"Ben Thanh existe depuis 1870. Son horloge frontale est devenue l'un des symboles de la ville. Plus de 3 000 stands y coexistent."},
+  {q:"Comment s'appelait Ho Chi Minh-Ville avant 1975 ?",a:["Saigon","Hanoi","Da Nang","Hue"],c:0,t:"Beaucoup de locaux utilisent encore 'Saigon' au quotidien."},
+  {q:"Dans quel pays se trouve Ho Chi Minh-Ville ?",a:["Vietnam","Thailande","Cambodge","Laos"],c:0,t:"Ho Chi Minh-Ville est la plus grande ville du Vietnam avec 9 millions d'habitants."},
+  {q:"Quel moyen de transport domine les rues de Ho Chi Minh-Ville ?",a:["Les scooters","Les tuk-tuks","Les velos","Les taxis"],c:0,t:"On compte environ 7,5 millions de motos pour 9 millions d'habitants. Traverser la rue est un art !"},
+  {q:"Quel plat emblematique vietnamien est une soupe de nouilles au boeuf ?",a:["Le pho","Le bun cha","Le banh mi","Le com tam"],c:0,t:"Le pho du Sud est servi avec herbes fraiches, germes de soja et sauce hoisin — plus sucre que celui du Nord."},
+  {q:"Quel reseau de tunnels pres de la ville est devenu un site historique ?",a:["Cu Chi","Vinh Moc","Dong Hoi","Khe Sanh"],c:0,t:"Le reseau de Cu Chi fait 250 km. Il abritait hopitaux, cuisines et salles de classe souterraines."},
+  {q:"Quel batiment colonial est la poste centrale concue par Gustave Eiffel ?",a:["La Poste Centrale","La Gare de Saigon","L'Opera","Le Palais du Peuple"],c:0,t:"La Poste Centrale de Saigon (1891) est un chef-d'oeuvre d'architecture coloniale avec sa charpente metallique interieure."},
+  {q:"Quel marche couvert historique est le plus grand de Ho Chi Minh-Ville ?",a:["Ben Thanh","Binh Tay","An Dong","Tan Dinh"],c:0,t:"Ben Thanh existe depuis 1870. Son horloge frontale est un symbole de la ville."},
+  {q:"Quel ancien palais presidentiel de Saigon est devenu un musee ?",a:["Le Palais de la Reunification","Le Palais Gia Long","Le Palais de l'Independance","Le Palais du Peuple"],c:0,t:"Le 30 avril 1975, un tank nord-vietnamien a defonce les grilles de ce palais, marquant la fin de la guerre."},
+  {q:"Quel cafe typiquement vietnamien est prepare avec du lait concentre sucre ?",a:["Ca phe sua da","Espresso","Americano","Latte"],c:0,t:"Le ca phe sua da (cafe glace au lait concentre) est un rituel quotidien. Le Vietnam est le 2e producteur mondial de cafe."},
+  {q:"Quelle eglise rose de Ho Chi Minh-Ville est devenue un spot Instagram celebre ?",a:["L'eglise Tan Dinh","La cathedrale Notre-Dame","L'eglise Cha Tam","La pagode Vinh Nghiem"],c:0,t:"L'eglise Tan Dinh, construite en 1876 et repeinte en rose en 1957, est l'une des plus photographiees d'Asie du Sud-Est."},
 ],
-"Madrid": [
-  {d:1,q:"Madrid est la capitale de quel pays ?",a:["Espagne","Portugal","Italie","Argentine"],c:0,t:"Madrid est la ville la plus haute parmi les capitales de l'UE, perchee a 667 metres d'altitude sur le plateau castillan."},
-  {d:2,q:"Quel celebre musee de Madrid abrite des oeuvres de Velazquez et Goya ?",a:["Le Prado","Le Reina Sofia","Le Thyssen","Le Sorolla"],c:0,t:"Le Musee du Prado possede plus de 8 000 peintures. Les Menines de Velazquez en est l'oeuvre la plus celebre."},
-  {d:3,q:"A quelle heure les Madrilenes dinent-ils typiquement ?",a:["22h","20h","19h","21h"],c:0,t:"Madrid vit decalee : dejeuner a 14h-15h, diner a 22h. Les bars a tapas restent ouverts bien apres minuit meme en semaine."},
-  {d:4,q:"Quel parc royal de 125 hectares est le poumon vert de Madrid ?",a:["Le Retiro","Casa de Campo","Madrid Rio","Parque del Oeste"],c:0,t:"Le Retiro etait reserve a la famille royale jusqu'en 1868. Son Palais de Cristal accueille des expos d'art contemporain gratuites."},
-  {d:5,q:"Quel plat traditionnel madrilene est un ragout a base de pois chiches ?",a:["Cocido madrileno","Paella","Gazpacho","Fabada"],c:0,t:"Le cocido se sert en 3 services (vuelcos) : d'abord le bouillon, puis les legumes, enfin les viandes. Un rituel d'hiver incontournable."},
+"Bangkok": [
+  {q:"Bangkok est la capitale de quel pays ?",a:["Thailande","Vietnam","Malaisie","Cambodge"],c:0,t:"Le nom officiel de Bangkok en thai est le plus long nom de ville au monde : 168 lettres."},
+  {q:"Quel fleuve traverse Bangkok ?",a:["Le Chao Phraya","Le Mekong","L'Irrawaddy","Le Tonle Sap"],c:0,t:"Le Chao Phraya est surnomme 'le fleuve des rois'. Des bateaux-bus le parcourent quotidiennement."},
+  {q:"Quel celebre temple abrite un Bouddha couche de 46 metres ?",a:["Wat Pho","Wat Arun","Wat Phra Kaew","Wat Saket"],c:0,t:"Le Wat Pho est aussi le berceau du massage thai traditionnel, pratique ici depuis le XVIIIe siecle."},
+  {q:"Quel temple est orne de porcelaine et surnomme 'le temple de l'aube' ?",a:["Wat Arun","Wat Pho","Wat Saket","Wat Benchamabophit"],c:0,t:"Le Wat Arun est decore de morceaux de porcelaine chinoise collee a la main sur toute sa surface."},
+  {q:"Quel quartier chinois de Bangkok est l'un des plus grands au monde ?",a:["Yaowarat","Chinatown Road","Sampeng","Pahurat"],c:0,t:"Yaowarat, le Chinatown de Bangkok, est un paradis du street food nocturne avec ses centaines de stands."},
+  {q:"Quel type de transport flottant est emblematique de Bangkok ?",a:["Les marches flottants","Les gondoles","Les water-taxis","Les ferries"],c:0,t:"Le marche flottant de Damnoen Saduak date de 1868. Les vendeurs proposent fruits et plats depuis leurs barques."},
+  {q:"Quel palais royal est le monument le plus sacre de Thailande ?",a:["Le Grand Palais","Le Palais Dusit","Le Palais Bang Pa-In","Le Palais Chitralada"],c:0,t:"Le Grand Palais, construit en 1782, abrite le Wat Phra Kaew et le Bouddha d'Emeraude, l'objet le plus sacre du pays."},
+  {q:"Combien de canaux (khlongs) parcourent encore Bangkok ?",a:["Plus de 1 000","Environ 100","Environ 50","Plus de 500"],c:0,t:"Bangkok etait surnommee 'la Venise de l'Est'. Beaucoup de khlongs ont ete combles, mais plus de 1 000 subsistent."},
+  {q:"Quel marche nocturne de Bangkok est le plus grand d'Asie du Sud-Est ?",a:["Chatuchak","Khao San","Pratunam","Silom"],c:0,t:"Chatuchak (le marche du week-end) couvre 14 hectares avec plus de 15 000 stands et 200 000 visiteurs chaque week-end."},
+  {q:"Quel roi thailandais, Rama IX, etait le monarque au plus long regne au monde a sa mort ?",a:["Bhumibol Adulyadej","Vajiralongkorn","Chulalongkorn","Mongkut"],c:0,t:"Bhumibol Adulyadej a regne 70 ans (1946-2016). Il est profondement venere et toute insulte a la monarchie est un crime en Thailande."},
 ],
-"Buenos Aires": [
-  {d:1,q:"Buenos Aires est la capitale de quel pays ?",a:["Argentine","Bresil","Uruguay","Chili"],c:0,t:"Buenos Aires est surnommee 'le Paris de l'Amerique du Sud' pour son architecture europeenne et sa vie culturelle intense."},
-  {d:2,q:"Quelle danse est nee dans les quartiers populaires de Buenos Aires ?",a:["Le tango","La salsa","Le flamenco","La samba"],c:0,t:"Le tango est ne dans les conventillos (immeubles pauvres) de La Boca et San Telmo vers 1880, melange d'influences africaines et europeennes."},
-  {d:3,q:"Quel quartier colore de Buenos Aires est associe au football et a l'art de rue ?",a:["La Boca","San Telmo","Palermo","Recoleta"],c:0,t:"Le Caminito de La Boca, avec ses maisons en tole peinte, doit ses couleurs aux restes de peinture des chantiers navals voisins."},
-  {d:4,q:"Quelle boisson chaude est un rituel social en Argentine ?",a:["Le mate","Le cafe","Le chocolat chaud","Le te"],c:0,t:"Le mate se partage : un seul recipient tourne dans le groupe. Refuser un mate offert est considere comme impoli en Argentine."},
-  {d:5,q:"Quelle avenue de Buenos Aires detient le record de la plus large au monde ?",a:["Avenida 9 de Julio","Avenida de Mayo","Avenida Corrientes","Avenida Santa Fe"],c:0,t:"L'Avenida 9 de Julio fait 140 metres de large (16 voies). En son centre se dresse l'Obelisco de 67 metres, symbole de la ville."},
+"Hong Kong": [
+  {q:"Hong Kong se trouve sur la cote de quel pays ?",a:["Chine","Japon","Vietnam","Taiwan"],c:0,t:"Hong Kong est une Region administrative speciale de Chine depuis la retrocession britannique en 1997."},
+  {q:"Quelle mer borde Hong Kong ?",a:["Mer de Chine meridionale","Mer du Japon","Mer Jaune","Mer de Chine orientale"],c:0,t:"Le port naturel de Hong Kong est l'un des plus profonds au monde, ce qui en a fait un hub commercial mondial."},
+  {q:"Quel type de transport a deux etages est iconique de Hong Kong ?",a:["Le tramway","Le bus","Le ferry","Le metro"],c:0,t:"Les tramways a deux etages circulent depuis 1904 sur l'ile de Hong Kong. C'est le seul reseau de ce type au monde."},
+  {q:"Quel pic offre une vue panoramique celebre sur la skyline ?",a:["Victoria Peak","Lion Rock","Lantau Peak","Tai Mo Shan"],c:0,t:"Victoria Peak culmine a 552m. Un funiculaire le dessert depuis 1888, offrant une vue spectaculaire sur la baie."},
+  {q:"Quel repas traditionnel cantonais se prend le matin avec du the ?",a:["Dim sum","Sushi","Pho","Bibimbap"],c:0,t:"Le dim sum ('toucher le coeur') se compose de petits plats vapeur. A Hong Kong, on dit 'yum cha' (boire du the)."},
+  {q:"Combien d'iles composent le territoire de Hong Kong ?",a:["Plus de 260","Environ 50","3 principales","Plus de 100"],c:0,t:"Hong Kong compte 263 iles, dont la plupart sont inhabitees. Lantau, la plus grande, abrite l'aeroport."},
+  {q:"Quel spectacle de lumieres quotidien illumine la skyline de Hong Kong ?",a:["Symphony of Lights","Light Show HK","Harbour Glow","Neon Night"],c:0,t:"Le Symphony of Lights est le plus grand spectacle son et lumiere permanent au monde selon le Guinness."},
+  {q:"Quel marche nocturne de Kowloon est celebre pour ses echoppes et neons ?",a:["Temple Street","Ladies Market","Stanley Market","Jade Market"],c:0,t:"Temple Street Night Market est aussi un lieu de diseuses de bonne aventure et d'opera cantonais de rue."},
+  {q:"Quel grand Bouddha en bronze trone au sommet de l'ile de Lantau ?",a:["Tian Tan Buddha","Bouddha d'Or","Bouddha de Jade","Bouddha Geant"],c:0,t:"Le Tian Tan Buddha mesure 34m de haut et pese 250 tonnes. Il a fallu 12 ans pour le construire (1981-1993)."},
+  {q:"Quel principe architectural chinois guide la disposition des batiments a Hong Kong ?",a:["Le feng shui","Le wabi-sabi","Le yin-yang","Le qi gong"],c:0,t:"Le feng shui influence reellement l'architecture a Hong Kong : certains gratte-ciel ont des trous pour laisser passer les dragons."},
 ],
-"Biarritz": [
-  {d:1,q:"Biarritz se trouve dans quelle region francaise ?",a:["Pays Basque","Bretagne","Provence","Cote d'Azur"],c:0,t:"Biarritz est passee d'un simple village de pecheurs a une station balneaire de luxe grace a l'imperatrice Eugenie au XIXe siecle."},
-  {d:2,q:"Quel sport de glisse a fait la renommee mondiale de Biarritz ?",a:["Le surf","Le ski nautique","Le windsurf","Le kitesurf"],c:0,t:"Biarritz est consideree comme le berceau du surf en Europe. Les premieres planches y sont arrivees en 1957, importees de Californie."},
-  {d:3,q:"Quel rocher emblematique est relie a la cote par une passerelle ?",a:["Le Rocher de la Vierge","Le Rocher du Lion","Le Rocher Saint-Martin","Le Rocher des Basques"],c:0,t:"La passerelle metallique vers le Rocher de la Vierge a ete concue par les ateliers Gustave Eiffel, le meme homme que la Tour Eiffel."},
-  {d:4,q:"Quel gateau traditionnel basque est une specialite de la region ?",a:["Le gateau basque","Le cannele","Le kouign-amann","Le far breton"],c:0,t:"Le gateau basque est fourre soit a la cerise noire d'Itxassou, soit a la creme patissiere. La recette daterait du XVIIIe siecle."},
-  {d:5,q:"Quel empereur francais a fait construire la Villa Eugenie a Biarritz ?",a:["Napoleon III","Napoleon Ier","Louis XIV","Charles X"],c:0,t:"La Villa Eugenie, construite en 1854, est aujourd'hui l'Hotel du Palais. Napoleon III l'a fait batir pour son epouse Eugenie de Montijo."},
+"Phuket": [
+  {q:"Phuket est une ile de quel pays ?",a:["Thailande","Vietnam","Indonesie","Philippines"],c:0,t:"Phuket est la plus grande ile de Thailande, avec 576 km2."},
+  {q:"Quelle mer borde Phuket ?",a:["Mer d'Andaman","Golfe de Thailande","Mer de Chine","Ocean Pacifique"],c:0,t:"La mer d'Andaman offre a Phuket une eau turquoise et une visibilite sous-marine exceptionnelle."},
+  {q:"Quel type de bateau traditionnel colore est iconique de Phuket ?",a:["Les longtail boats","Les jonques","Les pirogues","Les sampans"],c:0,t:"Les longtail boats doivent leur nom a leur long arbre d'helice. Leur proue est ornee de rubans et fleurs porte-bonheur."},
+  {q:"Quel ilot celebre pres de Phuket est surnomme 'James Bond Island' ?",a:["Khao Phing Kan","Ko Phi Phi","Ko Similan","Ko Racha"],c:0,t:"L'ile est apparue dans 'L'Homme au pistolet d'or' (1974). Son piton calcaire de 20m est devenu un symbole."},
+  {q:"Quel type de formation rocheuse emerge de la baie de Phang Nga ?",a:["Calcaire karstique","Granit","Basalte","Gres"],c:0,t:"Ces pitons karstiques ont ete sculptes par l'erosion sur des millions d'annees."},
+  {q:"Quelle plage est la plus celebre et animee de Phuket ?",a:["Patong","Kata","Karon","Mai Khao"],c:0,t:"Patong Beach concentre la majorite de la vie nocturne de Phuket, avec Bangla Road comme artere principale."},
+  {q:"Quel festival vegetarien spectaculaire a lieu chaque annee a Phuket ?",a:["Le festival des Neuf Dieux","Songkran","Loy Krathong","Phi Ta Khon"],c:0,t:"Pendant 9 jours, des participants en transe se percent les joues. L'un des festivals les plus extremes au monde."},
+  {q:"Quel promontoire au sud de Phuket offre une vue spectaculaire ?",a:["Cap Promthep","Cap Panwa","Laem Ka","Rawai Point"],c:0,t:"Cap Promthep est le point le plus au sud de Phuket. C'est le meilleur spot pour le coucher de soleil."},
+  {q:"Quelle industrie a fait la richesse de Phuket avant le tourisme ?",a:["L'extraction d'etain","La peche","Le caoutchouc","La soie"],c:0,t:"Les mines d'etain ont attire des travailleurs chinois, ce qui explique l'architecture sino-portugaise du vieux Phuket."},
+  {q:"Quel peuple nomade de la mer vit traditionnellement dans les iles autour de Phuket ?",a:["Les Moken","Les Bajau","Les Orang Laut","Les Urak Lawoi"],c:0,t:"Les Moken (Sea Gypsies) vivent de la peche et de la plongee en apnee. Leurs enfants voient deux fois mieux sous l'eau."},
 ],
-"Londres": [
-  {d:1,q:"Le fleuve qui traverse Londres s'appelle ?",a:["La Tamise","La Seine","Le Rhin","Le Danube"],c:0,t:"La Tamise fait 346 km de long. Plus de 200 ponts et tunnels la traversent dans le Grand Londres."},
-  {d:2,q:"Quelle celebre horloge se trouve au Palais de Westminster ?",a:["Big Ben","London Eye","Tower Clock","Westminster Bell"],c:0,t:"'Big Ben' designe en realite la cloche de 13,5 tonnes, pas la tour. La tour s'appelle Elizabeth Tower depuis 2012."},
-  {d:3,q:"Quel musee gratuit de Londres abrite la pierre de Rosette ?",a:["British Museum","National Gallery","V&A","Tate Modern"],c:0,t:"Le British Museum accueille plus de 6 millions de visiteurs par an. Sa collection compte 8 millions d'objets sur toute l'histoire humaine."},
-  {d:4,q:"Quel quartier de Londres est le centre historique de la finance mondiale ?",a:["The City","Canary Wharf","Westminster","Mayfair"],c:0,t:"The City of London fait seulement 2,9 km2 mais a ses propres lois et sa propre police. Elle est techniquement separee du reste de Londres."},
-  {d:5,q:"Quel systeme de metro de Londres est le plus ancien au monde ?",a:["Le Tube (1863)","Le Metro (1900)","Le U-Bahn (1902)","Le Subway (1904)"],c:0,t:"La premiere ligne (Metropolitan) a ouvert le 10 janvier 1863. Aujourd'hui, le Tube compte 272 stations et transporte 5 millions de passagers par jour."},
+"Sydney": [
+  {q:"Dans quel pays se trouve Sydney ?",a:["Australie","Nouvelle-Zelande","Afrique du Sud","Canada"],c:0,t:"Sydney est la plus grande ville d'Australie mais ce n'est pas la capitale (c'est Canberra)."},
+  {q:"Quel batiment en forme de voiles se trouve dans le port ?",a:["L'Opera de Sydney","Le Harbour Bridge","Le Museum of Contemporary Art","La Tour Sydney"],c:0,t:"L'Opera, concu par Jorn Utzon, a mis 16 ans a etre construit au lieu des 4 prevus."},
+  {q:"Comment surnomme-t-on le celebre pont en arc du port ?",a:["Le Cintre","Le Geant","L'Arche","Le Portail"],c:0,t:"Le Harbour Bridge est surnomme 'the Coathanger' (le cintre). On peut grimper jusqu'a 134m de hauteur."},
+  {q:"Quelle plage iconique est situee dans l'est de Sydney ?",a:["Bondi Beach","Manly Beach","Coogee Beach","Bronte Beach"],c:0,t:"La promenade cotiere de Bondi a Coogee fait 6 km le long des falaises."},
+  {q:"Quel animal australien peut-on voir a l'etat sauvage pres de Sydney ?",a:["Des koalas","Des kangourous","Des ornithorynques","Des diables de Tasmanie"],c:0,t:"Les Blue Mountains, a 1h de Sydney, abritent koalas, wallabies et cacatoes. Le parc national fait 2 690 km2."},
+  {q:"Quel quartier historique est le plus ancien de Sydney ?",a:["The Rocks","Darling Harbour","Circular Quay","Surry Hills"],c:0,t:"The Rocks est le site de la premiere colonie europeenne en 1788. Ses ruelles pavees et pubs historiques ont survecu."},
+  {q:"Quel evenement annuel transforme le port de Sydney le 31 decembre ?",a:["Un feu d'artifice geant","Une regate","Un concert flottant","Un marathon"],c:0,t:"Le feu d'artifice du Nouvel An de Sydney est le premier au monde (decalage horaire) et attire plus d'un million de spectateurs."},
+  {q:"Quelle formation rocheuse bleue est visible depuis les montagnes pres de Sydney ?",a:["Les Blue Mountains","Les Grampians","Les Snowy Mountains","Uluru"],c:0,t:"La brume bleue des Blue Mountains vient de l'huile d'eucalyptus evaporee par les millions d'arbres."},
+  {q:"Quel peuple autochtone vivait dans la region de Sydney ?",a:["Les Gadigal","Les Wiradjuri","Les Noongar","Les Yorta Yorta"],c:0,t:"Les Gadigal vivent dans la region depuis plus de 60 000 ans. Sydney Cove etait un lieu de peche sacre."},
+  {q:"Quelle barriere de corail, la plus grande au monde, est accessible depuis l'Australie ?",a:["La Grande Barriere de Corail","Le recif de Ningaloo","Le recif de Lord Howe","Le recif de Jervis Bay"],c:0,t:"Bien qu'a 2 000 km de Sydney, la Grande Barriere de Corail (2 300 km de long) est le joyau naturel du pays."},
 ],
-"Vannes": [
-  {d:1,q:"Vannes se trouve dans quelle region ?",a:["Bretagne","Normandie","Pays de la Loire","Aquitaine"],c:0,t:"Vannes est situee au fond du Golfe du Morbihan, l'une des plus belles baies du monde selon le Club des Plus Belles Baies."},
-  {d:2,q:"Quel gulf interieur borde Vannes ?",a:["Le Golfe du Morbihan","Le Golfe de Gascogne","La Baie de Quiberon","La Rade de Brest"],c:0,t:"'Morbihan' signifie 'petite mer' en breton. Le golfe abrite environ 40 iles dont l'Ile aux Moines et l'Ile d'Arz."},
-  {d:3,q:"Quelle enceinte medievale entoure encore le centre de Vannes ?",a:["Les remparts gallo-romains","Le mur d'Hadrien","La muraille bretonne","Le fort Vauban"],c:0,t:"Les remparts de Vannes, avec leurs jardins en contrebas, forment l'un des ensembles medievaux les mieux conserves de Bretagne."},
-  {d:4,q:"Quel alignement megalithique se trouve a proximite de Vannes ?",a:["Carnac","Stonehenge","Newgrange","Callanish"],c:0,t:"Les alignements de Carnac comptent plus de 3 000 menhirs dresses il y a environ 6 000 ans. C'est le plus grand site megalithique au monde."},
-  {d:5,q:"Quelle celebre bataille navale des Venetes contre Cesar a eu lieu dans le Morbihan ?",a:["Bataille du Morbihan (56 av. J.-C.)","Bataille de Quiberon","Bataille d'Auray","Siege de Vannes"],c:0,t:"Les Venetes, peuple gaulois marin base a Vannes, ont affronte la flotte de Jules Cesar. Leur defaite a scelle la conquete de l'Armorique."},
+"Stockholm": [
+  {q:"Stockholm est la capitale de quel pays ?",a:["Suede","Norvege","Finlande","Danemark"],c:0,t:"Stockholm est construite sur 14 iles reliees par 57 ponts."},
+  {q:"Combien d'iles composent Stockholm ?",a:["14","7","3","21"],c:0,t:"Les 14 iles sont reliees par 57 ponts, ce qui vaut a Stockholm le surnom de 'Venise du Nord'."},
+  {q:"Quel musee abrite un navire du XVIIe siecle ?",a:["Musee Vasa","Musee Nobel","Moderna Museet","Skansen"],c:0,t:"Le Vasa a coule a 1 300 metres de son depart en 1628. Repche en 1961, conserve a 95%."},
+  {q:"Comment s'appelle la vieille ville medievale ?",a:["Gamla Stan","Sodermalm","Ostermalm","Norrmalm"],c:0,t:"Gamla Stan date du XIIIe siecle. Sa plus etroite rue fait seulement 90 cm de large."},
+  {q:"Quel prix international est remis chaque annee a Stockholm ?",a:["Le Prix Nobel","Le Prix Pulitzer","La Medaille Fields","Le Prix Pritzker"],c:0,t:"Les Prix Nobel sont remis le 10 decembre. Le banquet au City Hall accueille 1 300 invites."},
+  {q:"Quel concept suedois designe la pause cafe rituelle ?",a:["Fika","Hygge","Lagom","Smorgasbord"],c:0,t:"Le fika est un rituel social sacre. Les Suedois en font en moyenne 2 par jour avec un kanelbulle."},
+  {q:"Quel archipel de 30 000 iles s'etend au large de Stockholm ?",a:["L'archipel de Stockholm","Les iles Aland","L'archipel de Goteborg","Les iles Gotland"],c:0,t:"L'archipel de Stockholm compte environ 30 000 iles, ilots et rochers. Seulement un millier sont habites."},
+  {q:"Quel musee en plein air de Stockholm est le plus ancien au monde ?",a:["Skansen","Gröna Lund","Millesgarden","Prins Eugens"],c:0,t:"Skansen, fonde en 1891, reconstitue la Suede d'antan avec 150 batiments historiques et des animaux nordiques."},
+  {q:"Quel systeme de metro de Stockholm est surnomme 'la plus longue galerie d'art du monde' ?",a:["Le Tunnelbana","Le T-bana Art","Le Metro Kunst","Le SL Gallery"],c:0,t:"90 des 100 stations du Tunnelbana sont decorees par 150 artistes. Chaque station a un theme unique."},
+  {q:"Quel mot suedois signifie 'juste ce qu'il faut' et resume la philosophie de vie suedoise ?",a:["Lagom","Fika","Hygge","Mysig"],c:0,t:"Lagom vient de l'expression viking 'laget om' (autour du groupe). Il resume l'ideal suedois de moderation et equilibre."},
+],
+"Dubai": [
+  {q:"Dans quel pays se trouve Dubai ?",a:["Emirats arabes unis","Arabie Saoudite","Qatar","Oman"],c:0,t:"Dubai est l'un des 7 emirats qui composent les EAU, federes depuis 1971."},
+  {q:"Quel est le plus haut batiment du monde, situe a Dubai ?",a:["Burj Khalifa","Shanghai Tower","Taipei 101","One World Trade"],c:0,t:"Le Burj Khalifa mesure 828m et 163 etages. L'ascenseur monte a 10 m/s."},
+  {q:"Quel desert entoure Dubai ?",a:["Le Rub al-Khali","Le Sahara","Le Gobi","Le Thar"],c:0,t:"Le Rub al-Khali (Quartier Vide) est le plus grand desert de sable continu du monde."},
+  {q:"Quelle ile artificielle en forme de palmier est celebre ?",a:["Palm Jumeirah","The World","Palm Jebel Ali","Deira Island"],c:0,t:"Palm Jumeirah a ajoute 78 km de cotes a Dubai. Visible depuis l'espace."},
+  {q:"Quel souk traditionnel de Dubai est celebre pour l'or ?",a:["Gold Souk","Spice Souk","Textile Souk","Perfume Souk"],c:0,t:"Le Gold Souk de Deira contient environ 10 tonnes d'or en permanence dans ses vitrines."},
+  {q:"Quel centre commercial de Dubai est le plus grand du monde ?",a:["Dubai Mall","Mall of the Emirates","Ibn Battuta Mall","City Centre"],c:0,t:"Le Dubai Mall fait 502 000 m2 avec un aquarium geant, une patinoire olympique et 1 200 boutiques."},
+  {q:"Quel type d'architecture futuriste est la specialite de Dubai ?",a:["Les gratte-ciel","Les pyramides","Les domes","Les pagodes"],c:0,t:"Dubai compte plus de 1 200 gratte-ciel. La Marina de Dubai est le plus grand port de plaisance artificiel au monde."},
+  {q:"Quelle course hippique est l'evenement sportif le plus riche de Dubai ?",a:["Dubai World Cup","Dubai Stakes","Emirates Cup","Gold Cup"],c:0,t:"La Dubai World Cup offre 12 millions $ de prix total. La piste du Meydan Racecourse fait 1 750m."},
+  {q:"Quel pourcentage de la population de Dubai est compose d'expatries ?",a:["Environ 90%","Environ 60%","Environ 75%","Environ 50%"],c:0,t:"Seulement 10% de la population sont des citoyens emiratis. Le reste vient de plus de 200 nationalites."},
+  {q:"Quel musee futuriste en forme de tore argente a ouvert a Dubai en 2022 ?",a:["Museum of the Future","Dubai Frame","Etihad Museum","Al Shindagha"],c:0,t:"Le Museum of the Future est recouvert de calligraphie arabe en acier. Il a ete nomme 'plus beau batiment du monde'."},
+],
+"Seoul": [
+  {q:"Seoul est la capitale de quel pays ?",a:["Coree du Sud","Coree du Nord","Japon","Chine"],c:0,t:"Seoul abrite environ 10 millions d'habitants, et 25 millions dans l'agglomeration."},
+  {q:"Quel fleuve traverse Seoul ?",a:["Le Han","Le Nakdong","Le Geum","Le Yeongsan"],c:0,t:"Le fleuve Han divise Seoul en Gangbuk (nord) et Gangnam (sud) — oui, comme la chanson !"},
+  {q:"Quel plat coreen est un chou fermente epice ?",a:["Kimchi","Bibimbap","Bulgogi","Tteokbokki"],c:0,t:"Le kimchi est classe au patrimoine culturel immateriel UNESCO. Les Coreens en consomment a chaque repas."},
+  {q:"Quel palais royal est le plus grand et le plus celebre de Seoul ?",a:["Gyeongbokgung","Changdeokgung","Deoksugung","Gyeonghuigung"],c:0,t:"Gyeongbokgung a ete construit en 1395 par la dynastie Joseon. Il comptait 7 000 pieces a l'origine."},
+  {q:"Quel quartier futuriste de Seoul est associe au K-pop et a la mode ?",a:["Gangnam","Hongdae","Itaewon","Myeongdong"],c:0,t:"Gangnam concentre les sieges des agences K-pop (SM, YG, JYP) et les boutiques de luxe. 'Gangnam Style' de Psy l'a rendu celebre."},
+  {q:"Quelle frontiere fortifiee se trouve a 50 km de Seoul ?",a:["La DMZ (zone demilitarisee)","Le 38e parallele","La ligne de MacArthur","La frontiere du Han"],c:0,t:"La DMZ entre les deux Corees fait 4 km de large sur 250 km. Paradoxalement, c'est un refuge pour la faune sauvage."},
+  {q:"Quel quartier etudiant de Seoul est le centre de la musique indie et du street art ?",a:["Hongdae","Gangnam","Jongno","Sinchon"],c:0,t:"Hongdae, pres de l'universite Hongik, vibre de concerts live, cafes a theme et artistes de rue chaque soir."},
+  {q:"Quel village traditionnel au coeur de Seoul est preserve depuis 600 ans ?",a:["Bukchon Hanok","Namsangol","Insadong","Samcheongdong"],c:0,t:"Bukchon abrite 900 hanok (maisons traditionnelles) ou des familles vivent encore. Les ruelles offrent une vue sur la ville moderne."},
+  {q:"Quelle technologie sud-coreenne est la plus rapide au monde pour Internet ?",a:["La fibre optique 5G","Le satellite","Le cable sous-marin","Le Wi-Fi 7"],c:0,t:"La Coree du Sud a le debit Internet moyen le plus rapide au monde. 97% des foyers ont la fibre optique."},
+  {q:"Quel jeu de societe traditionnel coreen ressemble aux echecs ?",a:["Janggi","Baduk","Yutnori","Ssireum"],c:0,t:"Le Janggi (echecs coreens) se joue sur un plateau de 9x10. Contrairement aux echecs, il n'y a pas de case noire/blanche."},
+],
+"Le Cap": [
+  {q:"Le Cap est une ville de quel pays ?",a:["Afrique du Sud","Kenya","Maroc","Egypte"],c:0,t:"Le Cap est la 'ville mere' de l'Afrique du Sud, fondee en 1652."},
+  {q:"Quelle montagne emblematique surplombe Le Cap ?",a:["Table Mountain","Signal Hill","Lion's Head","Devil's Peak"],c:0,t:"Table Mountain a environ 600 millions d'annees — plus vieille que l'Himalaya."},
+  {q:"Quel ocean borde Le Cap ?",a:["Atlantique et Indien","Pacifique","Atlantique seul","Indien seul"],c:0,t:"Le Cap se trouve a la jonction de l'Atlantique (froid) et de l'Indien (chaud). On sent la difference en nageant."},
+  {q:"Quelle ile au large a servi de prison a Nelson Mandela ?",a:["Robben Island","Seal Island","Dassen Island","Bird Island"],c:0,t:"Mandela a passe 18 de ses 27 ans de detention dans une cellule de 4,5m2 sur Robben Island."},
+  {q:"Quel quartier colore est symbole de resistance contre l'apartheid ?",a:["Bo-Kaap","Woodstock","Observatory","Langa"],c:0,t:"Bo-Kaap est le quartier historique de la communaute malaise du Cap depuis le XVIIe siecle."},
+  {q:"Quel celebre jardin botanique du Cap est classe UNESCO ?",a:["Kirstenbosch","Table Bay Garden","Companys Garden","Arderne Gardens"],c:0,t:"Kirstenbosch est le premier jardin botanique au monde dedie a la flore d'un seul pays. Il couvre 528 hectares."},
+  {q:"Quel cap pres du Cap est (faussement) considere comme le point le plus au sud de l'Afrique ?",a:["Le Cap de Bonne-Esperance","Le Cap des Aiguilles","Le Cap Point","Le Cap False"],c:0,t:"Le vrai point le plus au sud est le Cap des Aiguilles, 150 km plus a l'est. Mais le Cap de Bonne-Esperance est plus spectaculaire."},
+  {q:"Quel vin est la specialite de la region viticole du Cap ?",a:["Le Pinotage","Le Malbec","Le Tempranillo","Le Riesling"],c:0,t:"Le Pinotage est un cepage 100% sud-africain, cree en 1925 par croisement de Pinot noir et Cinsault."},
+  {q:"Quel courant oceanique froid longe la cote atlantique du Cap ?",a:["Le courant de Benguela","Le Gulf Stream","Le Kuroshio","Le courant des Aiguilles"],c:0,t:"Le Benguela rend l'eau atlantique glaciale (12-14°C) meme en ete, tandis que False Bay est bien plus chaude."},
+  {q:"Quel phenomene naturel recouvre regulierement Table Mountain d'une nappe blanche ?",a:["La 'nappe' de nuages orographiques","Le brouillard marin","La neige","La brume volcanique"],c:0,t:"Les locaux appellent ca 'the tablecloth'. C'est de l'air humide qui se condense au sommet a cause du vent du sud-est."},
 ],
 "Reykjavik": [
-  {d:1,q:"Reykjavik est la capitale de quel pays ?",a:["Islande","Norvege","Groenland","Finlande"],c:0,t:"Reykjavik est la capitale la plus septentrionale du monde, a 64 degres de latitude nord."},
-  {d:2,q:"Que signifie 'Reykjavik' en islandais ?",a:["Baie des fumees","Ville de glace","Port du nord","Terre de feu"],c:0,t:"Les premiers colons vikings ont vu les vapeurs des sources chaudes et ont nomme l'endroit 'baie des fumees' (reykja = fumee, vik = baie)."},
-  {d:3,q:"Quelle eglise moderne domine le skyline de Reykjavik ?",a:["Hallgrimskirkja","Domkirkjan","Landakotskirkja","Frikirkjan"],c:0,t:"Hallgrimskirkja mesure 74,5m de haut. Sa facade s'inspire des colonnes de basalte naturelles qu'on trouve dans la nature islandaise."},
-  {d:4,q:"Quelle source chaude celebre se trouve pres de Reykjavik ?",a:["Blue Lagoon","Golden Circle","Sky Lagoon","Secret Lagoon"],c:0,t:"L'eau du Blue Lagoon vient d'une centrale geothermique voisine. Sa couleur bleu laiteux est due a la silice et aux algues microscopiques."},
-  {d:5,q:"Quel phenomene permet a Reykjavik d'avoir presque 24h de lumiere en ete ?",a:["Le soleil de minuit","Les aurores boreales","L'effet albedo","La refraction polaire"],c:0,t:"Autour du solstice d'ete (21 juin), le soleil ne se couche que 3 heures a Reykjavik. Le 'vrai' soleil de minuit se voit plus au nord."},
+  {q:"Reykjavik est la capitale de quel pays ?",a:["Islande","Norvege","Groenland","Finlande"],c:0,t:"Reykjavik est la capitale la plus septentrionale du monde."},
+  {q:"Que signifie 'Reykjavik' en islandais ?",a:["Baie des fumees","Ville de glace","Port du nord","Terre de feu"],c:0,t:"Les premiers Vikings ont vu les vapeurs des sources chaudes et nomme l'endroit 'baie des fumees'."},
+  {q:"Quel type d'energie chauffe la quasi-totalite de Reykjavik ?",a:["La geothermie","Le petrole","Le solaire","L'eolien"],c:0,t:"L'eau chaude arrive directement de la terre a 80°C. Les trottoirs du centre-ville sont chauffes par geothermie."},
+  {q:"Quelle eglise moderne domine le skyline de Reykjavik ?",a:["Hallgrimskirkja","Domkirkjan","Landakotskirkja","Frikirkjan"],c:0,t:"Hallgrimskirkja mesure 74,5m. Sa facade s'inspire des colonnes de basalte naturelles islandaises."},
+  {q:"Quelle source chaude celebre se trouve pres de Reykjavik ?",a:["Blue Lagoon","Golden Circle","Sky Lagoon","Secret Lagoon"],c:0,t:"L'eau du Blue Lagoon vient d'une centrale geothermique. Sa couleur bleu laiteux est due a la silice."},
+  {q:"Quel phenomene lumineux est visible en hiver a Reykjavik ?",a:["Les aurores boreales","Les nuits blanches","Les arcs-en-ciel nocturnes","Les eclipses"],c:0,t:"De septembre a mars, les aurores boreales dansent regulierement dans le ciel islandais, visibles meme depuis la ville."},
+  {q:"Quel animal marin peut-on observer depuis la baie de Reykjavik ?",a:["Des baleines","Des dauphins seuls","Des requins seuls","Des phoques seuls"],c:0,t:"Baleines a bosse, orques et dauphins frequentent la baie de Faxafloi. Les sorties whale-watching partent du vieux port."},
+  {q:"Quel parcours touristique populaire pres de Reykjavik s'appelle le Cercle d'Or ?",a:["Thingvellir, Geysir, Gullfoss","Blue Lagoon, Vik, Skogafoss","Akureyri, Myvatn, Dettifoss","Landmannalaugar, Skaftafell, Jokulsarlon"],c:0,t:"Le Cercle d'Or reunit le parc national Thingvellir (faille tectonique), les geysers de Geysir et la cascade de Gullfoss."},
+  {q:"Quel aliment traditionnel islandais est du requin fermente ?",a:["Hakarl","Skyr","Hardfiskur","Hangikjot"],c:0,t:"Le hakarl est du requin du Groenland fermente 3 a 5 mois. Son odeur d'ammoniaque est notoire. Meme les Islandais le trouvent fort."},
+  {q:"Quel site de Thingvellir est l'endroit ou les plaques tectoniques nord-americaine et eurasienne s'ecartent ?",a:["La faille de Silfra","Le geyser de Strokkur","La cascade Oxararfoss","Le lac Thingvallavatn"],c:0,t:"A Silfra, on peut plonger entre les deux continents. L'eau de source glaciaire y offre une visibilite de 100 metres."},
 ],
 "Marrakech": [
-  {d:1,q:"Marrakech est une ville de quel pays ?",a:["Maroc","Tunisie","Algerie","Egypte"],c:0,t:"Marrakech est surnommee 'la ville rouge' en raison de la couleur ocre de ses remparts et batiments traditionnels."},
-  {d:2,q:"Comment s'appelle la place principale et marche nocturne de Marrakech ?",a:["Jemaa el-Fna","Place Royale","Souk Central","Medina Square"],c:0,t:"Jemaa el-Fna est classee patrimoine mondial. Chaque soir, elle se transforme avec des conteurs, charmeurs de serpents et stands de nourriture."},
-  {d:3,q:"Quel jardin botanique bleu a ete restaure par Yves Saint Laurent ?",a:["Le Jardin Majorelle","Le Jardin Secret","Le Jardin de l'Agdal","Les Jardins de la Menara"],c:0,t:"Le Jardin Majorelle, cree par Jacques Majorelle en 1931, a ete rachete par Yves Saint Laurent en 1980. Le bleu 'Majorelle' est sa signature."},
-  {d:4,q:"Que trouve-t-on dans les 'riads' traditionnels de Marrakech ?",a:["Une cour interieure avec jardin","Un hammam prive","Une terrasse panoramique","Un bassin de nage"],c:0,t:"'Riad' vient de l'arabe 'ryad' (jardin). L'architecture est pensee pour la fraicheur : murs epais, fontaine centrale et ouverture vers le ciel."},
-  {d:5,q:"Quelle dynastie a fonde Marrakech en 1070 ?",a:["Les Almoravides","Les Almohades","Les Merinides","Les Saadiens"],c:0,t:"Les Almoravides, venus du Sahara, ont fonde Marrakech comme capitale de leur empire qui s'etendait jusqu'a l'Espagne."},
+  {q:"Marrakech est une ville de quel pays ?",a:["Maroc","Tunisie","Algerie","Egypte"],c:0,t:"Marrakech est surnommee 'la ville rouge' pour la couleur ocre de ses remparts."},
+  {q:"Quel surnom donne-t-on a Marrakech ?",a:["La ville rouge","La ville blanche","La perle du desert","L'oasis royale"],c:0,t:"Les remparts et batiments de Marrakech sont construits en pisee (terre rouge), ce qui donne cette couleur unique."},
+  {q:"Comment s'appelle la grande place et marche nocturne ?",a:["Jemaa el-Fna","Place Royale","Souk Central","Medina Square"],c:0,t:"Jemaa el-Fna est classee patrimoine mondial. Chaque soir : conteurs, charmeurs de serpents et stands de nourriture."},
+  {q:"Quel jardin bleu a ete restaure par Yves Saint Laurent ?",a:["Le Jardin Majorelle","Le Jardin Secret","L'Agdal","La Menara"],c:0,t:"Le bleu 'Majorelle' est devenu une couleur iconique. YSL l'a rachete en 1980 pour le sauver de la destruction."},
+  {q:"Comment s'appellent les maisons traditionnelles avec cour interieure ?",a:["Les riads","Les kasbahs","Les dars","Les fondouks"],c:0,t:"'Riad' vient de l'arabe 'ryad' (jardin). Murs epais, fontaine centrale et ouverture vers le ciel."},
+  {q:"Quel palais en ruines est celebre pour ses cigognes nichant sur les murs ?",a:["Le Palais El Badi","Le Palais Bahia","La Medersa Ben Youssef","Le Palais Royal"],c:0,t:"Le Palais El Badi, construit en 1578, a ete depouille de ses richesses mais reste grandiose par ses dimensions."},
+  {q:"Quel plat marocain est un ragout cuit dans un plat en terre conique ?",a:["Le tajine","Le couscous","La pastilla","La harira"],c:0,t:"Le tajine doit son nom au plat en terre cuite a couvercle conique qui permet une cuisson lente a la vapeur."},
+  {q:"Quelle ecole coranique du XIVe siecle est un chef-d'oeuvre d'architecture a Marrakech ?",a:["La Medersa Ben Youssef","La Koutoubia","Le Musee de Marrakech","Dar Si Said"],c:0,t:"La Medersa Ben Youssef accueillait 900 etudiants. Ses mosaiques de zellige et bois sculpte sont exceptionnels."},
+  {q:"Quel minaret de Marrakech a inspire la Giralda de Seville ?",a:["La Koutoubia","La Tour Hassan","Le minaret de la Medersa","Le minaret Kasbah"],c:0,t:"La Koutoubia (77m), la Tour Hassan de Rabat et la Giralda de Seville ont ete baties par les memes architectes almohades."},
+  {q:"Quelle dynastie a fonde Marrakech en 1070 ?",a:["Les Almoravides","Les Almohades","Les Merinides","Les Saadiens"],c:0,t:"Les Almoravides, venus du Sahara, ont fonde Marrakech comme capitale d'un empire s'etendant jusqu'a l'Espagne."},
 ],
 "Seville": [
-  {d:1,q:"Seville est la capitale de quelle region espagnole ?",a:["Andalousie","Catalogne","Castille","Galice"],c:0,t:"Seville est la 4e plus grande ville d'Espagne et l'une des plus chaudes d'Europe, depassant souvent 45°C en ete."},
-  {d:2,q:"Quelle danse passionnee est indissociable de Seville ?",a:["Le flamenco","Le tango","La salsa","Le paso doble"],c:0,t:"Le quartier de Triana est considere comme le berceau du flamenco. Les 'tablaos' y proposent des spectacles authentiques chaque soir."},
-  {d:3,q:"Quel palais royal de Seville melange architecture islamique et chretienne ?",a:["L'Alcazar","L'Alhambra","La Giralda","La Torre del Oro"],c:0,t:"L'Alcazar de Seville est le plus ancien palais royal encore en usage en Europe, utilise par la famille royale espagnole."},
-  {d:4,q:"Quelle cathedrale de Seville est la plus grande cathedrale gothique du monde ?",a:["La Cathedrale de Seville","La Sagrada Familia","Notre-Dame","Le Duomo de Milan"],c:0,t:"Construite sur une ancienne mosquee, elle abrite le tombeau de Christophe Colomb. Sa tour, la Giralda, etait l'ancien minaret."},
-  {d:5,q:"Quel evenement printanier transforme Seville en une immense fete pendant 6 jours ?",a:["La Feria de Abril","La Semana Santa","Las Fallas","La Tomatina"],c:0,t:"La Feria rassemble plus d'un million de visiteurs. Les Sevillanes portent des robes a pois et dansent la sevillana dans plus de 1 000 casetas."},
+  {q:"Seville est la capitale de quelle region ?",a:["Andalousie","Catalogne","Castille","Galice"],c:0,t:"Seville depasse souvent 45°C en ete, l'une des villes les plus chaudes d'Europe."},
+  {q:"Quel fleuve traverse Seville ?",a:["Le Guadalquivir","Le Tage","L'Ebre","Le Douro"],c:0,t:"Le Guadalquivir etait navigable jusqu'a l'ocean. Seville fut le port du commerce avec les Ameriques."},
+  {q:"Quelle danse passionnee est indissociable de Seville ?",a:["Le flamenco","Le tango","La salsa","Le paso doble"],c:0,t:"Le quartier de Triana est le berceau du flamenco. Les tablaos proposent des spectacles authentiques chaque soir."},
+  {q:"Quel palais royal melange architecture islamique et chretienne ?",a:["L'Alcazar","L'Alhambra","La Giralda","La Torre del Oro"],c:0,t:"L'Alcazar est le plus ancien palais royal encore en usage en Europe."},
+  {q:"Quelle cathedrale de Seville est la plus grande cathedrale gothique du monde ?",a:["La Cathedrale de Seville","La Sagrada Familia","Notre-Dame","Le Duomo de Milan"],c:0,t:"Construite sur une mosquee, elle abrite le tombeau de Christophe Colomb. La Giralda etait l'ancien minaret."},
+  {q:"Quel quartier de Seville est celebre pour ses ruelles fleuries et ses azulejos ?",a:["Santa Cruz","Triana","Macarena","Alameda"],c:0,t:"Le Barrio Santa Cruz, ancien quartier juif, est un labyrinthe de ruelles blanches ornees d'orangers et de jasmin."},
+  {q:"Quelle tour doree au bord du Guadalquivir date de l'epoque almohade ?",a:["La Torre del Oro","La Giralda","La Torre de la Plata","La Torre Sevilla"],c:0,t:"La Torre del Oro (1220) servait a controler la navigation. Son reflet dore sur l'eau lui a donne son nom."},
+  {q:"Quel plat froid a base de tomates est une specialite andalouse ?",a:["Le gazpacho","La paella","La tortilla","Les churros"],c:0,t:"Le gazpacho andalou se boit aussi bien qu'il se mange. En ete, c'est un incontournable de chaque repas a Seville."},
+  {q:"Quelle fete printaniere transforme Seville pendant 6 jours ?",a:["La Feria de Abril","La Semana Santa","Las Fallas","La Tomatina"],c:0,t:"La Feria rassemble 1 million de visiteurs. Les Sevillanes dansent en robes a pois dans plus de 1 000 casetas."},
+  {q:"Quel parc de Seville avec une place semi-circulaire a ete construit pour l'Expo de 1929 ?",a:["La Plaza de Espana","Le Parc Maria Luisa","Les Jardins de Murillo","L'Alameda"],c:0,t:"La Plaza de Espana est ornee de 52 bancs en azulejos representant chaque province espagnole. Star Wars Episode II y a ete filme."},
 ],
 "Fes": [
-  {d:1,q:"Fes est une ville de quel pays ?",a:["Maroc","Tunisie","Algerie","Libye"],c:0,t:"Fes est la plus ancienne des villes imperiales du Maroc, fondee en 789. Elle abrite la plus grande medina pietonne au monde."},
-  {d:2,q:"Quelle universite de Fes est consideree comme la plus ancienne du monde ?",a:["Al Quaraouiyine","Al-Azhar","Oxford","Bologne"],c:0,t:"L'universite Al Quaraouiyine a ete fondee en 859 par Fatima al-Fihri, une femme. Elle est reconnue par l'UNESCO comme la plus ancienne."},
-  {d:3,q:"Pour quoi les tanneries de Fes sont-elles celebres ?",a:["Le tannage du cuir","La teinture de la soie","Le tissage de tapis","La poterie"],c:0,t:"Les tanneries Chouara utilisent les memes techniques depuis le Moyen Age : cuves de chaux, fiente de pigeon et teintures naturelles."},
-  {d:4,q:"Combien de ruelles compte approximativement la medina de Fes ?",a:["Plus de 9 000","Environ 2 000","Environ 500","Plus de 15 000"],c:0,t:"La medina de Fes el-Bali est un labyrinthe de 9 400 ruelles. Le GPS y est inutile — les habitants servent de guides naturels."},
-  {d:5,q:"Quel type de mosaique geometrique decore les batiments traditionnels de Fes ?",a:["Le zellige","Le mosaico","Le terrazzo","L'azulejo"],c:0,t:"Le zellige est un art ancestral : des carreaux de ceramique emailles sont tailles a la main puis assembles en motifs geometriques complexes."},
+  {q:"Fes est une ville de quel pays ?",a:["Maroc","Tunisie","Algerie","Libye"],c:0,t:"Fes est la plus ancienne des villes imperiales du Maroc, fondee en 789."},
+  {q:"Fes abrite la plus grande quoi au monde ?",a:["Medina pietonne","Mosquee","Bibliotheque","Place publique"],c:0,t:"La medina de Fes el-Bali est la plus grande zone urbaine sans voiture au monde."},
+  {q:"Quelle universite de Fes est consideree comme la plus ancienne du monde ?",a:["Al Quaraouiyine","Al-Azhar","Oxford","Bologne"],c:0,t:"Fondee en 859 par Fatima al-Fihri, une femme. Reconnue par l'UNESCO comme la plus ancienne."},
+  {q:"Pour quoi les tanneries de Fes sont-elles celebres ?",a:["Le tannage du cuir","La teinture de la soie","Le tissage de tapis","La poterie"],c:0,t:"Les tanneries Chouara utilisent les memes techniques depuis le Moyen Age."},
+  {q:"Combien de ruelles compte la medina de Fes ?",a:["Plus de 9 000","Environ 2 000","Environ 500","Plus de 15 000"],c:0,t:"La medina de Fes el-Bali est un labyrinthe de 9 400 ruelles. Le GPS y est inutile."},
+  {q:"Quel animal est utilise pour transporter les marchandises dans la medina ?",a:["L'ane","Le chameau","Le cheval","Le mulet"],c:0,t:"Les anes et mulets sont les seuls 'vehicules' possibles dans les ruelles etroites de la medina."},
+  {q:"Quel type de mosaique decore les batiments traditionnels ?",a:["Le zellige","Le mosaico","Le terrazzo","L'azulejo"],c:0,t:"Le zellige : carreaux de ceramique tailles a la main puis assembles en motifs geometriques complexes."},
+  {q:"Quelle porte monumentale bleue et verte est l'entree principale de la medina ?",a:["Bab Boujloud","Bab Guissa","Bab Ftouh","Bab Rcif"],c:0,t:"Bab Boujloud (1913) est ornee de zellige bleu cote exterieur (couleur de Fes) et vert cote medina (couleur de l'Islam)."},
+  {q:"Quel quartier juif historique de Fes est l'un des plus anciens du Maroc ?",a:["Le Mellah","Le Ghetto","La Juderia","Le Kahal"],c:0,t:"Le Mellah de Fes, cree au XVe siecle, possede ses propres synagogues, cimetiere et architecture distinctive."},
+  {q:"Quel sultan merinide a fait de Fes la capitale intellectuelle du Maghreb ?",a:["Abu Inan Faris","Moulay Ismail","Ahmad al-Mansur","Yacoub el-Mansour"],c:0,t:"Abu Inan Faris (XIVe siecle) a construit la medersa Bou Inania, chef-d'oeuvre de l'art merinide a Fes."},
+],
+"Vannes": [
+  {q:"Vannes se trouve dans quelle region ?",a:["Bretagne","Normandie","Pays de la Loire","Aquitaine"],c:0,t:"Vannes est au fond du Golfe du Morbihan, une des plus belles baies du monde."},
+  {q:"Quel golfe interieur borde Vannes ?",a:["Le Golfe du Morbihan","Le Golfe de Gascogne","La Baie de Quiberon","La Rade de Brest"],c:0,t:"'Morbihan' signifie 'petite mer' en breton. Le golfe abrite environ 40 iles."},
+  {q:"Que signifie 'Morbihan' en breton ?",a:["Petite mer","Grand port","Terre sacree","Eau douce"],c:0,t:"Mor-bihan = petite mer, par opposition au Mor-braz (la grande mer = l'ocean Atlantique)."},
+  {q:"Quelle enceinte medievale entoure le centre de Vannes ?",a:["Les remparts","Le mur d'Hadrien","La muraille bretonne","Le fort Vauban"],c:0,t:"Les remparts de Vannes forment l'un des ensembles medievaux les mieux conserves de Bretagne."},
+  {q:"Quel alignement megalithique se trouve a proximite de Vannes ?",a:["Carnac","Stonehenge","Newgrange","Callanish"],c:0,t:"Carnac compte plus de 3 000 menhirs dresses il y a 6 000 ans. Le plus grand site megalithique au monde."},
+  {q:"Quelle ile du Golfe du Morbihan est la plus visitee ?",a:["L'Ile aux Moines","L'Ile d'Arz","L'Ile de Gavrinis","L'Ile Berder"],c:0,t:"L'Ile aux Moines, en forme de croix, fait 3,5 km de long. On y circule a pied ou a velo."},
+  {q:"Quel port de peche celebre se trouve pres de Vannes ?",a:["Le Golfe du Morbihan","Lorient","Concarneau","Quiberon"],c:0,t:"Le Golfe du Morbihan est un spot d'ostreiculture majeur. Les huitres de la region sont reputees."},
+  {q:"Quelle maison a colombages celebre de Vannes porte deux bustes sculptes ?",a:["La maison de Vannes et sa femme","La maison des Cariatides","La maison du Chapitre","La maison des Chanoines"],c:0,t:"'Vannes et sa femme' sont deux bustes en granit du XVIe siecle sur une maison a colombages de la place Valencia."},
+  {q:"Quel cairn neolithique du Golfe du Morbihan abrite des gravures exceptionnelles ?",a:["Gavrinis","Carnac","Locmariaquer","Er Grah"],c:0,t:"Le cairn de Gavrinis (4000 av. J.-C.) possede 23 dalles entierement gravees de motifs spirales et concentriques."},
+  {q:"Quelle bataille navale des Venetes contre Cesar a eu lieu dans le Morbihan ?",a:["Bataille du Morbihan (56 av. J.-C.)","Bataille de Quiberon","Bataille d'Auray","Siege de Vannes"],c:0,t:"Les Venetes, peuple gaulois marin base a Vannes, ont affronte la flotte de Cesar. Leur defaite a scelle la conquete de l'Armorique."},
+],
+"Dubrovnik": [
+  {q:"Dubrovnik est une ville de quel pays ?",a:["Croatie","Montenegro","Grece","Italie"],c:0,t:"Dubrovnik est surnommee 'la perle de l'Adriatique' par Lord Byron."},
+  {q:"Quelle mer borde Dubrovnik ?",a:["L'Adriatique","La Mediterranee","L'Egee","L'Ionienne"],c:0,t:"Dubrovnik donne sur l'Adriatique, face a l'Italie (Bari est a 200 km)."},
+  {q:"Quelle serie TV a utilise Dubrovnik comme decor ?",a:["Game of Thrones","The Witcher","Vikings","Rome"],c:0,t:"Dubrovnik represente Port-Real. La frequentation a augmente de 53% apres la serie."},
+  {q:"Quelle est la longueur des remparts de Dubrovnik ?",a:["Environ 2 km","500 m","5 km","800 m"],c:0,t:"Les remparts font 1 940 metres, jusqu'a 25 metres de haut. Jamais perces par un envahisseur."},
+  {q:"Comment s'appelle la rue principale de la vieille ville ?",a:["Le Stradun","Le Corso","La Placa","Le Bulevar"],c:0,t:"Le Stradun (ou Placa) fait 300m de long. Son sol en calcaire poli brille comme du marbre."},
+  {q:"Sous quel nom Dubrovnik etait-elle une republique maritime ?",a:["Raguse","Ragusa","Epidaurum","Cavtat"],c:0,t:"La Republique de Raguse (1358-1808) a aboli l'esclavage en 1416, bien avant le reste de l'Europe."},
+  {q:"Quel teleferique offre une vue panoramique sur la ville et les iles ?",a:["Le teleferique du Srd","Le teleferique de Lapad","Le cable car de Lokrum","La gondole de Babin Kuk"],c:0,t:"Le mont Srd culmine a 412m. Son teleferique, detruit pendant la guerre de 1991, a ete reconstruit en 2010."},
+  {q:"Quelle ile paradisiaque est accessible en 15 minutes de bateau depuis Dubrovnik ?",a:["Lokrum","Korcula","Mljet","Sipan"],c:0,t:"Lokrum est inhabitee et abrite un monastere benedic­tin, un jardin botanique et des paons en liberte."},
+  {q:"Quelle pharmacie de Dubrovnik, toujours active, est la 3e plus ancienne d'Europe ?",a:["Pharmacie des Franciscains","Pharmacie de Raguse","Pharmacie Sponza","Pharmacie du Rectorat"],c:0,t:"La pharmacie du monastere franciscain fonctionne sans interruption depuis 1317."},
+  {q:"Quel conflit des annees 1990 a gravement endommage Dubrovnik ?",a:["La guerre d'independance croate","La guerre de Bosnie","La guerre du Kosovo","La guerre de Slovenie"],c:0,t:"En 1991, Dubrovnik a ete assiegee et bombardee. 68% des batiments ont ete touches. La reconstruction a pris 8 ans."},
+],
+"Malaga": [
+  {q:"Malaga est une ville de quel pays ?",a:["Espagne","Portugal","Italie","Maroc"],c:0,t:"Malaga beneficie de plus de 300 jours de soleil par an."},
+  {q:"Quel artiste celebre est ne a Malaga en 1881 ?",a:["Pablo Picasso","Salvador Dali","Joan Miro","Francisco Goya"],c:0,t:"La maison natale de Picasso, sur la Plaza de la Merced, est aujourd'hui un musee."},
+  {q:"Sur quelle mer donne Malaga ?",a:["La Mediterranee","L'Atlantique","L'Adriatique","La mer d'Alboran"],c:0,t:"Malaga est sur la Costa del Sol, le long de la mer d'Alboran (partie ouest de la Mediterranee)."},
+  {q:"Quelle forteresse maure domine Malaga ?",a:["L'Alcazaba","L'Alhambra","L'Alcazar","Le Castillo"],c:0,t:"L'Alcazaba du XIe siecle est reliee au Gibralfaro. Un des plus beaux palais-forteresses arabes."},
+  {q:"Quel vin doux est la specialite de Malaga ?",a:["Malaga Virgen","Manzanilla","Rioja","Cava"],c:0,t:"Le vin de Malaga est produit depuis l'epoque phenicienne. La Russie des tsars en importait massivement."},
+  {q:"Quel musee de Malaga est une antenne du celebre musee parisien ?",a:["Centre Pompidou Malaga","Guggenheim Malaga","Louvre Malaga","Orsay Malaga"],c:0,t:"Le Centre Pompidou Malaga, dans un cube colore au port, a ouvert en 2015. C'est la premiere antenne hors de France."},
+  {q:"Quel plat de friture de poissons est typique des chiringuitos de Malaga ?",a:["Les espetos de sardines","Les calamares","La paella de mariscos","Les gambas al ajillo"],c:0,t:"Les espetos : des sardines enfilees sur un baton de canne, grillees verticalement au feu de bois sur la plage."},
+  {q:"Quel peuple antique a fonde Malaga sous le nom de Malaka ?",a:["Les Pheniciens","Les Romains","Les Grecs","Les Carthaginois"],c:0,t:"Malaka a ete fondee vers 770 av. J.-C. Le nom viendrait de 'malac' (sel), lie au sechage du poisson."},
+  {q:"Quel theatre romain du Ier siecle est visible au pied de l'Alcazaba ?",a:["Le Teatro Romano","L'Amphitheatre","Le Coliseo","L'Arena"],c:0,t:"Decouvert en 1951 lors de travaux, le theatre romain de Malaga date de l'empereur Auguste. Il est toujours utilise pour des spectacles."},
+  {q:"Quel jardin botanique de Malaga, cree en 1855, contient des plantes de 5 continents ?",a:["La Concepcion","Les jardins de Puerta Oscura","Le Parc de Malaga","Les jardins de Gibralfaro"],c:0,t:"Le Jardin Botanico-Historico La Concepcion est un jardin tropical de 23 hectares avec des arbres centenaires du monde entier."},
+],
+"Biarritz": [
+  {q:"Biarritz se trouve dans quelle region ?",a:["Pays Basque","Bretagne","Provence","Cote d'Azur"],c:0,t:"Biarritz est passee de village de pecheurs a station de luxe grace a l'imperatrice Eugenie."},
+  {q:"Quel sport de glisse a rendu Biarritz celebre ?",a:["Le surf","Le ski nautique","Le windsurf","Le kitesurf"],c:0,t:"Biarritz est le berceau du surf en Europe. Premieres planches importees de Californie en 1957."},
+  {q:"Quel ocean borde Biarritz ?",a:["L'Atlantique","La Mediterranee","La Manche","La mer du Nord"],c:0,t:"La cote basque est exposee a la houle atlantique, ce qui en fait un spot de surf de classe mondiale."},
+  {q:"Quel rocher est relie a la cote par une passerelle ?",a:["Le Rocher de la Vierge","Le Rocher du Lion","Le Rocher Saint-Martin","Le Grand Rocher"],c:0,t:"La passerelle a ete concue par les ateliers Gustave Eiffel."},
+  {q:"Quel gateau traditionnel basque est une specialite de la region ?",a:["Le gateau basque","Le cannele","Le kouign-amann","Le far breton"],c:0,t:"Fourre a la cerise noire d'Itxassou ou a la creme patissiere. Recette du XVIIIe siecle."},
+  {q:"Quel empereur a fait construire la Villa Eugenie a Biarritz ?",a:["Napoleon III","Napoleon Ier","Louis XIV","Charles X"],c:0,t:"La Villa Eugenie (1854) est aujourd'hui l'Hotel du Palais. Construite pour l'imperatrice Eugenie de Montijo."},
+  {q:"Quelle plage de Biarritz est la plus celebre pour le surf ?",a:["La Cote des Basques","La Grande Plage","La plage Miramar","Le Port Vieux"],c:0,t:"La Cote des Basques est le berceau historique du surf en Europe. C'est ici que tout a commence en 1957."},
+  {q:"Quel sport traditionnel basque se joue avec une chistera ?",a:["La pelote basque","Le rugby","La lutte","La course de taureaux"],c:0,t:"La pelote basque se joue avec un gant d'osier (chistera) et la balle peut atteindre 300 km/h au grand chistera."},
+  {q:"Quel aquarium de Biarritz est dedie a l'ocean ?",a:["L'Aquarium de Biarritz","L'Oceanopolis","Le Nausicaa","Le Sea Life"],c:0,t:"L'Aquarium de Biarritz, face au Rocher de la Vierge, abrite 5 000 animaux dont des requins et une fosse aux phoques."},
+  {q:"Quel village basque a 30 minutes de Biarritz est classe parmi les plus beaux de France ?",a:["Ainhoa","Espelette","Saint-Jean-Pied-de-Port","Sare"],c:0,t:"Ainhoa, avec ses maisons a colombages rouges et verts, est une etape du chemin de Saint-Jacques-de-Compostelle."},
+],
+"Londres": [
+  {q:"Quel fleuve traverse Londres ?",a:["La Tamise","La Seine","Le Rhin","Le Danube"],c:0,t:"La Tamise fait 346 km. Plus de 200 ponts et tunnels la traversent dans le Grand Londres."},
+  {q:"Quelle celebre horloge se trouve au Palais de Westminster ?",a:["Big Ben","London Eye","Tower Clock","Westminster Bell"],c:0,t:"'Big Ben' designe la cloche de 13,5 tonnes, pas la tour (Elizabeth Tower)."},
+  {q:"Quel bus a deux etages est iconique de Londres ?",a:["Le bus rouge","Le bus bleu","Le bus vert","Le bus jaune"],c:0,t:"Les Routemasters rouges circulent depuis 1956. La ligne 15 est la plus touristique."},
+  {q:"Quel musee gratuit abrite la pierre de Rosette ?",a:["British Museum","National Gallery","V&A","Tate Modern"],c:0,t:"Le British Museum accueille 6 millions de visiteurs par an. Collection de 8 millions d'objets."},
+  {q:"Quel palais est la residence officielle du monarque britannique ?",a:["Buckingham Palace","Kensington Palace","Windsor Castle","Tower of London"],c:0,t:"Buckingham Palace a 775 pieces. La releve de la garde attire des milliers de spectateurs chaque jour."},
+  {q:"Quel marche de l'East End est celebre pour les fleurs le dimanche ?",a:["Columbia Road","Camden Market","Portobello","Borough Market"],c:0,t:"Columbia Road Flower Market, chaque dimanche matin, est un corridor de couleurs et de cris des vendeurs."},
+  {q:"Quel quartier de Londres est le centre historique de la finance mondiale ?",a:["The City","Canary Wharf","Westminster","Mayfair"],c:0,t:"The City fait seulement 2,9 km2 mais a ses propres lois et sa propre police."},
+  {q:"Quel systeme de metro est le plus ancien au monde ?",a:["Le Tube (1863)","Le Metro de Paris (1900)","Le U-Bahn (1902)","Le Subway (1904)"],c:0,t:"La premiere ligne a ouvert le 10 janvier 1863. Aujourd'hui : 272 stations, 5 millions de passagers par jour."},
+  {q:"Quel theatre de Shakespeare a ete reconstruit sur la rive sud de la Tamise ?",a:["Le Globe Theatre","Le Royal Court","Le Old Vic","Le National Theatre"],c:0,t:"Le Globe reconstruit (1997) est a 200m du site original. Les spectacles se jouent en plein air comme a l'epoque."},
+  {q:"Quel cimetiere victorien de Londres est celebre pour Karl Marx et George Michael ?",a:["Highgate Cemetery","Kensal Green","Brompton","Abney Park"],c:0,t:"Highgate Cemetery, ouvert en 1839, est un jardin gothique envahi par la vegetation. La tombe de Marx attire des visiteurs du monde entier."},
+],
+"Buenos Aires": [
+  {q:"Buenos Aires est la capitale de quel pays ?",a:["Argentine","Bresil","Uruguay","Chili"],c:0,t:"Buenos Aires est surnommee 'le Paris de l'Amerique du Sud'."},
+  {q:"Quel fleuve/estuaire borde Buenos Aires ?",a:["Le Rio de la Plata","L'Amazone","Le Parana","L'Uruguay"],c:0,t:"Le Rio de la Plata est le plus large estuaire du monde (220 km a son embouchure)."},
+  {q:"Quelle danse est nee dans les quartiers populaires de Buenos Aires ?",a:["Le tango","La salsa","Le flamenco","La samba"],c:0,t:"Le tango est ne dans les conventillos de La Boca et San Telmo vers 1880."},
+  {q:"Quel quartier colore est associe au football et a l'art de rue ?",a:["La Boca","San Telmo","Palermo","Recoleta"],c:0,t:"Le Caminito doit ses couleurs aux restes de peinture des chantiers navals."},
+  {q:"Quelle boisson chaude est un rituel social en Argentine ?",a:["Le mate","Le cafe","Le chocolat chaud","Le the"],c:0,t:"Refuser un mate offert est considere comme impoli en Argentine."},
+  {q:"Quel stade mythique est celui de Boca Juniors ?",a:["La Bombonera","El Monumental","El Cilindro","El Estadio Unico"],c:0,t:"La Bombonera vibre litteralement lors des matchs. Les commentateurs disent qu'elle 'tremble' quand les fans sautent."},
+  {q:"Quel cimetiere de Buenos Aires abrite la tombe d'Eva Peron ?",a:["Recoleta","La Chacarita","Flores","San Telmo"],c:0,t:"Le cimetiere de Recoleta est une ville de mausolees Art Nouveau et Art Deco. Evita repose dans le caveau familial Duarte."},
+  {q:"Quelle avenue de Buenos Aires est la plus large au monde ?",a:["Avenida 9 de Julio","Avenida de Mayo","Corrientes","Santa Fe"],c:0,t:"L'Avenida 9 de Julio fait 140m de large (16 voies). L'Obelisco de 67m se dresse en son centre."},
+  {q:"Quel type de viande est la specialite culinaire de Buenos Aires ?",a:["L'asado (boeuf grille)","Le poulet","L'agneau","Le porc"],c:0,t:"Les Argentins consomment ~50 kg de boeuf par personne par an. L'asado du dimanche est un rituel familial sacre."},
+  {q:"Quelle librairie de Buenos Aires, dans un ancien theatre, est consideree parmi les plus belles du monde ?",a:["El Ateneo Grand Splendid","Eterna Cadencia","Libreria de Avila","Walrus Books"],c:0,t:"El Ateneo Grand Splendid est un theatre de 1919 reconverti en librairie. La scene est devenue un cafe et les loges des coins lecture."},
+],
+"Madrid": [
+  {q:"Madrid est la capitale de quel pays ?",a:["Espagne","Portugal","Italie","Argentine"],c:0,t:"Madrid est la capitale la plus haute de l'UE, a 667m d'altitude."},
+  {q:"Quel musee celebre abrite des oeuvres de Velazquez et Goya ?",a:["Le Prado","Le Reina Sofia","Le Thyssen","Le Sorolla"],c:0,t:"Le Prado possede plus de 8 000 peintures. Les Menines de Velazquez est l'oeuvre phare."},
+  {q:"A quelle heure les Madrilenes dinent-ils typiquement ?",a:["22h","20h","19h","21h"],c:0,t:"Madrid vit decalee : dejeuner 14h-15h, diner 22h. Les bars restent ouverts bien apres minuit."},
+  {q:"Quel grand parc royal est le poumon vert de Madrid ?",a:["Le Retiro","Casa de Campo","Madrid Rio","Parque del Oeste"],c:0,t:"Le Retiro etait reserve a la famille royale jusqu'en 1868. Son Palais de Cristal accueille des expos gratuites."},
+  {q:"Quel stade de football est celui du Real Madrid ?",a:["Santiago Bernabeu","Wanda Metropolitano","Camp Nou","San Siro"],c:0,t:"Le Bernabeu, renove en 2023, peut accueillir 80 000 spectateurs et a un toit retractable."},
+  {q:"Quel plat traditionnel est un ragout de pois chiches ?",a:["Cocido madrileno","Paella","Gazpacho","Fabada"],c:0,t:"Le cocido se sert en 3 temps : bouillon, puis legumes, puis viandes. Un rituel d'hiver."},
+  {q:"Quel quartier de Madrid est le centre de la vie nocturne ?",a:["Malasana","Chueca","Sol","Lavapies"],c:0,t:"Malasana, ancien quartier de la Movida des annees 80, est devenu le QG des bars indie et vintage."},
+  {q:"Quel marche couvert est le plus ancien de Madrid ?",a:["Mercado de San Miguel","Mercado de la Paz","Mercado de Anton Martin","Mercado de Cebada"],c:0,t:"Le Mercado de San Miguel (1916), avec sa structure en fer et verre, a ete reconverti en halle gastronomique haut de gamme."},
+  {q:"Quelle oeuvre de Picasso, exposee au Reina Sofia, denonce un bombardement ?",a:["Guernica","Les Demoiselles d'Avignon","La Femme qui pleure","Le Reve"],c:0,t:"Guernica (1937) mesure 3,5m x 7,8m. Elle denonce le bombardement de la ville basque par l'aviation nazie."},
+  {q:"Quel temple egyptien a ete transporte pierre par pierre et reconstruit dans un parc de Madrid ?",a:["Le Temple de Debod","Le Temple d'Isis","Le Temple de Louxor","Le Temple d'Amon"],c:0,t:"L'Egypte a offert le Temple de Debod a l'Espagne en 1968 pour la remercier d'avoir aide a sauver les temples de Nubie."},
+],
+"Cusco": [
+  {q:"Cusco est une ville de quel pays ?",a:["Perou","Bolivie","Equateur","Colombie"],c:0,t:"Cusco est a 3 400m d'altitude. Le mal des montagnes y est frequent pour les visiteurs."},
+  {q:"Quelle civilisation avait Cusco pour capitale ?",a:["Les Incas","Les Mayas","Les Azteques","Les Mochicas"],c:0,t:"Cusco signifie 'nombril du monde' en quechua. C'etait le centre de l'empire Inca."},
+  {q:"Quel celebre site se trouve a quelques heures de Cusco ?",a:["Le Machu Picchu","Nazca","Titicaca","Chan Chan"],c:0,t:"Le Machu Picchu est a 4h de train depuis Cusco. Decouvert par Hiram Bingham en 1911."},
+  {q:"Quel materiau les Incas utilisaient-ils pour construire sans mortier ?",a:["La pierre taillee parfaitement","Le bois","L'argile","Le metal"],c:0,t:"Les pierres incas s'emboitent si parfaitement qu'on ne peut pas glisser une feuille de papier entre elles."},
+  {q:"Quel animal est un symbole sacre des Andes ?",a:["Le condor","L'aigle","Le lama","Le jaguar"],c:0,t:"Dans la cosmologie inca, le condor represente le monde celeste (Hanan Pacha), le puma le monde terrestre."},
+  {q:"Quelle boisson locale est faite a partir de mais violet fermente ?",a:["La chicha morada","Le pisco sour","Le mate de coca","L'inca kola"],c:0,t:"La chicha morada se boit depuis l'epoque inca. Le mais violet a des proprietes antioxydantes."},
+  {q:"Quel quartier de Cusco est construit sur des fondations incas ?",a:["San Blas","Santa Ana","San Cristobal","Santiago"],c:0,t:"San Blas, le quartier des artisans, est bati sur des murs incas. Ses ruelles escarpees offrent une vue sur la ville."},
+  {q:"Quelle fete du soleil est celebree chaque 24 juin a Cusco ?",a:["Inti Raymi","Corpus Christi","Qoyllur Rit'i","Carnaval"],c:0,t:"L'Inti Raymi reconstitue la ceremonie inca du solstice d'hiver. Des milliers de figurants en costumes traditionnels."},
+  {q:"Quel superaliment des Andes, cultive depuis 5 000 ans, est devenu une tendance mondiale ?",a:["Le quinoa","Le chia","L'amarante","La maca"],c:0,t:"Le quinoa etait si sacre pour les Incas qu'ils l'appelaient 'la mere de tous les grains'."},
+  {q:"Quelle technique de construction inca permettait aux murs de resister aux seismes ?",a:["Murs inclines vers l'interieur","Murs en zigzag","Fondations sur ressorts","Murs creux"],c:0,t:"Les murs incas sont trapezo'idaux (plus larges en bas, inclines vers l'interieur). Cette forme les rend antisismiques."},
+],
+"Singapour": [
+  {q:"Singapour est a la fois une ville et un... ?",a:["Etat (cite-etat)","Canton","Province","Territoire"],c:0,t:"Singapour est l'une des trois seules cites-etats au monde, avec le Vatican et Monaco."},
+  {q:"Quel ocean/detroit borde Singapour ?",a:["Le detroit de Malacca","Le Pacifique","L'Indien","La mer de Chine"],c:0,t:"Le detroit de Malacca est l'une des voies maritimes les plus frequentees au monde. 25% du commerce mondial y transite."},
+  {q:"Quel hotel iconique a une piscine a debordement sur son toit ?",a:["Marina Bay Sands","Raffles Hotel","Fullerton Hotel","Shangri-La"],c:0,t:"La piscine du Marina Bay Sands, a 200m de hauteur, fait 150m de long. C'est la plus haute piscine a debordement du monde."},
+  {q:"Quel plat de street food est le plus iconique de Singapour ?",a:["Le chicken rice","Le laksa","Le chilli crab","Le satay"],c:0,t:"Le chicken rice singapourien est si important qu'il a failli provoquer un incident diplomatique avec la Malaisie qui le revendique aussi."},
+  {q:"Combien de langues officielles Singapour a-t-elle ?",a:["4","2","3","1"],c:0,t:"Anglais, mandarin, malais et tamoul. Le malais est la langue nationale mais l'anglais domine les affaires."},
+  {q:"Quel jardin futuriste abrite des 'super-arbres' artificiels lumineux ?",a:["Gardens by the Bay","Botanic Gardens","Fort Canning","East Coast Park"],c:0,t:"Les 18 Supertrees font de 25 a 50m de haut. Certains ont des panneaux solaires et des systemes de collecte d'eau de pluie."},
+  {q:"Quel quartier ethnique colore est celebre pour ses temples hindous ?",a:["Little India","Chinatown","Kampong Glam","Geylang"],c:0,t:"Little India explose de couleurs et d'odeurs d'epices. Le temple Sri Veeramakaliamman date de 1855."},
+  {q:"Quel fruit tropical est interdit dans le metro et les hotels de Singapour ?",a:["Le durian","La mangue","Le jackfruit","Le ramboutan"],c:0,t:"Le durian est surnomme 'le roi des fruits'. Son odeur est si forte qu'il est banni des transports et batiments publics."},
+  {q:"Quelle loi singapourienne est connue dans le monde entier pour sa severite ?",a:["L'interdiction du chewing-gum","L'interdiction de l'alcool","Le couvre-feu","L'interdiction des tatouages"],c:0,t:"Importer du chewing-gum est illegal depuis 1992. L'amende peut atteindre 100 000 $. Le but : garder la ville propre."},
+  {q:"Quel systeme de transport innovant relie Singapour a la Malaisie par une chaussee ?",a:["Le Causeway","Le Skyway","Le Link Bridge","Le TransMalaysia"],c:0,t:"Le Johor-Singapore Causeway (1923) fait 1 056m. C'est l'un des passages frontaliers les plus frequentes au monde : 300 000 personnes/jour."},
+],
+"Kyoto": [
+  {q:"Kyoto etait l'ancienne capitale de quel pays ?",a:["Japon","Chine","Coree","Vietnam"],c:0,t:"Kyoto a ete la capitale du Japon pendant plus de 1 000 ans (794-1868)."},
+  {q:"Combien de temples et sanctuaires compte Kyoto ?",a:["Plus de 2 000","Environ 500","Environ 100","Plus de 5 000"],c:0,t:"Kyoto possede 17 sites classes au patrimoine mondial de l'UNESCO."},
+  {q:"Quel pavilion dore est l'un des symboles de Kyoto ?",a:["Kinkaku-ji","Ginkaku-ji","Fushimi Inari","Kiyomizu-dera"],c:0,t:"Le Kinkaku-ji (Temple du Pavilion d'Or) est recouvert de feuilles d'or pur. Il se reflete dans un lac miroir."},
+  {q:"Quel sanctuaire est celebre pour ses milliers de torii vermillons ?",a:["Fushimi Inari","Meiji Jingu","Itsukushima","Kasuga"],c:0,t:"Les 10 000 torii de Fushimi Inari forment un tunnel de 4 km a travers la foret. Chacun est offert par une entreprise."},
+  {q:"Dans quel quartier peut-on croiser des geishas ?",a:["Gion","Arashiyama","Higashiyama","Nishiki"],c:0,t:"Les geiko (geishas de Kyoto) et maiko (apprenties) se deplacent encore dans les ruelles de Gion le soir."},
+  {q:"Quel temple offre une vue panoramique depuis sa terrasse en bois ?",a:["Kiyomizu-dera","Nanzen-ji","Tofuku-ji","Ryoan-ji"],c:0,t:"La terrasse de Kiyomizu-dera est suspendue a 13m, soutenue par 139 piliers sans un seul clou."},
+  {q:"Quelle foret de bambous est l'un des sites les plus photographies ?",a:["Arashiyama","Sagano","Fushimi","Kitano"],c:0,t:"La foret de bambous d'Arashiyama produit un son classe parmi les '100 paysages sonores du Japon'."},
+  {q:"Quel jardin zen du temple Ryoan-ji est le plus celebre au monde ?",a:["Le jardin de pierres","Le jardin de mousse","Le jardin d'eau","Le jardin de sable"],c:0,t:"Le jardin sec de Ryoan-ji comporte 15 pierres disposees de sorte qu'on n'en voit jamais que 14 a la fois."},
+  {q:"Quelle ceremonie traditionnelle est un art a part entiere a Kyoto ?",a:["La ceremonie du the","La ceremonie du sake","La ceremonie de l'encens","La ceremonie de l'ikebana"],c:0,t:"Le chanoyu (voie du the) peut durer 4 heures. Chaque geste est codifie. Sen no Rikyu a fixe les regles au XVIe siecle."},
+  {q:"Quel type de cuisine raffinee multi-plats est l'art culinaire traditionnel de Kyoto ?",a:["Le kaiseki","Le sushi","Le ramen","Le tempura"],c:0,t:"Le kaiseki est un repas gastronomique de 8 a 14 plats, lie a la ceremonie du the. Il privilegie la saisonnalite et l'esthetique."},
+],
+"Kathmandu": [
+  {q:"Kathmandu est la capitale de quel pays ?",a:["Nepal","Bhoutan","Tibet","Bangladesh"],c:0,t:"Kathmandu est a 1 400m d'altitude, dans une vallee entouree de collines."},
+  {q:"Quelle chaine de montagnes est visible depuis Kathmandu ?",a:["L'Himalaya","Les Andes","Les Alpes","Le Caucase"],c:0,t:"Par temps clair, on voit les sommets himalayens depuis Kathmandu, dont le Langtang a 7 227m."},
+  {q:"Quel est le plus haut sommet du monde, accessible depuis le Nepal ?",a:["L'Everest","Le K2","Le Kangchenjunga","Le Lhotse"],c:0,t:"L'Everest (8 849m) s'appelle Sagarmatha en nepalais ('front du ciel'). Le camp de base est a 5 380m."},
+  {q:"Quel stupa aux yeux peints est le symbole de Kathmandu ?",a:["Boudhanath","Swayambhunath","Pashupatinath","Changu Narayan"],c:0,t:"Les yeux de Bouddha peints sur les 4 faces de Boudhanath regardent dans toutes les directions."},
+  {q:"Quel temple hindou au bord d'une riviere est un lieu de cremation sacre ?",a:["Pashupatinath","Boudhanath","Changu Narayan","Dakshinkali"],c:0,t:"A Pashupatinath, les cremations ont lieu en plein air sur les ghats au bord de la Bagmati, comme a Varanasi."},
+  {q:"Quel temple perche sur une colline est surnomme 'le temple des singes' ?",a:["Swayambhunath","Boudhanath","Kopan","Namobuddha"],c:0,t:"Des centaines de singes vivent autour de Swayambhunath. Le stupa aurait 2 500 ans."},
+  {q:"Quel quartier medieval de Kathmandu est classe UNESCO ?",a:["Durbar Square","Thamel","Patan","Ason"],c:0,t:"Durbar Square regroupe palais, temples et cours royales. Le seisme de 2015 a endommage plusieurs edifices."},
+  {q:"Quelle ville voisine de Kathmandu est celebre pour ses artisans Newars ?",a:["Patan","Bhaktapur","Banepa","Kirtipur"],c:0,t:"Patan (Lalitpur) est la 'ville de la beaute'. Ses artisans Newars sont reputes pour le travail du metal et du bois."},
+  {q:"Quel evenement tragique a severement endommage Kathmandu en 2015 ?",a:["Un seisme de magnitude 7,8","Une inondation","Une eruption volcanique","Un cyclone"],c:0,t:"Le seisme du 25 avril 2015 a tue 9 000 personnes et endommage 600 000 batiments. La tour Dharahara s'est effondree."},
+  {q:"Quelle ethnie autochtone de la vallee de Kathmandu a une architecture et une culture uniques ?",a:["Les Newars","Les Sherpas","Les Gurungs","Les Tamangs"],c:0,t:"Les Newars ont developpe un art et une architecture uniques melangeant influences hindoues et bouddhistes."},
+],
+"Ibiza": [
+  {q:"Ibiza est une ile de quel pays ?",a:["Espagne","Portugal","Grece","Italie"],c:0,t:"Ibiza fait partie des iles Baleares, avec Majorque, Minorque et Formentera."},
+  {q:"Dans quelle mer se trouve Ibiza ?",a:["La Mediterranee","L'Atlantique","L'Adriatique","La mer Egee"],c:0,t:"Ibiza est a seulement 80 km de la cote espagnole."},
+  {q:"Pour quel type de musique Ibiza est-elle mondialement connue ?",a:["La musique electronique","Le flamenco","Le reggae","Le rock"],c:0,t:"Ibiza est la capitale mondiale de la musique electronique depuis les annees 80."},
+  {q:"Quelle discothèque d'Ibiza est l'une des plus celebres au monde ?",a:["Pacha","Amnesia","Space","Privilege"],c:0,t:"Pacha a ouvert en 1973 et a son logo de cerises iconique. Les meilleurs DJs du monde y jouent chaque ete."},
+  {q:"Quel vieux quartier fortifie d'Ibiza est classe UNESCO ?",a:["Dalt Vila","Eivissa","Sant Antoni","Santa Eulalia"],c:0,t:"Dalt Vila est une citadelle Renaissance entouree de murailles du XVIe siecle. Les vues sur le port sont spectaculaires."},
+  {q:"Quelle petite ile voisine est accessible en ferry en 30 minutes ?",a:["Formentera","Majorque","Minorque","Cabrera"],c:0,t:"Formentera a des plages aux eaux cristallines souvent comparees aux Caraibes. Ses Illetes sont parmi les plus belles d'Europe."},
+  {q:"Quel coucher de soleil est un rituel celebre au Cafe del Mar ?",a:["Le sunset de Sant Antoni","Le sunrise de Platja d'en Bossa","L'aube de Cala Comte","Le crepuscule de Dalt Vila"],c:0,t:"Le Cafe del Mar a popularise les compilations 'chill-out'. Depuis 1980, on y applaudit le coucher de soleil chaque soir."},
+  {q:"Quelle civilisation phenicienne a laisse un site archeologique important a Ibiza ?",a:["Sa Caleta","Dalt Vila","Can Marsa","Es Vedra"],c:0,t:"Sa Caleta est un village phenicien du VIIe siecle av. J.-C., classe UNESCO. C'est l'un des plus anciens vestiges de la Mediterranee occidentale."},
+  {q:"Quel rocher mystique au large d'Ibiza est entoure de legendes ?",a:["Es Vedra","Es Vedranell","Tagomago","S'Espalmador"],c:0,t:"Es Vedra serait le 3e lieu le plus magnetique au monde apres le Pole Nord et les Bermudes. Les legendes parlent d'ovnis et de sirenes."},
+  {q:"Quelle tradition hippie des annees 60-70 survit encore dans les marches d'Ibiza ?",a:["Les marches artisanaux hippies","Les cercles de meditation","Les communes","Les festivals gratuits"],c:0,t:"Le marche hippie de Las Dalias (depuis 1954) et celui de Punta Arabi perpetuent l'esprit boheme qui a fait la legende d'Ibiza."},
+],
+"Nice": [
+  {q:"Nice se trouve sur quelle cote ?",a:["La Cote d'Azur","La Cote d'Opale","La Cote Vermeille","La Cote Sauvage"],c:0,t:"Nice beneficie de 300 jours de soleil par an et de 2 700 heures d'ensoleillement."},
+  {q:"Quelle celebre promenade longe la mer a Nice ?",a:["La Promenade des Anglais","La Croisette","Le Bord de Mer","La Corniche"],c:0,t:"La Promenade des Anglais doit son nom aux Britanniques qui l'ont financee au XIXe siecle."},
+  {q:"Quel plat a base de pois chiches est une specialite nicoise ?",a:["La socca","La ratatouille","La pissaladiere","Le pan bagnat"],c:0,t:"La socca est une galette de farine de pois chiches cuite au four a bois. On la mange brulante au marche."},
+  {q:"Quel celebre marche se tient chaque matin dans le Vieux-Nice ?",a:["Le marche du Cours Saleya","Le marche aux fleurs","Le marche Forville","Le marche de la Condamine"],c:0,t:"Le Cours Saleya accueille fruits, fleurs et antiquites. Les ruelles du Vieux-Nice partent de la en etoile."},
+  {q:"Quelle salade mondialement connue porte le nom de la ville ?",a:["La salade nicoise","La salade cesar","La salade grecque","La salade lyonnaise"],c:0,t:"La vraie salade nicoise ne contient PAS de pommes de terre ni de haricots verts (scandale pour les Nicois)."},
+  {q:"Quel musee de Nice est dedie a l'oeuvre d'Henri Matisse ?",a:["Le Musee Matisse","Le MAMAC","Le Musee Chagall","Le Palais Lascaris"],c:0,t:"Matisse a vecu a Nice pendant 37 ans. Le musee, dans une villa genoise du XVIIe, abrite 236 de ses oeuvres."},
+  {q:"Quel celebre carnaval se tient chaque fevrier a Nice ?",a:["Le Carnaval de Nice","Mardi Gras","La Fete du Citron","Le Corso Fleuri"],c:0,t:"Le Carnaval de Nice est le 3e plus grand au monde apres Rio et Venise. Il attire 1 million de visiteurs."},
+  {q:"Quelle colline offre la meilleure vue panoramique sur Nice et la Baie des Anges ?",a:["La Colline du Chateau","Le Mont Boron","Le Mont Alban","Cimiez"],c:0,t:"La Colline du Chateau (93m) offre une vue a 360 degres. Le chateau a ete detruit en 1706 par Louis XIV."},
+  {q:"Quel comte historique avait Nice pour capitale avant son rattachement a la France ?",a:["Le Comte de Nice (Savoie)","Le Comte de Provence","Le Duche de Ligurie","La Republique de Genes"],c:0,t:"Nice n'est devenue francaise qu'en 1860, par rattachement du Comte de Nice (Savoie) apres un referendum."},
+  {q:"Quel style architectural colore, dit 'Belle Epoque', domine le front de mer ?",a:["Le style neo-classique/Art Deco","Le style haussmannien","Le style provencal","Le style italien"],c:0,t:"Le Negresco (1913), palace Art Deco sur la Promenade, possede un lustre de 16 000 cristaux commande au meme atelier que le Tsar de Russie."},
+],
+"La Rochelle": [
+  {q:"La Rochelle est sur quel littoral ?",a:["L'Atlantique","La Mediterranee","La Manche","La mer du Nord"],c:0,t:"La Rochelle est l'un des plus anciens ports de la facade atlantique francaise."},
+  {q:"Quelle ile est accessible par un pont depuis La Rochelle ?",a:["L'ile de Re","L'ile d'Oleron","Belle-Ile","L'ile d'Aix"],c:0,t:"Le pont de l'ile de Re fait 2,9 km. L'ile est celebre pour ses marais salants et ses roses tremieres."},
+  {q:"Quelles tours medievales gardent l'entree du Vieux-Port ?",a:["Tour Saint-Nicolas et Tour de la Chaine","Tour de la Lanterne et Tour Blanche","Tour Richelieu et Tour Colbert","Tour du Port et Tour de Garde"],c:0,t:"Une chaine pouvait etre tendue entre les deux tours pour bloquer l'entree du port."},
+  {q:"Quel celebre siege a ete ordonne par Richelieu ?",a:["Le siege de 1627-1628","Le siege de 1573","Le siege de 1372","Le siege de 1224"],c:0,t:"Le siege de 14 mois visait le dernier bastion protestant. La population passa de 28 000 a 5 000."},
+  {q:"Quel aquarium de La Rochelle est l'un des plus grands d'Europe ?",a:["L'Aquarium de La Rochelle","Oceanopolis","Nausicaa","Sea Life"],c:0,t:"Plus de 12 000 animaux marins de 600 especes sur 8 000m2."},
+  {q:"Quel marche couvert historique est au coeur de la vie rochelaise ?",a:["Le Marche Central","Les Halles de La Rochelle","Le Marche du Port","Le Marche Saint-Nicolas"],c:0,t:"Le Marche Central, dans un batiment du XIXe siecle, propose fruits de mer, fromages et produits charentais chaque matin."},
+  {q:"Quel quartier de La Rochelle est connu pour ses arcades medievales ?",a:["La rue des Merciers","Le quartier du Gabut","Le quartier Saint-Nicolas","Le quartier de l'Horloge"],c:0,t:"Les arcades du centre-ville permettaient aux commercants de vendre a l'abri de la pluie. Certaines datent du XIIIe siecle."},
+  {q:"Quel type de transport ecologique La Rochelle a-t-elle ete la premiere ville francaise a adopter ?",a:["Les velos en libre-service","Le tramway electrique","Les bus a hydrogene","Les bateaux electriques"],c:0,t:"La Rochelle a lance les premiers velos en libre-service de France en 1974, bien avant le Velib parisien (2007)."},
+  {q:"Quel festival de cinema se tient chaque ete a La Rochelle ?",a:["Festival International du Film","Festival de Cannes","Festival Premiers Plans","Festival Cine Mer"],c:0,t:"Le FIFLR, cree en 1973, est un evenement non competitif dedie au cinema d'auteur."},
+  {q:"Quel fort au large de La Rochelle est surnomme 'le Fort Boyard' et est devenu un plateau tele ?",a:["Fort Boyard","Fort Enet","Fort Louvois","Fort de la Rade"],c:0,t:"Fort Boyard, construit sous Napoleon entre l'ile d'Aix et l'ile d'Oleron, n'a jamais servi militairement. Il est devenu celebre grace au jeu TV."},
 ],
 };
 
 // ═══════════════════════════════════════════════════════════
-//  QUIZ THEMES — defines the 2 story quizzes per top3
+//  DIFFICULTY SYSTEM — simple ladder
 // ═══════════════════════════════════════════════════════════
-const QUIZ_THEMES = [
-  {
-    id: "culture",
-    title: "Culture & Histoire",
-    desc: "Patrimoine, traditions et anecdotes",
-    icon: "🏛️",
-    gradient: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-    questionCount: 10,
-  },
-  {
-    id: "insolite",
-    title: "Insolite & Fun Facts",
-    desc: "Les anecdotes les plus surprenantes",
-    icon: "🤯",
-    gradient: "linear-gradient(135deg, #f59e0b, #ef4444)",
-    questionCount: 10,
-  }
-];
+const LEVELS = 10;
+const START_LEVEL = 5;
+const LEVEL_LABELS = {1:"Tres facile",2:"Facile",3:"Facile+",4:"Moyen-",5:"Moyen",6:"Moyen+",7:"Difficile-",8:"Difficile",9:"Expert-",10:"Expert"};
+const LEVEL_COLORS = {1:"#22c55e",2:"#22c55e",3:"#84cc16",4:"#84cc16",5:"#f59e0b",6:"#f59e0b",7:"#f97316",8:"#ef4444",9:"#ef4444",10:"#dc2626"};
+function diffClass(d) { return d <= 3 ? 'diff-easy' : d <= 7 ? 'diff-medium' : 'diff-hard'; }
 
-// ═══════════════════════════════════════════════════════════
-//  ELO / ADAPTIVE DIFFICULTY ENGINE
-// ═══════════════════════════════════════════════════════════
-const DIFFICULTY_LABELS = {1:"Facile",2:"Facile+",3:"Moyen",4:"Difficile",5:"Expert"};
-const DIFFICULTY_COLORS = {1:"#22c55e",2:"#84cc16",3:"#f59e0b",4:"#f97316",5:"#ef4444"};
-const DIFFICULTY_CLASSES = {1:"diff-easy",2:"diff-easy",3:"diff-medium",4:"diff-hard",5:"diff-hard"};
-
-let playerElo = 2.5;
-const ELO_K = 0.6;
-const TARGET_SUCCESS = 0.70;
-
-function adaptDifficulty(wasCorrect) {
-  if (wasCorrect) {
-    playerElo = Math.min(5, playerElo + ELO_K * (1 - TARGET_SUCCESS));
-  } else {
-    playerElo = Math.max(1, playerElo - ELO_K * TARGET_SUCCESS);
-  }
-}
-
-function pickDifficulty() {
-  const target = Math.round(playerElo);
-  const clamped = Math.max(1, Math.min(5, target));
-  const jitter = Math.random() < 0.3 ? (Math.random() < 0.5 ? -1 : 1) : 0;
-  return Math.max(1, Math.min(5, clamped + jitter));
-}
+let currentLevel = START_LEVEL;
 
 function updateDifficultyBar() {
   const fill = document.getElementById('diff-fill');
   const text = document.getElementById('diff-text');
-  const pct = ((playerElo - 1) / 4) * 100;
-  const level = Math.max(1, Math.min(5, Math.round(playerElo)));
+  const pct = ((currentLevel - 1) / (LEVELS - 1)) * 100;
   fill.style.width = pct + '%';
-  fill.style.background = DIFFICULTY_COLORS[level];
-  text.textContent = DIFFICULTY_LABELS[level];
-  text.style.color = DIFFICULTY_COLORS[level];
+  fill.style.background = LEVEL_COLORS[currentLevel];
+  text.textContent = LEVEL_LABELS[currentLevel];
+  text.style.color = LEVEL_COLORS[currentLevel];
 }
 
 // ═══════════════════════════════════════════════════════════
 //  QUIZ STATE
 // ═══════════════════════════════════════════════════════════
 let currentQuiz = null;
-let quizQuestions = [];
+let quizCities = [];
+let usedQuestions = [];
+let currentQuestion = null;
 let currentQIndex = 0;
+let totalQuestions = 10;
 let correctCount = 0;
 let streak = 0;
 let maxStreak = 0;
@@ -569,108 +728,117 @@ let cityTotal = {};
 let waitingForNext = false;
 
 // ═══════════════════════════════════════════════════════════
-//  INIT — check localStorage for quiz results
+//  PICK NEXT QUESTION — adaptive, balanced across cities
+// ═══════════════════════════════════════════════════════════
+function pickNextQuestion() {
+  const citiesWithQuestions = quizCities.filter(c => Q[c] && Q[c].length > 0);
+  if (citiesWithQuestions.length === 0) return null;
+
+  const cityUsed = {};
+  citiesWithQuestions.forEach(c => cityUsed[c] = 0);
+  usedQuestions.forEach(uq => { if (cityUsed[uq.city] !== undefined) cityUsed[uq.city]++; });
+
+  const minUsed = Math.min(...Object.values(cityUsed));
+  const leastUsedCities = citiesWithQuestions.filter(c => cityUsed[c] === minUsed);
+
+  const targetLevel = currentLevel;
+  const targetIndex = targetLevel - 1;
+
+  let bestQuestion = null;
+  let bestDistance = Infinity;
+
+  for (const city of leastUsedCities) {
+    const questions = Q[city];
+    for (let i = 0; i < questions.length; i++) {
+      const alreadyUsed = usedQuestions.some(uq => uq.city === city && uq.index === i);
+      if (alreadyUsed) continue;
+      const distance = Math.abs(i - targetIndex);
+      if (distance < bestDistance || (distance === bestDistance && Math.random() < 0.5)) {
+        bestDistance = distance;
+        bestQuestion = { city, index: i, question: questions[i], difficulty: i + 1 };
+      }
+    }
+  }
+
+  if (!bestQuestion) {
+    for (const city of citiesWithQuestions) {
+      const questions = Q[city];
+      for (let i = 0; i < questions.length; i++) {
+        const alreadyUsed = usedQuestions.some(uq => uq.city === city && uq.index === i);
+        if (alreadyUsed) continue;
+        const distance = Math.abs(i - targetIndex);
+        if (distance < bestDistance || (distance === bestDistance && Math.random() < 0.5)) {
+          bestDistance = distance;
+          bestQuestion = { city, index: i, question: questions[i], difficulty: i + 1 };
+        }
+      }
+    }
+  }
+
+  return bestQuestion;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
 // ═══════════════════════════════════════════════════════════
 function init() {
   const raw = localStorage.getItem('quiz-last-top3');
-  if (!raw) {
-    document.getElementById('empty-state').style.display = 'block';
-    return;
-  }
+  if (!raw) { document.getElementById('empty-state').style.display = 'block'; return; }
   const top3 = JSON.parse(raw);
-  if (!top3 || top3.length < 3) {
-    document.getElementById('empty-state').style.display = 'block';
-    return;
-  }
-
+  if (!top3 || top3.length < 3) { document.getElementById('empty-state').style.display = 'block'; return; }
   const cities = top3.map(r => r.city);
-  const hasCoverage = cities.some(c => QUESTIONS_DB[c] && QUESTIONS_DB[c].length > 0);
-  if (!hasCoverage) {
-    document.getElementById('empty-state').style.display = 'block';
-    return;
-  }
-
-  renderStoryCards(cities, top3);
+  const hasCoverage = cities.some(c => Q[c] && Q[c].length > 0);
+  if (!hasCoverage) { document.getElementById('empty-state').style.display = 'block'; return; }
+  renderStoryCards(cities);
   document.getElementById('stories-list').style.display = 'block';
 }
 
-function renderStoryCards(cities, top3) {
+function renderStoryCards(cities) {
   const container = document.getElementById('story-cards');
-  let html = '';
-  QUIZ_THEMES.forEach(theme => {
-    const available = cities.filter(c => QUESTIONS_DB[c] && QUESTIONS_DB[c].length > 0);
-    if (available.length === 0) return;
-    html += `
-    <div class="story-card" onclick="startQuiz('${theme.id}', ${JSON.stringify(cities).replace(/"/g,'&quot;')})">
-      <div class="story-card-header" style="background:${theme.gradient}">
-        <div class="story-card-cities">
-          ${cities.map(c => `<span>${c}</span>`).join('')}
-        </div>
+  const available = cities.filter(c => Q[c] && Q[c].length > 0);
+  const citiesJson = JSON.stringify(cities).replace(/"/g, '&quot;');
+
+  let html = `
+  <div class="story-card" onclick='startQuiz(${JSON.stringify(cities)})'>
+    <div class="story-card-header" style="background:linear-gradient(135deg, #6366f1, #8b5cf6)">
+      <div class="story-card-cities">
+        ${cities.map(c => {
+          const has = Q[c] && Q[c].length > 0;
+          return `<span${has ? '' : ' style="opacity:0.5"'}>${c}</span>`;
+        }).join('')}
       </div>
-      <div class="story-card-body">
-        <h3>${theme.icon} ${theme.title}</h3>
-        <p>${theme.desc} — melange de tes 3 destinations</p>
-        <div class="story-card-meta">
-          <span>📝 ${theme.questionCount} questions</span>
-          <span>🎯 Difficulte adaptative</span>
-          <span>⏱ ~3 min</span>
-        </div>
+    </div>
+    <div class="story-card-body">
+      <h3>🏛️ Decouvre tes destinations</h3>
+      <p>Quiz culturel adaptatif — melange de tes 3 villes</p>
+      <div class="story-card-meta">
+        <span>📝 10 questions</span>
+        <span>🎯 Difficulte adaptative</span>
+        <span>⏱ ~3 min</span>
       </div>
-    </div>`;
-  });
+      ${available.length < cities.length ? `<p style="font-size:0.75rem;color:var(--orange);margin-top:8px">⚠️ Questions disponibles pour : ${available.join(', ')}</p>` : ''}
+    </div>
+  </div>`;
   container.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════════
 //  START QUIZ
 // ═══════════════════════════════════════════════════════════
-function startQuiz(themeId, cities) {
-  currentQuiz = QUIZ_THEMES.find(t => t.id === themeId);
-  const totalQ = currentQuiz.questionCount;
-
-  const allQuestions = [];
-  cities.forEach(city => {
-    if (QUESTIONS_DB[city]) {
-      QUESTIONS_DB[city].forEach(q => {
-        allQuestions.push({...q, city});
-      });
-    }
-  });
-
-  const perCity = Math.ceil(totalQ / cities.filter(c => QUESTIONS_DB[c]).length);
-  const selected = [];
-  const usedByCity = {};
-
-  for (let round = 0; round < totalQ; round++) {
-    const targetDiff = pickDifficulty();
-    const candidates = allQuestions.filter(q => {
-      if (selected.find(s => s.q === q.q && s.city === q.city)) return false;
-      const cityCount = (usedByCity[q.city] || 0);
-      if (cityCount >= perCity + 1) return false;
-      return true;
-    });
-    if (candidates.length === 0) break;
-
-    candidates.sort((a, b) => Math.abs(a.d - targetDiff) - Math.abs(b.d - targetDiff));
-    const bestDiffMatch = candidates[0];
-
-    const sameDiffCandidates = candidates.filter(q => Math.abs(q.d - targetDiff) === Math.abs(bestDiffMatch.d - targetDiff));
-    const pick = sameDiffCandidates[Math.floor(Math.random() * sameDiffCandidates.length)];
-    selected.push(pick);
-    usedByCity[pick.city] = (usedByCity[pick.city] || 0) + 1;
-  }
-
-  quizQuestions = selected;
+function startQuiz(cities) {
+  quizCities = cities;
+  usedQuestions = [];
   currentQIndex = 0;
   correctCount = 0;
   streak = 0;
   maxStreak = 0;
   answeredCount = 0;
-  playerElo = 2.5;
+  currentLevel = START_LEVEL;
   cityCorrect = {};
   cityTotal = {};
   cities.forEach(c => { cityCorrect[c] = 0; cityTotal[c] = 0; });
   waitingForNext = false;
+  totalQuestions = 10;
 
   document.getElementById('stories-list').style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
@@ -678,55 +846,40 @@ function startQuiz(themeId, cities) {
   showQuestion();
 }
 
-// ═══════════════════════════════════════════════════════════
-//  SHOW QUESTION — adaptive selection at runtime
-// ═══════════════════════════════════════════════════════════
 function showQuestion() {
-  if (currentQIndex >= quizQuestions.length) {
-    showQuizResults();
-    return;
-  }
+  if (currentQIndex >= totalQuestions) { showQuizResults(); return; }
 
-  const totalQ = quizQuestions.length;
+  const picked = pickNextQuestion();
+  if (!picked) { showQuizResults(); return; }
 
-  if (currentQIndex > 0) {
-    const targetDiff = pickDifficulty();
-    const remaining = quizQuestions.slice(currentQIndex);
-    remaining.sort((a, b) => Math.abs(a.d - targetDiff) - Math.abs(b.d - targetDiff));
-    const best = remaining[0];
-    const bestIdx = quizQuestions.indexOf(best, currentQIndex);
-    if (bestIdx > currentQIndex) {
-      [quizQuestions[currentQIndex], quizQuestions[bestIdx]] = [quizQuestions[bestIdx], quizQuestions[currentQIndex]];
-    }
-  }
+  currentQuestion = picked;
+  usedQuestions.push({ city: picked.city, index: picked.index });
 
-  const q = quizQuestions[currentQIndex];
-
-  document.getElementById('q-counter').textContent = `${currentQIndex + 1}/${totalQ}`;
-  document.getElementById('q-progress-fill').style.width = ((currentQIndex) / totalQ * 100) + '%';
+  document.getElementById('q-counter').textContent = `${currentQIndex + 1}/${totalQuestions}`;
+  document.getElementById('q-progress-fill').style.width = ((currentQIndex) / totalQuestions * 100) + '%';
   document.getElementById('score-correct').textContent = correctCount;
   document.getElementById('score-total').textContent = answeredCount;
   document.getElementById('score-streak').textContent = streak;
   updateDifficultyBar();
 
-  const shuffled = q.a.map((text, origIdx) => ({text, origIdx}));
+  const q = picked.question;
+  const shuffled = q.a.map((text, origIdx) => ({ text, origIdx }));
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
 
-  const diffClass = DIFFICULTY_CLASSES[q.d];
-  const diffLabel = DIFFICULTY_LABELS[q.d];
+  const dc = diffClass(picked.difficulty);
+  const dl = LEVEL_LABELS[picked.difficulty];
+
   let html = `<div class="question-card">
-    <span class="question-city-tag">${q.city}</span>
-    <span class="question-difficulty-tag ${diffClass}">${diffLabel}</span>
+    <span class="question-city-tag">${picked.city}</span>
+    <span class="question-difficulty-tag ${dc}">${dl}</span>
     <div class="question-text">${q.q}</div>
     <div class="answers-grid">`;
-
-  shuffled.forEach((opt, i) => {
+  shuffled.forEach(opt => {
     html += `<button class="answer-btn" data-orig="${opt.origIdx}" onclick="handleAnswer(this, ${opt.origIdx}, ${q.c})">${opt.text}</button>`;
   });
-
   html += `</div><div id="anecdote-area"></div></div>`;
   document.getElementById('question-area').innerHTML = html;
   waitingForNext = false;
@@ -736,9 +889,7 @@ function handleAnswer(btn, chosenIdx, correctIdx) {
   if (waitingForNext) return;
   waitingForNext = true;
 
-  const q = quizQuestions[currentQIndex];
   const isCorrect = chosenIdx === correctIdx;
-
   const buttons = document.querySelectorAll('.answer-btn');
   buttons.forEach(b => {
     const orig = parseInt(b.dataset.orig);
@@ -752,16 +903,18 @@ function handleAnswer(btn, chosenIdx, correctIdx) {
     correctCount++;
     streak++;
     if (streak > maxStreak) maxStreak = streak;
+    currentLevel = Math.min(LEVELS, currentLevel + 1);
   } else {
     btn.classList.add('wrong');
     streak = 0;
+    currentLevel = Math.max(1, currentLevel - 1);
   }
 
   answeredCount++;
-  cityTotal[q.city] = (cityTotal[q.city] || 0) + 1;
-  if (isCorrect) cityCorrect[q.city] = (cityCorrect[q.city] || 0) + 1;
+  const city = currentQuestion.city;
+  cityTotal[city] = (cityTotal[city] || 0) + 1;
+  if (isCorrect) cityCorrect[city] = (cityCorrect[city] || 0) + 1;
 
-  adaptDifficulty(isCorrect);
   updateDifficultyBar();
   document.getElementById('score-correct').textContent = correctCount;
   document.getElementById('score-total').textContent = answeredCount;
@@ -771,7 +924,7 @@ function handleAnswer(btn, chosenIdx, correctIdx) {
   document.getElementById('anecdote-area').innerHTML = `
     <div class="anecdote">
       <strong>${emoji} ${isCorrect ? 'Bravo !' : 'Pas tout a fait...'}</strong><br>
-      ${q.t}
+      ${currentQuestion.question.t}
       <button class="anecdote-next" onclick="nextQuestion()">Suivant →</button>
     </div>`;
 }
@@ -809,8 +962,6 @@ function showQuizResults() {
       </div>`;
   });
 
-  const levelLabel = DIFFICULTY_LABELS[Math.max(1, Math.min(5, Math.round(playerElo)))];
-
   screen.innerHTML = `
     <div class="results-card">
       <div class="results-emoji">${emoji}</div>
@@ -819,7 +970,7 @@ function showQuizResults() {
       <div class="results-stats">
         <div class="results-stat"><div class="val" style="color:var(--green)">${correctCount}/${answeredCount}</div><div class="lbl">Correct</div></div>
         <div class="results-stat"><div class="val" style="color:var(--orange)">${maxStreak}</div><div class="lbl">Meilleure serie</div></div>
-        <div class="results-stat"><div class="val" style="color:var(--accent)">${levelLabel}</div><div class="lbl">Niveau atteint</div></div>
+        <div class="results-stat"><div class="val" style="color:var(--accent)">${LEVEL_LABELS[currentLevel]}</div><div class="lbl">Niveau atteint</div></div>
       </div>
       <div class="results-breakdown">
         <h4>Score par ville</h4>
@@ -830,7 +981,7 @@ function showQuizResults() {
         <button class="secondary" onclick="retryQuiz()">Rejouer ↻</button>
       </div>
     </div>`;
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function backToStories() {
@@ -840,10 +991,7 @@ function backToStories() {
 }
 
 function retryQuiz() {
-  const raw = localStorage.getItem('quiz-last-top3');
-  if (!raw) return;
-  const cities = JSON.parse(raw).map(r => r.city);
-  startQuiz(currentQuiz.id, cities);
+  startQuiz(quizCities);
 }
 
 init();
