@@ -533,21 +533,27 @@
   .cq-city-card-score { font-size:0.85rem; text-align:right; }
   .cq-city-card-btn { padding:7px 16px !important; font-size:0.82rem !important; margin:0 !important; white-space:nowrap; }
 
+  /* ── Image quiz answers ── */
+  .cq-answers-img { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .cq-ans-img { position:relative; border-radius:14px; overflow:hidden; border:3px solid var(--border); cursor:pointer; transition:all 0.25s; }
+  .cq-ans-img:hover { border-color:var(--accent); transform:scale(1.02); box-shadow:0 2px 12px rgba(37,190,199,0.25); }
+  .cq-ans-img img { width:100%; height:140px; object-fit:cover; display:block; }
+  .cq-ans-img .cq-img-label { position:absolute; top:8px; left:8px; width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,0.6); color:#fff; font-weight:800; font-size:0.85rem; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); z-index:2; }
+  .cq-ans-img .cq-img-icon { display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44px; height:44px; border-radius:50%; font-size:1.3rem; align-items:center; justify-content:center; z-index:3; }
+  .cq-ans-img.correct { border-color:var(--green) !important; border-width:4px; }
+  .cq-ans-img.correct .cq-img-label { background:var(--green); }
+  .cq-ans-img.correct .cq-img-icon { display:flex; background:var(--green); color:#fff; }
+  .cq-ans-img.wrong { border-color:#ef4444 !important; border-width:4px; }
+  .cq-ans-img.wrong .cq-img-icon { display:flex; background:#ef4444; color:#fff; }
+  .cq-ans-img.wrong .cq-img-label { background:#ef4444; }
+  .cq-ans-img.reveal { border-color:var(--green) !important; border-width:4px; }
+  .cq-ans-img.reveal .cq-img-icon { display:flex; background:var(--green); color:#fff; }
+  .cq-ans-img.reveal .cq-img-label { background:var(--green); }
+  .cq-ans-img.dimmed { opacity:0.35; }
+
   /* ── Responsive ── */
   @media (max-width: 640px) {
     body { padding-top: 16px; }
-.cq-answers-img { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
-.cq-ans-img { position:relative; border-radius:14px; overflow:hidden; border:3px solid var(--border); cursor:pointer; transition:all 0.25s; }
-.cq-ans-img:hover { border-color:var(--accent); transform:scale(1.03); }
-.cq-ans-img img { width:100%; height:140px; object-fit:cover; display:block; }
-.cq-ans-img .cq-img-label { position:absolute; top:6px; left:6px; width:28px; height:28px; border-radius:50%; background:rgba(0,0,0,0.55); color:#fff; font-weight:800; font-size:0.82rem; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
-.cq-ans-img.correct { border-color:var(--green) !important; border-width:4px; }
-.cq-ans-img.correct .cq-img-label { background:var(--green); }
-.cq-ans-img.wrong { border-color:#ef4444 !important; border-width:4px; opacity:0.6; }
-.cq-ans-img.wrong .cq-img-label { background:#ef4444; }
-.cq-ans-img.reveal { border-color:var(--green) !important; border-width:4px; opacity:0.45; }
-.cq-ans-img.reveal .cq-img-label { background:var(--green); }
-
     .container { padding: 12px; }
     h1 { font-size: 1.25rem; }
     .subtitle { font-size: 0.78rem; margin-bottom: 20px; }
@@ -2417,22 +2423,25 @@ function showResults() {
   // Messaging adaptatif selon la rarete (X% des voyageurs te ressemblent).
   const sim = computeSimilarity(vecteur);
   let simIcon, simHeadline, simSub, simBadge;
+  // Paliers calibres sur la distribution reelle de la pop synthetique :
+  // mediane ~3 %, p90 ~8 %, max ~18.6 % (voir similarity.mjs).
+  // Le seuil "populaire" reste sous le plafond pour rester atteignable.
   if (sim.pct < 1) {
     simIcon = "\u{2728}"; // ✨
     simBadge = "Profil rare";
     simHeadline = "Moins de 1 % des voyageurs te ressemblent";
     simSub = `Ton profil <b>${sim.dominant}</b> est singulier — peu de profils tombent aussi loin dans cette direction.`;
-  } else if (sim.pct < 5) {
+  } else if (sim.pct < 4) {
     simIcon = "\u{1F48E}"; // 💎
     simBadge = "Profil rare";
     simHeadline = `Seulement ${sim.pct.toFixed(1)} % des voyageurs te ressemblent`;
     simSub = `Tu fais partie d'un petit groupe : les <b>${sim.dominant}</b>. Une vraie identite de voyage.`;
-  } else if (sim.pct < 12) {
+  } else if (sim.pct < 9) {
     simIcon = "\u{1F3AF}"; // 🎯
     simBadge = "Profil affirme";
     simHeadline = `${sim.pct.toFixed(1)} % des voyageurs te ressemblent`;
     simSub = `Tu partages des envies tres claires avec les <b>${sim.dominant}</b>.`;
-  } else if (sim.pct < 25) {
+  } else if (sim.pct < 14) {
     simIcon = "\u{1F30D}"; // 🌍
     simBadge = "Profil partage";
     simHeadline = `${sim.pct.toFixed(1)} % des voyageurs te ressemblent`;
@@ -2450,7 +2459,7 @@ function showResults() {
     <div class="sim-sub">${simSub}</div>
     <div class="sim-bar-wrap">
       <div class="sim-bar-bg">
-        <div class="sim-bar-fill" style="width:${Math.min(100, sim.pct * 4)}%"></div>
+        <div class="sim-bar-fill" style="width:${Math.min(100, sim.pct * 5.5)}%"></div>
       </div>
       <div class="sim-bar-legend"><span>rare</span><span>populaire</span></div>
     </div>
@@ -5651,7 +5660,7 @@ function showCQ(){
   h+='<div class="cq-text">'+q.q+'</div>';
   if(q.type==='img'){
     h+='<div class="cq-answers-img">';
-    sh.forEach((o,idx)=>{h+='<div class="cq-ans-img" data-o="'+o.i+'" onclick="handleCQ(this,'+o.i+','+q.c+')"><span class="cq-img-label">'+labels[idx]+'</span><img src="'+CQ_IMGS[o.t]+'" alt="" loading="lazy"></div>';});
+    sh.forEach((o,idx)=>{h+='<div class="cq-ans-img" data-o="'+o.i+'" onclick="handleCQ(this,'+o.i+','+q.c+')"><span class="cq-img-label">'+labels[idx]+'</span><span class="cq-img-icon"></span><img src="'+CQ_IMGS[o.t]+'" alt="" loading="lazy"></div>';});
     h+='</div>';
   } else {
     h+='<div class="cq-answers">';
@@ -5667,12 +5676,23 @@ function handleCQ(btn,chosen,correct){
   if(cqWaiting) return;cqWaiting=true;
   const ok=chosen===correct;
   var isImg=!!document.querySelector('.cq-ans-img');
-  document.querySelectorAll(isImg?'.cq-ans-img':'.cq-ans').forEach(b=>{
-    if(parseInt(b.dataset.o)===correct) b.classList.add('reveal');
-    b.style.pointerEvents='none';
-  });
-  if(ok){btn.classList.remove('reveal');btn.classList.add('correct');}
-  else{btn.classList.add('wrong');}
+  if(isImg){
+    document.querySelectorAll('.cq-ans-img').forEach(b=>{
+      const o=parseInt(b.dataset.o);
+      b.style.pointerEvents='none';
+      if(b===btn&&ok){b.classList.add('correct');b.querySelector('.cq-img-icon').textContent='✓';}
+      else if(b===btn&&!ok){b.classList.add('wrong');b.querySelector('.cq-img-icon').textContent='✗';}
+      else if(o===correct){b.classList.add('reveal');b.querySelector('.cq-img-icon').textContent='✓';}
+      else{b.classList.add('dimmed');}
+    });
+  } else {
+    document.querySelectorAll('.cq-ans').forEach(b=>{
+      if(parseInt(b.dataset.o)===correct) b.classList.add('reveal');
+      b.style.pointerEvents='none';
+    });
+    if(ok){btn.classList.remove('reveal');btn.classList.add('correct');}
+    else{btn.classList.add('wrong');}
+  }
   if(!cqIsImgBonus){
     if(ok){cqCorrect++;cqStreak++;if(cqStreak>cqMaxStreak)cqMaxStreak=cqStreak;cqLevel=Math.min(CQ_LEVELS,cqLevel+1);}
     else{cqStreak=0;cqLevel=Math.max(1,cqLevel-2);}
