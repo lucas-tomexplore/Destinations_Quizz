@@ -541,9 +541,9 @@
   }
   .cq-flame-dim {
     position:fixed; inset:0; z-index:999; pointer-events:none;
-    background:rgba(0,0,0,0); transition:background 0.5s;
+    background:rgba(0,0,0,0); transition:background 0.4s;
   }
-  .cq-flame-dim.active { background:rgba(0,0,0,0.25); }
+  .cq-flame-dim.active { background:rgba(0,0,0,0.45); }
   .cq-flame-canvas {
     position:fixed; bottom:0; left:0; width:100vw; height:100vh;
     z-index:1000; pointer-events:none;
@@ -6543,100 +6543,138 @@ function showFlameEffect(){
   document.body.appendChild(dim);
   requestAnimationFrame(function(){dim.classList.add('active');});
 
-  var img=new Image();
-  img.src='images.jpeg';
-  img.onload=function(){
-    var off=document.createElement('canvas');
-    off.width=img.width;off.height=img.height;
-    var ox=off.getContext('2d');
-    ox.drawImage(img,0,0);
-    var id=ox.getImageData(0,0,off.width,off.height);
-    var d=id.data;
-    for(var p=0;p<d.length;p+=4){
-      var mx=Math.max(d[p],d[p+1],d[p+2]);
-      if(mx<50){d[p+3]=0;}
-      else if(mx<100){d[p+3]=Math.round((mx-50)/50*255);}
+  var canvas=document.createElement('canvas');
+  canvas.className='cq-flame-canvas';
+  var vW=window.innerWidth,vH=window.innerHeight;
+  canvas.width=vW;canvas.height=vH;
+  document.body.appendChild(canvas);
+  var ctx=canvas.getContext('2d');
+  var t0=performance.now();
+  var DURATION=4200;
+
+  var wisps=[];
+  for(var i=0;i<10;i++){
+    wisps.push({
+      baseX:vW*(0.08+i*0.09),
+      amp:30+Math.random()*60,
+      freq:2+Math.random()*2,
+      phase:Math.random()*6.28,
+      height:vH*(0.25+Math.random()*0.35),
+      width:3+Math.random()*5,
+      speed:0.8+Math.random()*1.2,
+      hue:270+Math.random()*40,
+      delay:Math.random()*0.3
+    });
+  }
+
+  var sparks=[];
+  for(var j=0;j<50;j++){
+    sparks.push({
+      x:Math.random()*vW,
+      y:vH,
+      vx:(Math.random()-0.5)*3,
+      vy:-(3+Math.random()*7),
+      size:1.5+Math.random()*3,
+      life:1,
+      decay:0.01+Math.random()*0.02,
+      hue:260+Math.random()*60,
+      delay:Math.random()*1.5
+    });
+  }
+
+  function drawWisp(w,t,fade){
+    var progress=Math.max(0,Math.min(1,(t-w.delay)/1.2));
+    if(progress<=0)return;
+    var h=w.height*progress;
+    var segs=20;
+    ctx.save();
+    ctx.shadowColor='hsl('+w.hue+',100%,70%)';
+    ctx.shadowBlur=25;
+    ctx.lineWidth=w.width;
+    ctx.lineCap='round';
+    ctx.strokeStyle='hsla('+w.hue+',100%,80%,'+fade*0.7*progress+')';
+    ctx.beginPath();
+    for(var s=0;s<=segs;s++){
+      var pct=s/segs;
+      var y=vH-pct*h;
+      var x=w.baseX+Math.sin(pct*3.14*2+t*w.freq+w.phase)*w.amp*pct;
+      if(s===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
     }
-    ox.putImageData(id,0,0);
+    ctx.stroke();
+    ctx.shadowBlur=50;
+    ctx.lineWidth=w.width*0.4;
+    ctx.strokeStyle='hsla('+(w.hue+20)+',100%,95%,'+fade*0.9*progress+')';
+    ctx.beginPath();
+    for(var s2=0;s2<=segs;s2++){
+      var pct2=s2/segs;
+      var y2=vH-pct2*h;
+      var x2=w.baseX+Math.sin(pct2*3.14*2+t*w.freq+w.phase)*w.amp*pct2;
+      if(s2===0)ctx.moveTo(x2,y2);else ctx.lineTo(x2,y2);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
 
-    var canvas=document.createElement('canvas');
-    canvas.className='cq-flame-canvas';
-    var vW=window.innerWidth,vH=window.innerHeight;
-    canvas.width=vW;canvas.height=vH;
-    document.body.appendChild(canvas);
-    var ctx=canvas.getContext('2d');
-    var t0=performance.now();
-    var DURATION=4500;
+  function drawGlow(t,fade){
+    var pulse=0.85+Math.sin(t*8)*0.15;
+    var g=ctx.createRadialGradient(vW/2,vH+20,0,vW/2,vH+20,vW*0.6*pulse);
+    g.addColorStop(0,'rgba(192,38,211,'+0.4*fade+')');
+    g.addColorStop(0.3,'rgba(126,34,206,'+0.2*fade+')');
+    g.addColorStop(0.6,'rgba(88,28,135,'+0.08*fade+')');
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,vW,vH);
+  }
 
-    var flameH=vH*0.38;
-    var tileW=vW/3.5;
-    var tileH=flameH;
-    var ratio=img.height/img.width;
-    tileW=tileH/ratio;
+  function frame(now){
+    var elapsed=now-t0;
+    if(elapsed>DURATION){
+      canvas.remove();
+      dim.classList.remove('active');
+      setTimeout(function(){dim.remove();},500);
+      return;
+    }
+    var fade=1;
+    if(elapsed<400)fade=elapsed/400;
+    else if(elapsed>DURATION-800)fade=(DURATION-elapsed)/800;
+    var t=elapsed/1000;
 
-    var layers=[];
-    var cols=Math.ceil(vW/tileW)+2;
-    for(var row=0;row<2;row++){
-      for(var c=-1;c<cols+1;c++){
-        layers.push({
-          col:c,
-          row:row,
-          flip:((c+row)%2===0)?1:-1,
-          waveAmp:3+Math.random()*8,
-          waveSpd:1+Math.random()*1.5,
-          waveOff:Math.random()*6.28,
-          speed:0.01+Math.random()*0.02,
-          alpha:row===0?0.85:0.5,
-          scale:row===0?1:0.8,
-          xOff:(Math.random()-0.5)*tileW*0.25,
-          yOff:row*flameH*0.06
-        });
+    ctx.clearRect(0,0,vW,vH);
+
+    drawGlow(t,fade);
+
+    for(var i=0;i<wisps.length;i++) drawWisp(wisps[i],t,fade);
+
+    for(var j=0;j<sparks.length;j++){
+      var sp=sparks[j];
+      var st=t-sp.delay;
+      if(st<0)continue;
+      sp.x+=sp.vx;
+      sp.y+=sp.vy;
+      sp.vy+=0.08;
+      sp.life-=sp.decay;
+      if(sp.life<=0){
+        sp.x=vW*0.1+Math.random()*vW*0.8;
+        sp.y=vH;
+        sp.vx=(Math.random()-0.5)*3;
+        sp.vy=-(3+Math.random()*7);
+        sp.life=1;
+        sp.delay=-999;
       }
+      ctx.save();
+      ctx.globalAlpha=fade*sp.life;
+      ctx.shadowColor='hsl('+sp.hue+',100%,75%)';
+      ctx.shadowBlur=12;
+      ctx.fillStyle='hsl('+sp.hue+',100%,85%)';
+      ctx.beginPath();
+      ctx.arc(sp.x,sp.y,sp.size*sp.life,0,6.2832);
+      ctx.fill();
+      ctx.restore();
     }
 
-    function frame(now){
-      var elapsed=now-t0;
-      if(elapsed>DURATION){
-        canvas.remove();
-        dim.classList.remove('active');
-        setTimeout(function(){dim.remove();},600);
-        return;
-      }
-
-      var fade=1;
-      if(elapsed<500)fade=elapsed/500;
-      else if(elapsed>DURATION-1000)fade=(DURATION-elapsed)/1000;
-      var t=elapsed/1000;
-
-      ctx.clearRect(0,0,vW,vH);
-
-      for(var i=0;i<layers.length;i++){
-        var l=layers[i];
-        var sc=l.scale;
-        var dw=tileW*sc;
-        var dh=tileH*sc;
-        var baseX=l.col*tileW*0.82+l.xOff;
-        var waveX=Math.sin(t*l.waveSpd+l.waveOff)*l.waveAmp;
-        var moveY=t*l.speed*vH;
-        var dx=baseX+waveX;
-        var dy=vH-dh+l.yOff-moveY;
-
-        ctx.save();
-        ctx.globalAlpha=fade*l.alpha;
-        if(l.flip===-1){
-          ctx.translate(dx+dw,0);
-          ctx.scale(-1,1);
-          ctx.drawImage(off,0,dy,dw,dh);
-        }else{
-          ctx.drawImage(off,dx,dy,dw,dh);
-        }
-        ctx.restore();
-      }
-
-      requestAnimationFrame(frame);
-    }
     requestAnimationFrame(frame);
-  };
+  }
+  requestAnimationFrame(frame);
 }
 
 function showCQResults(){
