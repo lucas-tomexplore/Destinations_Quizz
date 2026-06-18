@@ -6494,7 +6494,7 @@ function showConfetti(){
   label.className='cq-streak-label cq-streak-label-3';
   label.textContent='🎉 En feu !';
   document.body.appendChild(label);
-  setTimeout(function(){label.remove();},1700);
+  setTimeout(function(){label.remove();},1200);
   var colors=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899','#14b8a6'];
   for(var i=0;i<55;i++){
     var p=document.createElement('div');
@@ -6514,7 +6514,7 @@ function showStarBurst(){
   label.className='cq-streak-label cq-streak-label-5';
   label.textContent='⭐ Inarretable !';
   document.body.appendChild(label);
-  setTimeout(function(){label.remove();},1700);
+  setTimeout(function(){label.remove();},1200);
   var stars=['⭐','🌟','✨','💫'];
   for(var i=0;i<24;i++){
     var angle=(i/24)*Math.PI*2;
@@ -6536,7 +6536,7 @@ function showFlameEffect(){
   label.className='cq-streak-label cq-streak-label-7';
   label.textContent='🔥 Legendaire 🔥';
   document.body.appendChild(label);
-  setTimeout(function(){label.remove();},3500);
+  setTimeout(function(){label.remove();},2000);
 
   var dim=document.createElement('div');
   dim.className='cq-flame-dim';
@@ -6550,7 +6550,7 @@ function showFlameEffect(){
   document.body.appendChild(canvas);
   var ctx=canvas.getContext('2d');
   var t0=performance.now();
-  var DURATION=3500;
+  var DURATION=2200;
 
   var pts=[];
   for(var i=0;i<80;i++){
