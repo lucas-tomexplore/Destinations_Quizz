@@ -6286,7 +6286,7 @@ const CQ = {
 // ═══════════════════════════════════════════════════════════
 //  CULTURE QUIZ ENGINE — 9 niveaux, 5 questions, pioche exacte
 // ═══════════════════════════════════════════════════════════
-const CQ_LEVELS = 9, CQ_START = 5, CQ_TOTAL = 5;
+const CQ_LEVELS = 9, CQ_START = 3, CQ_TOTAL = 5;
 const CQ_LABELS = {1:"Tres facile",2:"Facile",3:"Facile+",4:"Moyen-",5:"Moyen",6:"Moyen+",7:"Difficile-",8:"Difficile",9:"Extreme"};
 const CQ_COLORS = {1:"#22c55e",2:"#4ade80",3:"#84cc16",4:"#eab308",5:"#f59e0b",6:"#f97316",7:"#ef4444",8:"#dc2626",9:"#991b1b"};
 function cqDiffClass(d){ return d<=3?'cq-diff-easy':d<=6?'cq-diff-med':'cq-diff-hard'; }
@@ -6430,15 +6430,17 @@ function handleCQ(btn,chosen,correct){
     if(ok){btn.classList.remove('reveal');btn.classList.add('correct');}
     else{btn.classList.add('wrong');}
   }
+  if(ok){cqStreak++;if(cqStreak>cqMaxStreak)cqMaxStreak=cqStreak;showStreak(cqStreak);}
+  else{cqStreak=0;}
   if(!cqIsImgBonus){
-    if(ok){cqCorrect++;cqStreak++;if(cqStreak>cqMaxStreak)cqMaxStreak=cqStreak;showStreak(cqStreak);cqLevel=Math.min(CQ_LEVELS,cqLevel+1);}
-    else{cqStreak=0;cqLevel=Math.max(1,cqLevel-2);}
+    if(ok){cqCorrect++;cqLevel=Math.min(CQ_LEVELS,cqLevel+1);}
+    else{cqLevel=Math.max(1,cqLevel-1);}
     cqAnswered++;
     updateCQDiff();
     document.getElementById('c-correct').textContent=cqCorrect;
     document.getElementById('c-total').textContent=cqAnswered;
-    document.getElementById('c-streak').textContent=cqStreak;
   }
+  document.getElementById('c-streak').textContent=cqStreak;
   const em=ok?'✅':'❌';
   document.getElementById('c-anecdote').innerHTML='<div class="cq-anecdote"><strong>'+em+' '+(ok?'Bravo !':'Pas tout a fait...')+'</strong><br>'+cqCurrent.q.t+'<button class="cq-next" onclick="cqNext()">Suivant →</button></div>';
 }
