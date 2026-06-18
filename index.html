@@ -539,6 +539,11 @@
     40%{opacity:1}
     100%{transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(1.2);opacity:0}
   }
+  .cq-flame-dim {
+    position:fixed; inset:0; z-index:999; pointer-events:none;
+    background:rgba(0,0,0,0); transition:background 0.5s;
+  }
+  .cq-flame-dim.active { background:rgba(0,0,0,0.55); }
   .cq-flame-canvas {
     position:fixed; bottom:0; left:0; width:100vw; height:100vh;
     z-index:1000; pointer-events:none;
@@ -6531,7 +6536,12 @@ function showFlameEffect(){
   label.className='cq-streak-label cq-streak-label-7';
   label.textContent='🔥 Legendaire 🔥';
   document.body.appendChild(label);
-  setTimeout(function(){label.remove();},4200);
+  setTimeout(function(){label.remove();},4500);
+
+  var dim=document.createElement('div');
+  dim.className='cq-flame-dim';
+  document.body.appendChild(dim);
+  requestAnimationFrame(function(){dim.classList.add('active');});
 
   var img=new Image();
   img.src='images.jpeg';
@@ -6543,61 +6553,67 @@ function showFlameEffect(){
     document.body.appendChild(canvas);
     var ctx=canvas.getContext('2d');
     var t0=performance.now();
-    var DURATION=4200;
+    var DURATION=4500;
+
+    var ratio=img.height/img.width;
+    var tileW=vW/3;
+    var tileH=tileW*ratio;
+    if(tileH<vH*0.7){tileH=vH*0.7;tileW=tileH/ratio;}
 
     var layers=[];
-    for(var i=0;i<7;i++){
-      layers.push({
-        x:vW*(0.05+Math.random()*0.5),
-        scaleBase:0.6+Math.random()*0.8,
-        speed:0.3+Math.random()*0.5,
-        waveAmp:8+Math.random()*20,
-        waveSpd:1.5+Math.random()*2,
-        waveOff:Math.random()*6.28,
-        alpha:0.5+Math.random()*0.5,
-        flip:Math.random()>0.5?-1:1,
-        yOff:Math.random()*vH*0.15
-      });
+    var cols=Math.ceil(vW/tileW)+2;
+    for(var row=0;row<3;row++){
+      for(var c=-1;c<cols;c++){
+        layers.push({
+          col:c,
+          row:row,
+          flip:((c+row)%2===0)?1:-1,
+          waveAmp:5+Math.random()*12,
+          waveSpd:1.2+Math.random()*1.8,
+          waveOff:Math.random()*6.28,
+          speed:0.02+Math.random()*0.04,
+          alpha:row===0?0.9:(row===1?0.65:0.4),
+          scale:row===0?1:(row===1?0.85:0.7),
+          xOff:(Math.random()-0.5)*tileW*0.3,
+          yOff:row*tileH*0.08
+        });
+      }
     }
 
     function frame(now){
       var elapsed=now-t0;
-      if(elapsed>DURATION){canvas.remove();return;}
+      if(elapsed>DURATION){
+        canvas.remove();
+        dim.classList.remove('active');
+        setTimeout(function(){dim.remove();},600);
+        return;
+      }
 
       var fade=1;
-      if(elapsed<500)fade=elapsed/500;
-      else if(elapsed>DURATION-800)fade=(DURATION-elapsed)/800;
+      if(elapsed<600)fade=elapsed/600;
+      else if(elapsed>DURATION-1000)fade=(DURATION-elapsed)/1000;
       var t=elapsed/1000;
 
       ctx.clearRect(0,0,vW,vH);
-
-      ctx.globalCompositeOperation='source-over';
-      ctx.globalAlpha=fade*0.85;
-      var bg=ctx.createRadialGradient(vW*0.5,vH,0,vW*0.5,vH,vH*0.95);
-      bg.addColorStop(0,'rgba(10,0,20,0.95)');
-      bg.addColorStop(0.5,'rgba(5,0,10,0.7)');
-      bg.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.fillStyle=bg;
-      ctx.fillRect(0,0,vW,vH);
-
       ctx.globalCompositeOperation='lighter';
 
       for(var i=0;i<layers.length;i++){
         var l=layers[i];
-        var sc=l.scaleBase;
-        var dw=img.width*sc;
-        var dh=img.height*sc;
-        var moveY=t*l.speed*vH*0.08;
+        var sc=l.scale;
+        var dw=tileW*sc;
+        var dh=tileH*sc;
+        var baseX=l.col*tileW*0.75+l.xOff;
         var waveX=Math.sin(t*l.waveSpd+l.waveOff)*l.waveAmp;
-        var dx=l.x+waveX;
+        var moveY=t*l.speed*vH;
+        var dx=baseX+waveX;
         var dy=vH-dh+l.yOff-moveY;
 
         ctx.save();
         ctx.globalAlpha=fade*l.alpha;
         if(l.flip===-1){
-          ctx.translate(dx+dw/2,0);
+          ctx.translate(dx+dw,0);
           ctx.scale(-1,1);
-          ctx.drawImage(img,-dw/2,dy,dw,dh);
+          ctx.drawImage(img,0,dy,dw,dh);
         }else{
           ctx.drawImage(img,dx,dy,dw,dh);
         }
