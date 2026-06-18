@@ -3380,6 +3380,7 @@ function showCQResults(){
     allTotal:(prev.allTotal||0)+cqAnswered
   };
   localStorage.setItem('quiz-culture-scores',JSON.stringify(scores));
+  if(cqTourMode){showTourTransition();return;}
   let em,ti,su;
   if(pct>=80){em='🏆';ti='Incroyable !';su='Tu es un expert de '+cqActiveCity+' !';}
   else if(pct>=60){em='🌟';ti='Tres bien !';su='Tu connais bien '+cqActiveCity+'.';}
