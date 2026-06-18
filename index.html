@@ -539,26 +539,45 @@
     40%{opacity:1}
     100%{transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(1.2);opacity:0}
   }
-  @keyframes flameRise {
-    0%{transform:translateY(100%)}
-    15%{transform:translateY(0)}
-    75%{transform:translateY(0);opacity:0.85}
-    100%{transform:translateY(100%);opacity:0}
-  }
-  .cq-flame-overlay {
-    position:fixed; bottom:0; left:0; right:0; height:100vh;
-    background:linear-gradient(to top,#2e1065 0%,#4c1d95 25%,#7c3aed 50%,rgba(124,58,237,0.3) 75%,transparent 100%);
-    z-index:1000; pointer-events:none;
-    animation:flameRise 2.8s ease-in-out forwards;
-  }
-  .cq-flame-particles {
+  .cq-flame-container {
     position:fixed; bottom:0; left:0; right:0; height:100vh;
     z-index:1000; pointer-events:none; overflow:hidden;
+    animation:flameContainerFade 3.2s ease forwards;
   }
-  @keyframes emberFloat {
-    0%{transform:translateY(100vh) scale(0);opacity:0}
-    20%{opacity:1;transform:translateY(60vh) scale(1)}
-    100%{transform:translateY(-20vh) scale(0.3);opacity:0}
+  @keyframes flameContainerFade {
+    0%{opacity:0} 8%{opacity:1} 75%{opacity:1} 100%{opacity:0}
+  }
+  .cq-flame-tongue {
+    position:absolute; bottom:-20%; border-radius:50% 50% 45% 45%;
+    filter:blur(12px); opacity:0;
+    animation:flameTongue var(--dur,2s) var(--del,0s) ease-in-out forwards;
+  }
+  @keyframes flameTongue {
+    0%{transform:translateY(100%) scaleX(1);opacity:0}
+    10%{opacity:0.9}
+    30%{transform:translateY(-10%) scaleX(1.1)}
+    50%{transform:translateY(-15%) scaleX(0.85);opacity:0.85}
+    70%{transform:translateY(-8%) scaleX(1.15);opacity:0.7}
+    85%{transform:translateY(-20%) scaleX(0.9);opacity:0.4}
+    100%{transform:translateY(-30%) scaleX(0.7);opacity:0}
+  }
+  .cq-flame-glow {
+    position:absolute; bottom:0; left:0; right:0; height:45%;
+    background:radial-gradient(ellipse at 50% 100%,rgba(88,28,135,0.8) 0%,rgba(59,7,100,0.5) 40%,transparent 70%);
+    animation:flameGlowPulse 0.4s ease-in-out infinite alternate;
+  }
+  @keyframes flameGlowPulse {
+    0%{opacity:0.7;transform:scaleY(1)} 100%{opacity:1;transform:scaleY(1.08)}
+  }
+  .cq-ember {
+    position:absolute; border-radius:50%; filter:blur(1px);
+    animation:emberRise var(--dur,2s) var(--del,0s) ease-out forwards; opacity:0;
+  }
+  @keyframes emberRise {
+    0%{transform:translateY(0) scale(1);opacity:0}
+    15%{opacity:1}
+    50%{opacity:0.8}
+    100%{transform:translateY(calc(-100vh - 40px)) scale(0.2);opacity:0}
   }
   .cq-tour-btn {
     display: block; width: 100%; padding: 14px; margin-bottom: 16px;
@@ -6548,22 +6567,50 @@ function showFlameEffect(){
   label.className='cq-streak-label cq-streak-label-7';
   label.textContent='🔥 Legendaire 🔥';
   document.body.appendChild(label);
-  setTimeout(function(){label.remove();},2800);
-  var flame=document.createElement('div');
-  flame.className='cq-flame-overlay';
-  document.body.appendChild(flame);
-  setTimeout(function(){flame.remove();},3000);
-  var embers=['🔥','💜','✨','🟣'];
-  for(var i=0;i<30;i++){
-    var e=document.createElement('div');
-    e.textContent=embers[Math.floor(Math.random()*embers.length)];
-    var x=5+Math.random()*90;
-    var dur=1.5+Math.random()*2;
-    var delay=Math.random()*1.2;
-    e.style.cssText='position:fixed;z-index:1001;pointer-events:none;left:'+x+'vw;bottom:0;font-size:'+(14+Math.random()*20)+'px;animation:emberFloat '+dur+'s ease-out '+delay+'s forwards;opacity:0;';
-    document.body.appendChild(e);
-    setTimeout(function(el){el.remove();}.bind(null,e),4000);
+  setTimeout(function(){label.remove();},3200);
+
+  var container=document.createElement('div');
+  container.className='cq-flame-container';
+
+  var glow=document.createElement('div');
+  glow.className='cq-flame-glow';
+  container.appendChild(glow);
+
+  var flameColors=[
+    ['#1a0533','#2e1065','#4c1d95'],
+    ['#3b0764','#581c87','#7c3aed'],
+    ['#4c1d95','#6d28d9','#8b5cf6'],
+    ['#581c87','#7c3aed','#a78bfa'],
+    ['#6d28d9','#8b5cf6','#c4b5fd']
+  ];
+  for(var i=0;i<14;i++){
+    var t=document.createElement('div');
+    t.className='cq-flame-tongue';
+    var w=60+Math.random()*120;
+    var h=200+Math.random()*350;
+    var x=-10+Math.random()*100;
+    var dur=1.6+Math.random()*1.4;
+    var del=Math.random()*0.6;
+    var c=flameColors[Math.floor(Math.random()*flameColors.length)];
+    t.style.cssText='left:'+x+'%;width:'+w+'px;height:'+h+'px;background:radial-gradient(ellipse at 50% 90%,'+c[2]+','+c[1]+' 40%,'+c[0]+' 75%,transparent);--dur:'+dur+'s;--del:'+del+'s;';
+    container.appendChild(t);
   }
+
+  var emberColors=['#a78bfa','#c4b5fd','#7c3aed','#f59e0b','#fbbf24'];
+  for(var j=0;j<35;j++){
+    var e=document.createElement('div');
+    e.className='cq-ember';
+    var sz=3+Math.random()*6;
+    var ex=5+Math.random()*90;
+    var edur=1.2+Math.random()*2;
+    var edel=Math.random()*1.5;
+    var ec=emberColors[Math.floor(Math.random()*emberColors.length)];
+    e.style.cssText='left:'+ex+'%;bottom:'+(Math.random()*15)+'%;width:'+sz+'px;height:'+sz+'px;background:'+ec+';box-shadow:0 0 '+(sz*2)+'px '+ec+';--dur:'+edur+'s;--del:'+edel+'s;';
+    container.appendChild(e);
+  }
+
+  document.body.appendChild(container);
+  setTimeout(function(){container.remove();},3800);
 }
 
 function showCQResults(){
