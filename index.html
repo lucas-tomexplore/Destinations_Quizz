@@ -6531,131 +6531,83 @@ function showFlameEffect(){
   label.className='cq-streak-label cq-streak-label-7';
   label.textContent='🔥 Legendaire 🔥';
   document.body.appendChild(label);
-  setTimeout(function(){label.remove();},4000);
+  setTimeout(function(){label.remove();},4200);
 
-  var canvas=document.createElement('canvas');
-  canvas.className='cq-flame-canvas';
-  var dpr=Math.min(window.devicePixelRatio||1,2);
-  var W=Math.round(window.innerWidth*dpr);
-  var H=Math.round(window.innerHeight*dpr);
-  canvas.width=W;canvas.height=H;
-  document.body.appendChild(canvas);
-  var ctx=canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
-  var vW=window.innerWidth,vH=window.innerHeight;
+  var img=new Image();
+  img.src='images.jpeg';
+  img.onload=function(){
+    var canvas=document.createElement('canvas');
+    canvas.className='cq-flame-canvas';
+    var vW=window.innerWidth,vH=window.innerHeight;
+    canvas.width=vW;canvas.height=vH;
+    document.body.appendChild(canvas);
+    var ctx=canvas.getContext('2d');
+    var t0=performance.now();
+    var DURATION=4200;
 
-  var particles=[];
-  var t0=performance.now();
-  var DURATION=4000;
-
-  function P(hot){
-    this.hot=hot;
-    this.reset(true);
-  }
-  P.prototype.reset=function(init){
-    var spread=init?0.8:0.7;
-    this.x=vW*(0.5-spread/2)+Math.random()*vW*spread;
-    this.y=vH+(init?-Math.random()*vH*0.8:Math.random()*10);
-    this.vx=(Math.random()-0.5)*0.8;
-    this.vy=-(1.5+Math.random()*3.5);
-    this.r=this.hot?(8+Math.random()*18):(20+Math.random()*50);
-    this.life=1;
-    this.decay=this.hot?(0.012+Math.random()*0.018):(0.005+Math.random()*0.012);
-    this.wave=Math.random()*6.28;
-    this.waveSpd=0.03+Math.random()*0.05;
-    this.waveAmp=0.3+Math.random()*2;
-    this.stretch=0.7+Math.random()*0.6;
-  };
-  P.prototype.update=function(){
-    this.wave+=this.waveSpd;
-    this.x+=this.vx+Math.sin(this.wave)*this.waveAmp;
-    this.y+=this.vy;
-    this.vy*=0.998;
-    this.life-=this.decay;
-  };
-  P.prototype.draw=function(ctx){
-    if(this.life<=0)return;
-    var a=Math.pow(this.life,0.6);
-    var r=this.r*Math.max(this.life,0.15);
-    if(r<0.5)return;
-    ctx.save();
-    ctx.translate(this.x,this.y);
-    ctx.scale(1,this.stretch);
-    var g=ctx.createRadialGradient(0,0,0,0,0,r);
-    if(this.life>0.65){
-      g.addColorStop(0,'rgba(255,230,255,'+a*0.95+')');
-      g.addColorStop(0.15,'rgba(245,180,255,'+a*0.9+')');
-      g.addColorStop(0.4,'rgba(217,70,239,'+a*0.75+')');
-      g.addColorStop(0.7,'rgba(147,51,234,'+a*0.45+')');
-      g.addColorStop(1,'rgba(88,28,135,0)');
-    }else if(this.life>0.35){
-      g.addColorStop(0,'rgba(232,121,249,'+a*0.85+')');
-      g.addColorStop(0.25,'rgba(192,38,211,'+a*0.7+')');
-      g.addColorStop(0.6,'rgba(126,34,206,'+a*0.4+')');
-      g.addColorStop(1,'rgba(59,7,100,0)');
-    }else{
-      g.addColorStop(0,'rgba(168,85,247,'+a*0.6+')');
-      g.addColorStop(0.35,'rgba(88,28,135,'+a*0.35+')');
-      g.addColorStop(1,'rgba(30,0,50,0)');
+    var layers=[];
+    for(var i=0;i<7;i++){
+      layers.push({
+        x:vW*(0.05+Math.random()*0.5),
+        scaleBase:0.6+Math.random()*0.8,
+        speed:0.3+Math.random()*0.5,
+        waveAmp:8+Math.random()*20,
+        waveSpd:1.5+Math.random()*2,
+        waveOff:Math.random()*6.28,
+        alpha:0.5+Math.random()*0.5,
+        flip:Math.random()>0.5?-1:1,
+        yOff:Math.random()*vH*0.15
+      });
     }
-    ctx.fillStyle=g;
-    ctx.beginPath();
-    ctx.arc(0,0,r,0,6.2832);
-    ctx.fill();
-    ctx.restore();
-  };
 
-  for(var i=0;i<200;i++){
-    var pp=new P(i<60);
-    pp.reset(true);
-    pp.life=Math.random();
-    particles.push(pp);
-  }
+    function frame(now){
+      var elapsed=now-t0;
+      if(elapsed>DURATION){canvas.remove();return;}
 
-  function frame(now){
-    var elapsed=now-t0;
-    if(elapsed>DURATION){canvas.remove();return;}
-    var fade=1;
-    if(elapsed<400)fade=elapsed/400;
-    else if(elapsed>DURATION-900)fade=(DURATION-elapsed)/900;
+      var fade=1;
+      if(elapsed<500)fade=elapsed/500;
+      else if(elapsed>DURATION-800)fade=(DURATION-elapsed)/800;
+      var t=elapsed/1000;
 
-    ctx.clearRect(0,0,vW,vH);
-    ctx.globalAlpha=fade;
+      ctx.clearRect(0,0,vW,vH);
 
-    ctx.globalCompositeOperation='source-over';
-    var bgG=ctx.createRadialGradient(vW/2,vH,0,vW/2,vH,vH*0.9);
-    bgG.addColorStop(0,'rgba(15,0,30,0.92)');
-    bgG.addColorStop(0.5,'rgba(5,0,15,0.6)');
-    bgG.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=bgG;
-    ctx.fillRect(0,0,vW,vH);
+      ctx.globalCompositeOperation='source-over';
+      ctx.globalAlpha=fade*0.85;
+      var bg=ctx.createRadialGradient(vW*0.5,vH,0,vW*0.5,vH,vH*0.95);
+      bg.addColorStop(0,'rgba(10,0,20,0.95)');
+      bg.addColorStop(0.5,'rgba(5,0,10,0.7)');
+      bg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=bg;
+      ctx.fillRect(0,0,vW,vH);
 
-    ctx.globalCompositeOperation='lighter';
+      ctx.globalCompositeOperation='lighter';
 
-    var spawning=elapsed<DURATION-1200;
-    var spawnN=spawning?6:1;
-    for(var s=0;s<spawnN;s++){
-      for(var d=0;d<particles.length;d++){
-        if(particles[d].life<=0){particles[d].reset(false);break;}
+      for(var i=0;i<layers.length;i++){
+        var l=layers[i];
+        var sc=l.scaleBase;
+        var dw=img.width*sc;
+        var dh=img.height*sc;
+        var moveY=t*l.speed*vH*0.08;
+        var waveX=Math.sin(t*l.waveSpd+l.waveOff)*l.waveAmp;
+        var dx=l.x+waveX;
+        var dy=vH-dh+l.yOff-moveY;
+
+        ctx.save();
+        ctx.globalAlpha=fade*l.alpha;
+        if(l.flip===-1){
+          ctx.translate(dx+dw/2,0);
+          ctx.scale(-1,1);
+          ctx.drawImage(img,-dw/2,dy,dw,dh);
+        }else{
+          ctx.drawImage(img,dx,dy,dw,dh);
+        }
+        ctx.restore();
       }
+
+      requestAnimationFrame(frame);
     }
-
-    for(var j=0;j<particles.length;j++){
-      particles[j].update();
-      particles[j].draw(ctx);
-    }
-
-    ctx.globalCompositeOperation='source-over';
-    var coreG=ctx.createRadialGradient(vW/2,vH,0,vW/2,vH,vW*0.4);
-    coreG.addColorStop(0,'rgba(243,182,255,0.25)');
-    coreG.addColorStop(0.4,'rgba(192,38,211,0.1)');
-    coreG.addColorStop(1,'rgba(88,28,135,0)');
-    ctx.fillStyle=coreG;
-    ctx.fillRect(0,0,vW,vH);
-
     requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
+  };
 }
 
 function showCQResults(){
