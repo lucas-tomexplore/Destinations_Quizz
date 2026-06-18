@@ -543,7 +543,7 @@
     position:fixed; inset:0; z-index:999; pointer-events:none;
     background:rgba(0,0,0,0); transition:background 0.5s;
   }
-  .cq-flame-dim.active { background:rgba(0,0,0,0.55); }
+  .cq-flame-dim.active { background:rgba(0,0,0,0.25); }
   .cq-flame-canvas {
     position:fixed; bottom:0; left:0; width:100vw; height:100vh;
     z-index:1000; pointer-events:none;
@@ -6546,6 +6546,19 @@ function showFlameEffect(){
   var img=new Image();
   img.src='images.jpeg';
   img.onload=function(){
+    var off=document.createElement('canvas');
+    off.width=img.width;off.height=img.height;
+    var ox=off.getContext('2d');
+    ox.drawImage(img,0,0);
+    var id=ox.getImageData(0,0,off.width,off.height);
+    var d=id.data;
+    for(var p=0;p<d.length;p+=4){
+      var mx=Math.max(d[p],d[p+1],d[p+2]);
+      if(mx<50){d[p+3]=0;}
+      else if(mx<100){d[p+3]=Math.round((mx-50)/50*255);}
+    }
+    ox.putImageData(id,0,0);
+
     var canvas=document.createElement('canvas');
     canvas.className='cq-flame-canvas';
     var vW=window.innerWidth,vH=window.innerHeight;
@@ -6555,27 +6568,28 @@ function showFlameEffect(){
     var t0=performance.now();
     var DURATION=4500;
 
+    var flameH=vH*0.38;
+    var tileW=vW/3.5;
+    var tileH=flameH;
     var ratio=img.height/img.width;
-    var tileW=vW/3;
-    var tileH=tileW*ratio;
-    if(tileH<vH*0.7){tileH=vH*0.7;tileW=tileH/ratio;}
+    tileW=tileH/ratio;
 
     var layers=[];
     var cols=Math.ceil(vW/tileW)+2;
-    for(var row=0;row<3;row++){
-      for(var c=-1;c<cols;c++){
+    for(var row=0;row<2;row++){
+      for(var c=-1;c<cols+1;c++){
         layers.push({
           col:c,
           row:row,
           flip:((c+row)%2===0)?1:-1,
-          waveAmp:5+Math.random()*12,
-          waveSpd:1.2+Math.random()*1.8,
+          waveAmp:3+Math.random()*8,
+          waveSpd:1+Math.random()*1.5,
           waveOff:Math.random()*6.28,
-          speed:0.02+Math.random()*0.04,
-          alpha:row===0?0.9:(row===1?0.65:0.4),
-          scale:row===0?1:(row===1?0.85:0.7),
-          xOff:(Math.random()-0.5)*tileW*0.3,
-          yOff:row*tileH*0.08
+          speed:0.01+Math.random()*0.02,
+          alpha:row===0?0.85:0.5,
+          scale:row===0?1:0.8,
+          xOff:(Math.random()-0.5)*tileW*0.25,
+          yOff:row*flameH*0.06
         });
       }
     }
@@ -6590,19 +6604,18 @@ function showFlameEffect(){
       }
 
       var fade=1;
-      if(elapsed<600)fade=elapsed/600;
+      if(elapsed<500)fade=elapsed/500;
       else if(elapsed>DURATION-1000)fade=(DURATION-elapsed)/1000;
       var t=elapsed/1000;
 
       ctx.clearRect(0,0,vW,vH);
-      ctx.globalCompositeOperation='lighter';
 
       for(var i=0;i<layers.length;i++){
         var l=layers[i];
         var sc=l.scale;
         var dw=tileW*sc;
         var dh=tileH*sc;
-        var baseX=l.col*tileW*0.75+l.xOff;
+        var baseX=l.col*tileW*0.82+l.xOff;
         var waveX=Math.sin(t*l.waveSpd+l.waveOff)*l.waveAmp;
         var moveY=t*l.speed*vH;
         var dx=baseX+waveX;
@@ -6613,9 +6626,9 @@ function showFlameEffect(){
         if(l.flip===-1){
           ctx.translate(dx+dw,0);
           ctx.scale(-1,1);
-          ctx.drawImage(img,0,dy,dw,dh);
+          ctx.drawImage(off,0,dy,dw,dh);
         }else{
-          ctx.drawImage(img,dx,dy,dw,dh);
+          ctx.drawImage(off,dx,dy,dw,dh);
         }
         ctx.restore();
       }
