@@ -509,6 +509,17 @@
     animation: fadeIn .4s ease;
   }
   .cq-anecdote strong { color: var(--accent); }
+  .cq-hint-btn {
+    display:block; margin:12px auto 0; padding:8px 20px; border-radius:99px;
+    border:2px solid var(--accent); background:transparent; color:var(--accent);
+    font-family:inherit; font-weight:600; font-size:0.82rem; cursor:pointer;
+    transition:all 0.2s;
+  }
+  .cq-hint-btn:hover { background:var(--accent-soft); }
+  .cq-ans.hint-removed {
+    opacity:0.3; pointer-events:none; border-color:var(--border);
+    text-decoration:line-through; background:var(--bg);
+  }
   .cq-next {
     display: block; margin: 12px auto 0; background: var(--accent); color: #fff;
     border: none; border-radius: 99px; padding: 10px 26px;
@@ -6390,11 +6401,22 @@ function showCQ(){
   } else {
     h+='<div class="cq-answers">';
     sh.forEach(o=>{h+='<button class="cq-ans" data-o="'+o.i+'" onclick="handleCQ(this,'+o.i+','+q.c+')">'+o.t+'</button>';});
-    h+='</div>';
+    h+='</div><button class="cq-hint-btn" onclick="useCQHint('+q.c+')">Indice 💡</button>';
   }
   h+='<div id="c-anecdote"></div></div>';
   document.getElementById('c-question-area').innerHTML=h;
   cqWaiting=false;
+}
+
+function useCQHint(correct){
+  var btns=document.querySelectorAll('.cq-ans');
+  var wrong=[];
+  btns.forEach(function(b){if(parseInt(b.dataset.o)!==correct&&!b.classList.contains('hint-removed'))wrong.push(b);});
+  for(var i=wrong.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=wrong[i];wrong[i]=wrong[j];wrong[j]=tmp;}
+  var toRemove=wrong.slice(0,2);
+  toRemove.forEach(function(b){b.classList.add('hint-removed');});
+  var hb=document.querySelector('.cq-hint-btn');
+  if(hb)hb.remove();
 }
 
 function handleCQ(btn,chosen,correct){
