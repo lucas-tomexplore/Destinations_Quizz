@@ -529,8 +529,12 @@
   .cq-breakdown-val { font-size: 0.83rem; font-weight: 700; min-width: 40px; text-align: right; }
   .cq-city-card { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--card); border:1px solid var(--border); border-radius:14px; }
   .cq-city-card-rank { font-size:0.78rem; font-weight:800; color:var(--accent); min-width:24px; }
-  .cq-city-card-name { font-weight:700; font-size:1rem; flex:1; }
-  .cq-city-card-score { font-size:0.85rem; text-align:right; }
+  .cq-city-card-info { flex:1; min-width:0; }
+  .cq-city-card-name { font-weight:700; font-size:1rem; display:flex; align-items:center; gap:6px; }
+  .cq-city-card-badge { font-size:1.1rem; }
+  .cq-city-card-sub { font-size:0.78rem; color:var(--text2); margin-top:2px; }
+  .cq-city-card-bar { height:5px; background:var(--border); border-radius:3px; margin-top:5px; overflow:hidden; }
+  .cq-city-card-bar-fill { height:100%; border-radius:3px; transition:width 0.4s ease; }
   .cq-city-card-btn { padding:7px 16px !important; font-size:0.82rem !important; margin:0 !important; white-space:nowrap; }
 
   /* ── Image quiz answers ── */
@@ -5560,7 +5564,7 @@ const CQ_LABELS = {1:"Tres facile",2:"Facile",3:"Facile+",4:"Moyen-",5:"Moyen",6
 const CQ_COLORS = {1:"#22c55e",2:"#4ade80",3:"#84cc16",4:"#eab308",5:"#f59e0b",6:"#f97316",7:"#ef4444",8:"#dc2626",9:"#991b1b"};
 function cqDiffClass(d){ return d<=3?'cq-diff-easy':d<=6?'cq-diff-med':'cq-diff-hard'; }
 
-let cqLevel=CQ_START, cqActiveCity='', cqUsed=[], cqCurrent=null, cqIdx=0, cqCorrect=0, cqStreak=0, cqMaxStreak=0, cqAnswered=0, cqWaiting=false, cqImgShown=false, cqIsImgBonus=false;
+let cqLevel=CQ_START, cqActiveCity='', cqUsed=[], cqCurrent=null, cqIdx=0, cqCorrect=0, cqStreak=0, cqMaxStreak=0, cqAnswered=0, cqWaiting=false, cqImgCount=0, cqIsImgBonus=false;
 
 function cqPick(){
   if(!CQ[cqActiveCity]) return null;
@@ -5601,11 +5605,15 @@ function initCultureTab(){
     const sc=scores[city];
     const r='#'+(idx+1);
     if(hasCQ&&sc){
-      h+='<div class="cq-city-card"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-name">'+city+'</div><div class="cq-city-card-score"><span style="color:var(--green);font-weight:800">'+sc.correct+'/'+sc.total+'</span> · <span style="color:'+CQ_COLORS[sc.level]+'">'+CQ_LABELS[sc.level]+'</span></div><button class="restart-btn cq-city-card-btn" onclick="startCultureQuiz(\''+city+'\')">Rejouer ↻</button></div>';
+      const pct=sc.bestPct||Math.round((sc.correct||0)/(sc.total||1)*100);
+      const plays=sc.plays||1;
+      const badge=pct>=80?'🥇':pct>=60?'🥈':'🥉';
+      const barCol=pct>=80?'var(--green)':pct>=60?'var(--orange)':'var(--accent)';
+      h+='<div class="cq-city-card"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-info"><div class="cq-city-card-name"><span class="cq-city-card-badge">'+badge+'</span> '+city+'</div><div class="cq-city-card-sub">'+pct+'% · '+plays+' partie'+(plays>1?'s':'')+'  ·  <span style="color:'+CQ_COLORS[sc.level]+'">'+CQ_LABELS[sc.level]+'</span></div><div class="cq-city-card-bar"><div class="cq-city-card-bar-fill" style="width:'+pct+'%;background:'+barCol+'"></div></div></div><button class="restart-btn cq-city-card-btn" onclick="startCultureQuiz(\''+city+'\')">Rejouer ↻</button></div>';
     } else if(hasCQ){
-      h+='<div class="cq-city-card"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-name">'+city+'</div><div class="cq-city-card-score" style="color:var(--text2)">Pas encore joue</div><button class="restart-btn cq-city-card-btn" onclick="startCultureQuiz(\''+city+'\')">Jouer →</button></div>';
+      h+='<div class="cq-city-card"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-info"><div class="cq-city-card-name">'+city+'</div><div class="cq-city-card-sub" style="color:var(--text2)">Pas encore joue</div></div><button class="restart-btn cq-city-card-btn" onclick="startCultureQuiz(\''+city+'\')">Jouer →</button></div>';
     } else {
-      h+='<div class="cq-city-card" style="opacity:0.5"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-name">'+city+'</div><div class="cq-city-card-score" style="color:var(--text2)">Bientot disponible</div></div>';
+      h+='<div class="cq-city-card" style="opacity:0.5"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-info"><div class="cq-city-card-name">'+city+'</div><div class="cq-city-card-sub" style="color:var(--text2)">Bientot disponible</div></div></div>';
     }
   });
   document.getElementById('culture-city-cards').innerHTML=h;
@@ -5613,7 +5621,7 @@ function initCultureTab(){
 
 function startCultureQuiz(city){
   cqActiveCity=city;
-  cqLevel=CQ_START;cqUsed=[];cqIdx=0;cqCorrect=0;cqStreak=0;cqMaxStreak=0;cqAnswered=0;cqWaiting=false;cqImgShown=false;cqIsImgBonus=false;
+  cqLevel=CQ_START;cqUsed=[];cqIdx=0;cqCorrect=0;cqStreak=0;cqMaxStreak=0;cqAnswered=0;cqWaiting=false;cqImgCount=0;cqIsImgBonus=false;
   document.getElementById('culture-story').style.display='none';
   document.getElementById('culture-quiz').style.display='block';
   document.getElementById('culture-results').style.display='none';
@@ -5630,9 +5638,9 @@ function updateCQDiff(){
 function showCQ(){
   if(cqIdx>=CQ_TOTAL){showCQResults();return;}
   var p,isBonus=false;
-  if(cqIdx===2&&!cqImgShown){
+  if((cqIdx===1||cqIdx===3)&&cqImgCount<2){
     const imgP=cqPickImg();
-    if(imgP){cqImgShown=true;cqIsImgBonus=true;isBonus=true;p=imgP;}
+    if(imgP){cqImgCount++;cqIsImgBonus=true;isBonus=true;p=imgP;}
   }
   if(!p){p=cqPick();cqIsImgBonus=false;}
   if(!p){showCQResults();return;}
@@ -5712,7 +5720,15 @@ function showCQResults(){
   document.getElementById('culture-quiz').style.display='none';
   const el=document.getElementById('culture-results');el.style.display='block';
   const scores=JSON.parse(localStorage.getItem('quiz-culture-scores')||'{}');
-  scores[cqActiveCity]={correct:cqCorrect,total:cqAnswered,level:cqLevel};
+  const prev=scores[cqActiveCity]||{};
+  const pct=cqAnswered>0?Math.round(cqCorrect/cqAnswered*100):0;
+  scores[cqActiveCity]={
+    correct:cqCorrect,total:cqAnswered,level:cqLevel,
+    plays:(prev.plays||0)+1,
+    bestPct:Math.max(prev.bestPct||0,pct),
+    allCorrect:(prev.allCorrect||0)+cqCorrect,
+    allTotal:(prev.allTotal||0)+cqAnswered
+  };
   localStorage.setItem('quiz-culture-scores',JSON.stringify(scores));
   const pct=cqAnswered>0?Math.round(cqCorrect/cqAnswered*100):0;
   let em,ti,su;
