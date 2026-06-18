@@ -592,15 +592,16 @@
   .cq-breakdown-bar { flex: 1; height: 7px; background: var(--border); border-radius: 4px; }
   .cq-breakdown-fill { height: 100%; border-radius: 4px; }
   .cq-breakdown-val { font-size: 0.83rem; font-weight: 700; min-width: 40px; text-align: right; }
-  .cq-city-card { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--card); border:1px solid var(--border); border-radius:14px; }
-  .cq-city-card-rank { font-size:0.78rem; font-weight:800; color:var(--accent); min-width:24px; }
-  .cq-city-card-info { flex:1; min-width:0; }
-  .cq-city-card-name { font-weight:700; font-size:1rem; display:flex; align-items:center; gap:6px; }
-  .cq-city-card-badge { font-size:1.1rem; }
-  .cq-city-card-sub { font-size:0.78rem; color:var(--text2); margin-top:2px; }
-  .cq-city-card-bar { height:5px; background:var(--border); border-radius:3px; margin-top:5px; overflow:hidden; }
-  .cq-city-card-bar-fill { height:100%; border-radius:3px; transition:width 0.4s ease; }
-  .cq-city-card-btn { padding:7px 16px !important; font-size:0.82rem !important; margin:0 !important; white-space:nowrap; }
+  .cq-bubbles { display:flex; gap:18px; padding:8px 4px 14px; overflow-x:auto; justify-content:center; flex-wrap:wrap; }
+  .cq-bubbles::-webkit-scrollbar { display:none; }
+  .cq-bubble { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; width:80px; flex-shrink:0; }
+  .cq-bubble-ring { width:72px; height:72px; border-radius:50%; padding:3px; background:conic-gradient(var(--accent),#0ea5e9,var(--accent)); transition:transform 0.2s; }
+  .cq-bubble-ring.played { background:conic-gradient(var(--green),#4ade80,var(--green)); }
+  .cq-bubble-ring.gold { background:conic-gradient(#f59e0b,#fbbf24,#f59e0b); }
+  .cq-bubble:hover .cq-bubble-ring { transform:scale(1.1); }
+  .cq-bubble-avatar { width:100%; height:100%; border-radius:50%; background:var(--card); border:2.5px solid var(--bg); display:flex; align-items:center; justify-content:center; font-size:1.7rem; }
+  .cq-bubble-name { font-size:0.68rem; font-weight:700; color:var(--text2); text-align:center; line-height:1.15; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cq-bubble-sub { font-size:0.58rem; color:var(--text2); text-align:center; }
 
   /* ── Image quiz answers ── */
   .cq-answers-img { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
@@ -818,7 +819,7 @@
     <div id="culture-story" style="display:none;">
       <h1 style="font-size:1.2rem;text-align:center;margin-bottom:4px;">🏛️ Quiz Culture</h1>
       <p class="subtitle" style="text-align:center;margin-bottom:16px;">5 questions par ville · difficulte adaptative</p>
-      <div id="culture-city-cards" style="display:flex;flex-direction:column;gap:12px;"></div>
+      <div id="culture-city-cards" class="cq-bubbles"></div>
     </div>
     <div id="culture-quiz" style="display:none;">
       <div class="culture-difficulty-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--card);border-radius:12px;border:1px solid var(--border);">
@@ -3015,6 +3016,8 @@ function cqPickImg(){
   return cands.length?cands[Math.floor(Math.random()*cands.length)]:null;
 }
 
+var CQ_EMOJIS={"Amsterdam":"🌷","Athenes":"🏛️","Bali":"🌺","Bangkok":"🛕","Barcelone":"🎭","Berlin":"🐻","Biarritz":"🏄","Bogota":"☕","Bordeaux":"🍷","Bucarest":"🏰","Budapest":"♨️","Buenos Aires":"💃","Cancun":"🏖️","Cartagena":"🏰","Chicago":"🏙️","Cinque Terre":"🌈","Copenhague":"🧜","Cracovie":"🏰","Cuzco":"🦙","Dubrovnik":"⛵","Dubai":"🏙️","Edimbourg":"🏰","Fes":"🕌","Florence":"🎨","Hanoi":"🍜","Helsinki":"❄️","Ho Chi Minh":"🛵","Hong Kong":"🌃","Istanbul":"🕌","Kyoto":"⛩️","La Havane":"🚗","Le Cap":"🦁","Le Caire":"🔺","Lima":"🥘","Lisbonne":"🚋","Ljubljana":"🐉","Londres":"🎡","Lucerne":"⛰️","Lyon":"🍴","Madrid":"☀️","Malaga":"🏖️","Marrakech":"🌅","Medelin":"🌸","Mexico":"🌮","Montreal":"🍁","Munich":"🍺","Naples":"🍕","New York":"🗽","Nice":"🌴","Oslo":"❄️","Paris":"🗼","Petra":"🏜️","Prague":"🏰","Phuket":"🏝️","Porto":"🍷","Reykjavik":"🌋","Rio de Janeiro":"🎉","Rome":"🏛️","Rotterdam":"🏗️","San Francisco":"🌉","Santorin":"🌊","Seoul":"🎮","Seville":"💃","Siem Reap":"🛕","Singapour":"🦁","Stockholm":"🚢","Sydney":"🏄","Taipei":"🏯","Tokyo":"🗼","Vannes":"⚓","Venise":"🎭","Vienne":"🎻","Zagreb":"🏰"};
+
 function initCultureTab(){
   const raw=localStorage.getItem('quiz-last-top3');
   if(!raw){document.getElementById('culture-empty').style.display='block';document.getElementById('culture-story').style.display='none';return;}
@@ -3029,24 +3032,26 @@ function initCultureTab(){
   document.getElementById('culture-results').style.display='none';
   const scores=JSON.parse(localStorage.getItem('quiz-culture-scores')||'{}');
   let h='';
-  cities.forEach((city,idx)=>{
+  cities.forEach((city)=>{
     const hasCQ=!!CQ[city];
+    if(!hasCQ)return;
     const sc=scores[city];
-    const r='#'+(idx+1);
-    if(hasCQ&&sc){
+    const emoji=CQ_EMOJIS[city]||'🌍';
+    let ring='cq-bubble-ring';
+    let sub='';
+    if(sc){
       const pct=sc.bestPct||Math.round((sc.correct||0)/(sc.total||1)*100);
-      const plays=sc.plays||1;
-      const badge=pct>=80?'🥇':pct>=60?'🥈':'🥉';
-      const barCol=pct>=80?'var(--green)':pct>=60?'var(--orange)':'var(--accent)';
-      h+='<div class="cq-city-card"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-info"><div class="cq-city-card-name"><span class="cq-city-card-badge">'+badge+'</span> '+city+'</div><div class="cq-city-card-sub">'+pct+'% · '+plays+' partie'+(plays>1?'s':'')+'  ·  <span style="color:'+CQ_COLORS[sc.level]+'">'+CQ_LABELS[sc.level]+'</span></div><div class="cq-city-card-bar"><div class="cq-city-card-bar-fill" style="width:'+pct+'%;background:'+barCol+'"></div></div></div><button class="restart-btn cq-city-card-btn" onclick="startCultureQuiz(\''+city+'\')">Rejouer ↻</button></div>';
-    } else if(hasCQ){
-      h+='<div class="cq-city-card"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-info"><div class="cq-city-card-name">'+city+'</div><div class="cq-city-card-sub" style="color:var(--text2)">Pas encore joue</div></div><button class="restart-btn cq-city-card-btn" onclick="startCultureQuiz(\''+city+'\')">Jouer →</button></div>';
-    } else {
-      h+='<div class="cq-city-card" style="opacity:0.5"><div class="cq-city-card-rank">'+r+'</div><div class="cq-city-card-info"><div class="cq-city-card-name">'+city+'</div><div class="cq-city-card-sub" style="color:var(--text2)">Bientot disponible</div></div></div>';
+      if(pct>=80){ring+=' gold';sub=pct+'% 🥇';}
+      else{ring+=' played';sub=pct+'%';}
     }
+    h+='<div class="cq-bubble" onclick="startCultureQuiz(\''+city.replace(/'/g,"\\'")+'\')">';
+    h+='<div class="'+ring+'"><div class="cq-bubble-avatar">'+emoji+'</div></div>';
+    h+='<div class="cq-bubble-name">'+city+'</div>';
+    if(sub)h+='<div class="cq-bubble-sub">'+sub+'</div>';
+    h+='</div>';
   });
   var tourH='<button class="cq-tour-btn" onclick="startTourDuMonde()">🌍 Tour du Monde — Jouer les 3 villes</button>';
-  document.getElementById('culture-city-cards').innerHTML=tourH+h;
+  document.getElementById('culture-city-cards').innerHTML=h+tourH;
 }
 
 function startCultureQuiz(city){
