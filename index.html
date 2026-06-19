@@ -3228,7 +3228,7 @@ function handleCQ(btn,chosen,correct){
   if(ok){cqStreak++;if(cqStreak>cqMaxStreak)cqMaxStreak=cqStreak;showStreak(cqStreak);}
   else{cqStreak=0;}
   if(!cqIsImgBonus){
-    if(ok&&!cqHintUsed){cqCorrect++;cqLevel=Math.min(CQ_LEVELS,cqLevel+1);}
+    if(ok&&!cqHintUsed){cqCorrect++;var up=cqStreak>=3?2:1;cqLevel=Math.min(CQ_LEVELS,cqLevel+up);}
     else if(ok&&cqHintUsed){cqCorrect+=0.5;}
     else{cqLevel=Math.max(1,cqLevel-1);}
     cqAnswered++;
