@@ -592,7 +592,9 @@
   .cq-breakdown-bar { flex: 1; height: 7px; background: var(--border); border-radius: 4px; }
   .cq-breakdown-fill { height: 100%; border-radius: 4px; }
   .cq-breakdown-val { font-size: 0.83rem; font-weight: 700; min-width: 40px; text-align: right; }
+  .cq-section-label { font-size:0.75rem; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; margin:0 0 6px 4px; }
   .cq-bubbles { display:flex; gap:18px; padding:8px 4px 14px; overflow-x:auto; justify-content:center; flex-wrap:wrap; }
+  .cq-bubbles-scroll { justify-content:flex-start; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; padding-bottom:8px; }
   .cq-bubbles::-webkit-scrollbar { display:none; }
   .cq-bubble { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; width:80px; flex-shrink:0; }
   .cq-bubble-ring { width:72px; height:72px; border-radius:50%; padding:3px; background:conic-gradient(var(--accent),#0ea5e9,var(--accent)); transition:transform 0.2s; }
@@ -819,8 +821,12 @@
     </div>
     <div id="culture-story" style="display:none;">
       <h1 style="font-size:1.2rem;text-align:center;margin-bottom:4px;">🏛️ Quiz Culture</h1>
-      <p class="subtitle" style="text-align:center;margin-bottom:16px;">5 questions par ville · difficulte adaptative</p>
+      <p class="subtitle" style="text-align:center;margin-bottom:12px;">5 questions par ville · difficulte adaptative</p>
+      <p class="cq-section-label">⭐ Tes destinations</p>
       <div id="culture-city-cards" class="cq-bubbles"></div>
+      <div id="culture-tour-wrap"></div>
+      <p class="cq-section-label" style="margin-top:18px;">🌍 Toutes les villes</p>
+      <div id="culture-all-cities" class="cq-bubbles cq-bubbles-scroll"></div>
     </div>
     <div id="culture-quiz" style="display:none;">
       <div class="culture-difficulty-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--card);border-radius:12px;border:1px solid var(--border);">
@@ -3019,43 +3025,52 @@ function cqPickImg(){
 
 var CQ_EMOJIS={"Amsterdam":"🌷","Athenes":"🏛️","Bali":"🌺","Bangkok":"🛕","Barcelone":"🎭","Berlin":"🐻","Biarritz":"🏄","Bogota":"☕","Bordeaux":"🍷","Bucarest":"🏰","Budapest":"♨️","Buenos Aires":"💃","Cancun":"🏖️","Cartagena":"🏰","Chicago":"🏙️","Cinque Terre":"🌈","Copenhague":"🧜","Cracovie":"🏰","Cuzco":"🦙","Dubrovnik":"⛵","Dubai":"🏙️","Edimbourg":"🏰","Fes":"🕌","Florence":"🎨","Hanoi":"🍜","Helsinki":"❄️","Ho Chi Minh":"🛵","Hong Kong":"🌃","Istanbul":"🕌","Kyoto":"⛩️","La Havane":"🚗","Le Cap":"🦁","Le Caire":"🔺","Lima":"🥘","Lisbonne":"🚋","Ljubljana":"🐉","Londres":"🎡","Lucerne":"⛰️","Lyon":"🍴","Madrid":"☀️","Malaga":"🏖️","Marrakech":"🌅","Medelin":"🌸","Mexico":"🌮","Montreal":"🍁","Munich":"🍺","Naples":"🍕","New York":"🗽","Nice":"🌴","Oslo":"❄️","Paris":"🗼","Petra":"🏜️","Prague":"🏰","Phuket":"🏝️","Porto":"🍷","Reykjavik":"🌋","Rio de Janeiro":"🎉","Rome":"🏛️","Rotterdam":"🏗️","San Francisco":"🌉","Santorin":"🌊","Seoul":"🎮","Seville":"💃","Siem Reap":"🛕","Singapour":"🦁","Stockholm":"🚢","Sydney":"🏄","Taipei":"🏯","Tokyo":"🗼","Vannes":"⚓","Venise":"🎭","Vienne":"🎻","Zagreb":"🏰"};
 
+function buildBubble(city,scores){
+  var sc=scores[city];
+  var imgUrl='';
+  var qs=CQ[city];
+  if(qs){for(var qi=0;qi<qs.length;qi++){if(qs[qi].type==='img'){imgUrl=CQ_IMGS[qs[qi].a[qs[qi].c]]||'';break;}}}
+  var emoji=CQ_EMOJIS[city]||'🌍';
+  var ring='cq-bubble-ring';
+  var sub='';
+  if(sc){
+    var pct=sc.bestPct||Math.round((sc.correct||0)/(sc.total||1)*100);
+    if(pct>=80){ring+=' gold';sub=pct+'% 🥇';}
+    else{ring+=' played';sub=pct+'%';}
+  }
+  var h='<div class="cq-bubble" onclick="startCultureQuiz(\''+city.replace(/'/g,"\\'")+'\')">';
+  h+='<div class="'+ring+'"><div class="cq-bubble-avatar">'+(imgUrl?'<img src="'+imgUrl+'" alt="'+city+'" loading="lazy">':emoji)+'</div></div>';
+  h+='<div class="cq-bubble-name">'+city+'</div>';
+  if(sub)h+='<div class="cq-bubble-sub">'+sub+'</div>';
+  h+='</div>';
+  return h;
+}
+
 function initCultureTab(){
   const raw=localStorage.getItem('quiz-last-top3');
   if(!raw){document.getElementById('culture-empty').style.display='block';document.getElementById('culture-story').style.display='none';return;}
   const top3=JSON.parse(raw);
   if(!top3||top3.length<3){document.getElementById('culture-empty').style.display='block';document.getElementById('culture-story').style.display='none';return;}
-  const cities=top3.map(r=>r.city);
-  const has=cities.filter(c=>CQ[c]&&CQ[c].length>0);
-  if(!has.length){document.getElementById('culture-empty').style.display='block';document.getElementById('culture-story').style.display='none';return;}
+  const top3Cities=top3.map(r=>r.city).filter(c=>CQ[c]&&CQ[c].length>0);
+  if(!top3Cities.length){document.getElementById('culture-empty').style.display='block';document.getElementById('culture-story').style.display='none';return;}
   document.getElementById('culture-empty').style.display='none';
   document.getElementById('culture-story').style.display='block';
   document.getElementById('culture-quiz').style.display='none';
   document.getElementById('culture-results').style.display='none';
   const scores=JSON.parse(localStorage.getItem('quiz-culture-scores')||'{}');
-  let h='';
-  cities.forEach((city)=>{
-    const hasCQ=!!CQ[city];
-    if(!hasCQ)return;
-    const sc=scores[city];
-    var imgUrl='';
-    var qs=CQ[city];
-    if(qs){for(var qi=0;qi<qs.length;qi++){if(qs[qi].type==='img'){imgUrl=CQ_IMGS[qs[qi].a[qs[qi].c]]||'';break;}}}
-    const emoji=CQ_EMOJIS[city]||'🌍';
-    let ring='cq-bubble-ring';
-    let sub='';
-    if(sc){
-      const pct=sc.bestPct||Math.round((sc.correct||0)/(sc.total||1)*100);
-      if(pct>=80){ring+=' gold';sub=pct+'% 🥇';}
-      else{ring+=' played';sub=pct+'%';}
-    }
-    h+='<div class="cq-bubble" onclick="startCultureQuiz(\''+city.replace(/'/g,"\\'")+'\')">';
-    h+='<div class="'+ring+'"><div class="cq-bubble-avatar">'+(imgUrl?'<img src="'+imgUrl+'" alt="'+city+'" loading="lazy">':emoji)+'</div></div>';
-    h+='<div class="cq-bubble-name">'+city+'</div>';
-    if(sub)h+='<div class="cq-bubble-sub">'+sub+'</div>';
-    h+='</div>';
+  var h='';
+  top3Cities.forEach(function(city){h+=buildBubble(city,scores);});
+  document.getElementById('culture-city-cards').innerHTML=h;
+  document.getElementById('culture-tour-wrap').innerHTML='<button class="cq-tour-btn" onclick="startTourDuMonde()">🌍 Tour du Monde — Jouer les 3 villes</button>';
+  var top3Set={};
+  top3Cities.forEach(function(c){top3Set[c]=true;});
+  var allCities=Object.keys(CQ).sort();
+  var ah='';
+  allCities.forEach(function(city){
+    if(top3Set[city])return;
+    ah+=buildBubble(city,scores);
   });
-  var tourH='<button class="cq-tour-btn" onclick="startTourDuMonde()">🌍 Tour du Monde — Jouer les 3 villes</button>';
-  document.getElementById('culture-city-cards').innerHTML=h+tourH;
+  document.getElementById('culture-all-cities').innerHTML=ah;
 }
 
 function startCultureQuiz(city){
