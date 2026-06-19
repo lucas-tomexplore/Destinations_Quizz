@@ -637,6 +637,28 @@
   .cq-rank-stat { text-align:center; flex:1; min-width:60px; }
   .cq-rank-stat .val { font-size:1.1rem; font-weight:800; }
   .cq-rank-stat .lbl { font-size:0.62rem; color:var(--text2); text-transform:uppercase; }
+  /* ── Leaderboard ── */
+  .cq-lb-btn { background:var(--card); border:1.5px solid var(--border); border-radius:99px; padding:8px 20px; font-family:inherit; font-weight:600; font-size:0.8rem; color:var(--text2); cursor:pointer; transition:all 0.2s; }
+  .cq-lb-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .cq-lb { background:var(--card); border:1px solid var(--border); border-radius:16px; margin-top:16px; overflow:hidden; box-shadow:var(--shadow); }
+  .cq-lb-header { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border); }
+  .cq-lb-header h3 { font-size:0.95rem; font-weight:800; margin:0; }
+  .cq-lb-close { background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text2); padding:4px; }
+  .cq-lb-list { max-height:400px; overflow-y:auto; }
+  .cq-lb-row { display:flex; align-items:center; gap:10px; padding:9px 18px; border-bottom:1px solid var(--border); font-size:0.82rem; transition:transform 0.6s ease, background 0.3s; }
+  .cq-lb-row:last-child { border:none; }
+  .cq-lb-row .lb-rank { font-weight:800; color:var(--text2); min-width:32px; font-size:0.78rem; }
+  .cq-lb-row .lb-avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#fff; flex-shrink:0; }
+  .cq-lb-row .lb-name { flex:1; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cq-lb-row .lb-score { font-weight:700; color:var(--text2); font-size:0.75rem; min-width:50px; text-align:right; }
+  .cq-lb-row.lb-me { background:var(--accent-soft); border-radius:8px; margin:2px 4px; border:1.5px solid var(--accent); font-weight:700; }
+  .cq-lb-row.lb-me .lb-rank { color:var(--accent); }
+  .cq-lb-row.lb-me .lb-name { color:var(--accent); }
+  .cq-lb-row.lb-climbing { animation:lbClimb 0.8s ease-out; }
+  @keyframes lbClimb { from{transform:translateY(30px);background:rgba(37,190,199,0.15)} to{transform:translateY(0);background:transparent} }
+  .cq-lb-row.lb-me.lb-climbing { animation:lbClimbMe 0.8s ease-out; }
+  @keyframes lbClimbMe { from{transform:translateY(30px);background:rgba(37,190,199,0.3)} to{transform:translateY(0);background:var(--accent-soft)} }
+
   .cq-tour-transition {
     text-align: center; padding: 30px 20px; animation: fadeIn .4s ease;
   }
@@ -895,7 +917,9 @@
       </div>
       <div id="culture-tour-wrap"></div>
       <div id="culture-ranking" class="cq-ranking-card" style="display:none"></div>
+      <div id="culture-leaderboard-btn-wrap" style="display:none;text-align:center;margin-top:12px"><button class="cq-lb-btn" onclick="showLeaderboard()">🏅 Voir le classement</button></div>
       <div id="culture-badges" class="cq-badges-section" style="display:none"></div>
+      <div id="culture-leaderboard" style="display:none"></div>
     </div>
     <div id="culture-quiz" style="display:none;">
       <div class="culture-difficulty-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--card);border-radius:12px;border:1px solid var(--border);">
@@ -3157,6 +3181,9 @@ function initCultureTab(){
   cqEdgeFade();
   renderRanking();
   renderBadges();
+  var lbBtnWrap=document.getElementById('culture-leaderboard-btn-wrap');
+  if(lbBtnWrap){var uc=getUserCultureScore();lbBtnWrap.style.display=uc.cities>0?'block':'none';}
+  lbPrevPosition=parseInt(localStorage.getItem('quiz-lb-pos'))||null;
 }
 
 function cqEdgeFade(){
@@ -3696,6 +3723,104 @@ function triggerNewBadges(newBadges){
   if(!newBadges||!newBadges.length)return;
   pendingBadgeQueue=newBadges.slice(1);
   showBadgeUnlock(newBadges[0]);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LEADERBOARD
+// ═══════════════════════════════════════════════════════════
+var LB_NAMES=['Emma','Lucas','Chloe','Hugo','Lea','Louis','Manon','Jules','Camille','Arthur','Sarah','Tom','Ines','Nathan','Jade','Theo','Lola','Raphael','Alice','Gabriel','Clara','Adam','Eva','Paul','Zoe','Leo','Nina','Noel','Mia','Victor','Lisa','Axel','Anna','Oscar','Rose','Ethan','Lena','Sam','Lucie','Max','Elsa','Noah','Marie','Alex','Sofia','Aaron','Diane','Liam','Agathe','Felix','Stella','Remy','Ambre','Sacha','Iris','Elio','Nora','Gaspard','Lou','Adrien','Margot','Robin','Elise','Valentin','Juliette','Mael','Romane','Pablo','Oceane','Simon','Capucine','Bastien','Aurore','Tristan','Clemence','Dylan','Mathilde','Enzo','Charlotte','Alexis','Helene','Kevin','Pauline','Maxime','Justine','Antoine','Anais','Clement','Melanie','Florian','Aurelie','Thomas','Emilie','Pierre','Celia','Dorian','Marine','Julien','Laura'];
+var LB_COLORS=['#ef4444','#f97316','#f59e0b','#84cc16','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#6366f1','#14b8a6','#e11d48'];
+
+function generateLeaderboard(){
+  var rng=seededRand(77);
+  var users=[];
+  var profiles=[
+    {w:35,cities:[1,2],pctMu:38,pctSig:12},
+    {w:25,cities:[2,4],pctMu:50,pctSig:14},
+    {w:20,cities:[3,8],pctMu:60,pctSig:12},
+    {w:12,cities:[5,18],pctMu:68,pctSig:10},
+    {w:6,cities:[10,40],pctMu:75,pctSig:8},
+    {w:2,cities:[25,80],pctMu:82,pctSig:6}
+  ];
+  for(var i=0;i<200;i++){
+    var r=rng()*100,cum=0,prof=profiles[0];
+    for(var p=0;p<profiles.length;p++){cum+=profiles[p].w;if(r<cum){prof=profiles[p];break;}}
+    var nc=prof.cities[0]+Math.floor(rng()*(prof.cities[1]-prof.cities[0]+1));
+    var u1=rng(),u2=rng();
+    var z=Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+    var avgPct=Math.max(15,Math.min(98,Math.round(prof.pctMu+z*prof.pctSig)));
+    var score=nc*nc*100+avgPct*5;
+    var name=LB_NAMES[i%LB_NAMES.length];
+    if(i>=LB_NAMES.length)name+=Math.floor(i/LB_NAMES.length+1);
+    var col=LB_COLORS[Math.floor(rng()*LB_COLORS.length)];
+    users.push({name:name,score:score,cities:nc,pct:avgPct,color:col,isMe:false});
+  }
+  return users;
+}
+var LB_USERS=generateLeaderboard();
+var lbPrevPosition=null;
+
+function buildLeaderboardData(){
+  var u=getUserCultureScore();
+  var all=LB_USERS.map(function(x){return{name:x.name,score:x.score,cities:x.cities,pct:x.pct,color:x.color,isMe:false};});
+  if(u.cities>0){
+    all.push({name:'Toi',score:u.score,cities:u.cities,pct:u.avgPct,color:'#25bec7',isMe:true});
+  }
+  all.sort(function(a,b){return b.score-a.score;});
+  return all;
+}
+
+function showLeaderboard(){
+  var el=document.getElementById('culture-leaderboard');
+  var data=buildLeaderboardData();
+  var myIdx=-1;
+  for(var i=0;i<data.length;i++){if(data[i].isMe){myIdx=i;break;}}
+  var newPos=myIdx>=0?myIdx+1:null;
+  var climbed=lbPrevPosition!==null&&newPos!==null&&newPos<lbPrevPosition;
+  var h='<div class="cq-lb"><div class="cq-lb-header"><h3>🏅 Classement</h3><button class="cq-lb-close" onclick="hideLeaderboard()">✕</button></div><div class="cq-lb-list" id="cq-lb-list">';
+  var showAround=true;
+  var visible=[];
+  if(data.length<=30){
+    for(var i=0;i<data.length;i++)visible.push(i);
+  } else {
+    for(var i=0;i<10;i++)visible.push(i);
+    if(myIdx>=0){
+      for(var j=Math.max(0,myIdx-3);j<=Math.min(data.length-1,myIdx+3);j++){
+        if(visible.indexOf(j)===-1)visible.push(j);
+      }
+    }
+    for(var i=data.length-3;i<data.length;i++){if(visible.indexOf(i)===-1)visible.push(i);}
+    visible.sort(function(a,b){return a-b;});
+  }
+  var prevIdx=-1;
+  visible.forEach(function(idx){
+    var d=data[idx];
+    var rank=idx+1;
+    if(prevIdx>=0&&idx>prevIdx+1){
+      h+='<div style="text-align:center;padding:4px;color:var(--text2);font-size:0.7rem">···</div>';
+    }
+    var cls='cq-lb-row'+(d.isMe?' lb-me':'')+(d.isMe&&climbed?' lb-climbing':'');
+    var medal=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
+    var rankText=medal||('#'+rank);
+    var initial=d.name.charAt(0).toUpperCase();
+    h+='<div class="'+cls+'" id="lb-row-'+idx+'"><span class="lb-rank">'+rankText+'</span><span class="lb-avatar" style="background:'+d.color+'">'+initial+'</span><span class="lb-name">'+d.name+'</span><span class="lb-score">'+d.cities+' villes · '+d.pct+'%</span></div>';
+    prevIdx=idx;
+  });
+  h+='</div></div>';
+  el.innerHTML=h;
+  el.style.display='block';
+  if(myIdx>=0){
+    lbPrevPosition=newPos;
+    localStorage.setItem('quiz-lb-pos',String(newPos));
+    setTimeout(function(){
+      var row=document.getElementById('lb-row-'+myIdx);
+      if(row)row.scrollIntoView({behavior:'smooth',block:'center'});
+    },200);
+  }
+}
+
+function hideLeaderboard(){
+  document.getElementById('culture-leaderboard').style.display='none';
 }
 
 function shareResult(text){
