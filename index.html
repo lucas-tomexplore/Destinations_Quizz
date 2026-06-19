@@ -3087,10 +3087,19 @@ function initCultureTab(){
   var top3Set={};
   top3Cities.forEach(function(c){top3Set[c]=true;});
   var allCities=Object.keys(CQ).sort();
+  var notDone=[],done=[];
   allCities.forEach(function(city){
     if(top3Set[city])return;
-    h+=buildBubble(city,scores);
+    var sc=scores[city];
+    var pct=sc?(sc.bestPct||Math.round((sc.correct||0)/(sc.total||1)*100)):0;
+    if(pct>=100)done.push(city);
+    else notDone.push(city);
   });
+  notDone.forEach(function(city){h+=buildBubble(city,scores);});
+  if(done.length){
+    h+='<div class="cq-bubble-sep"></div>';
+    done.forEach(function(city){h+=buildBubble(city,scores);});
+  }
   var row=document.getElementById('culture-city-cards');
   row.innerHTML=h;
   document.getElementById('culture-tour-wrap').innerHTML='<button class="cq-tour-btn" onclick="startTourDuMonde()">🌍 Tour du Monde — Jouer les 3 villes</button>';
