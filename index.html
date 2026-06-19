@@ -3501,9 +3501,11 @@ function getUserCultureScore(){
 function getUserPercentile(){
   var u=getUserCultureScore();
   if(!u.cities)return null;
-  var rank=0;
-  for(var i=0;i<FAKE_USERS.length;i++){if(FAKE_USERS[i]<u.score)rank++;else break;}
-  return{pct:Math.round(rank/FAKE_USERS.length*100),cities:u.cities,avgPct:u.avgPct,score:u.score};
+  var beaten=0;
+  for(var i=0;i<FAKE_USERS.length;i++){if(FAKE_USERS[i]<u.score)beaten++;else break;}
+  var total=FAKE_USERS.length+1;
+  var position=total-beaten;
+  return{pct:Math.round(beaten/FAKE_USERS.length*100),position:position,total:total,cities:u.cities,avgPct:u.avgPct,score:u.score};
 }
 
 function renderRanking(){
@@ -3520,7 +3522,12 @@ function renderRanking(){
   else if(topPct<=50){icon='📚';title='Explorateur curieux';col='#6366f1';}
   else if(topPct<=70){icon='🌱';title='Apprenti explorateur';col='var(--orange)';}
   else{icon='🗺️';title='Debut de l\'aventure';col='var(--text2)';}
-  el.innerHTML='<div class="cq-rank-header"><div class="cq-rank-icon">'+icon+'</div><div><div class="cq-rank-title">'+title+'</div><div class="cq-rank-sub">Tu fais mieux que '+r.pct+'% des explorateurs</div></div></div><div class="cq-rank-bar-wrap"><div class="cq-rank-bar"><div class="cq-rank-bar-fill" style="width:'+r.pct+'%;background:'+col+'"></div><div class="cq-rank-marker" style="left:calc('+r.pct+'% - 9px);background:'+col+'"></div></div><div class="cq-rank-labels"><span>Debutant</span><span>Expert</span></div></div><div class="cq-rank-stats"><div class="cq-rank-stat"><div class="val" style="color:var(--accent)">'+r.cities+'</div><div class="lbl">Villes</div></div><div class="cq-rank-stat"><div class="val" style="color:var(--green)">'+r.avgPct+'%</div><div class="lbl">Score moyen</div></div><div class="cq-rank-stat"><div class="val" style="color:'+col+'">Top '+topPct+'%</div><div class="lbl">Classement</div></div></div>';
+  var topN=Math.max(100,Math.round(r.total*0.2));
+  var subText='Tu fais mieux que '+r.pct+'% des explorateurs';
+  if(r.position<=topN)subText=r.position+(r.position===1?'er':'e')+' sur '+r.total+' explorateurs';
+  var rankDisplay='Top '+topPct+'%';
+  if(r.position<=topN)rankDisplay=r.position+(r.position===1?'er':'e');
+  el.innerHTML='<div class="cq-rank-header"><div class="cq-rank-icon">'+icon+'</div><div><div class="cq-rank-title">'+title+'</div><div class="cq-rank-sub">'+subText+'</div></div></div><div class="cq-rank-bar-wrap"><div class="cq-rank-bar"><div class="cq-rank-bar-fill" style="width:'+r.pct+'%;background:'+col+'"></div><div class="cq-rank-marker" style="left:calc('+r.pct+'% - 9px);background:'+col+'"></div></div><div class="cq-rank-labels"><span>Debutant</span><span>Expert</span></div></div><div class="cq-rank-stats"><div class="cq-rank-stat"><div class="val" style="color:var(--accent)">'+r.cities+'</div><div class="lbl">Villes</div></div><div class="cq-rank-stat"><div class="val" style="color:var(--green)">'+r.avgPct+'%</div><div class="lbl">Score moyen</div></div><div class="cq-rank-stat"><div class="val" style="color:'+col+'">'+rankDisplay+'</div><div class="lbl">Classement</div></div></div>';
 }
 
 function shareResult(text){
