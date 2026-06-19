@@ -3648,7 +3648,7 @@ function renderBadges(){
   var h='<div class="cq-badges-title">Badges ('+unlocked.length+'/'+BADGES.length+')</div><div class="cq-badges-grid">';
   BADGES.forEach(function(b){
     var has=unlocked.indexOf(b.id)!==-1;
-    h+='<div class="cq-badge'+(has?'':' locked')+'" title="'+b.desc+'">';
+    h+='<div class="cq-badge'+(has?'':' locked')+'"'+(has?' onclick="showBadgeDetail(\''+b.id+'\')" style="cursor:pointer"':'')+' title="'+b.desc+'">';
     h+='<div class="cq-badge-icon '+b.cls+'"><div class="ring"></div><div class="inner">'+b.icon+'</div></div>';
     h+='<div class="cq-badge-name">'+(has?b.name:'???')+'</div></div>';
   });
@@ -3673,6 +3673,16 @@ function showBadgeUnlock(badgeId){
   }
   particles+='</div>';
   overlay.innerHTML='<div class="badge-unlock-card">'+particles+'<div class="unlock-label">Nouveau badge !</div><div class="unlock-icon"><div class="cq-badge-icon '+b.cls+'" style="width:80px;height:80px;margin:0 auto"><div class="ring"></div><div class="inner" style="width:64px;height:64px;font-size:2rem">'+b.icon+'</div></div></div><div class="unlock-name">'+b.name+'</div><div class="unlock-desc">'+b.desc+'</div><button class="unlock-btn" onclick="dismissBadgeUnlock(this)">Super !</button></div>';
+  document.body.appendChild(overlay);
+}
+
+function showBadgeDetail(id){
+  var b=BADGES.find(function(x){return x.id===id;});
+  if(!b)return;
+  var overlay=document.createElement('div');
+  overlay.className='badge-unlock-overlay';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  overlay.innerHTML='<div class="badge-unlock-card"><div class="unlock-icon"><div class="cq-badge-icon '+b.cls+'" style="width:80px;height:80px;margin:0 auto"><div class="ring"></div><div class="inner" style="width:64px;height:64px;font-size:2rem">'+b.icon+'</div></div></div><div class="unlock-name">'+b.name+'</div><div class="unlock-desc">'+b.desc+'</div><button class="unlock-btn" onclick="this.closest(\'.badge-unlock-overlay\').remove()">OK</button></div>';
   document.body.appendChild(overlay);
 }
 
