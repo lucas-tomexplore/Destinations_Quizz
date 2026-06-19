@@ -3777,7 +3777,7 @@ function showLeaderboard(){
   for(var i=0;i<data.length;i++){if(data[i].isMe){myIdx=i;break;}}
   var newPos=myIdx>=0?myIdx+1:null;
   var climbed=lbPrevPosition!==null&&newPos!==null&&newPos<lbPrevPosition;
-  var h='<div class="cq-lb"><div class="cq-lb-header"><h3>🏅 Classement</h3><button class="cq-lb-close" onclick="hideLeaderboard()">✕</button></div><div class="cq-lb-list" id="cq-lb-list">';
+  var h='<div class="cq-lb"><div class="cq-lb-header"><div><h3 style="margin:0">🏅 Classement</h3></div><button class="cq-lb-close" onclick="hideLeaderboard()">✕</button></div><div style="display:flex;justify-content:flex-end;padding:0 18px 6px;font-size:0.62rem;color:var(--text2);gap:4px"><span>Villes jouees</span><span>·</span><span>Score moyen</span></div><div class="cq-lb-list" id="cq-lb-list">';
   var showAround=true;
   var visible=[];
   if(data.length<=30){
