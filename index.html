@@ -592,9 +592,9 @@
   .cq-breakdown-bar { flex: 1; height: 7px; background: var(--border); border-radius: 4px; }
   .cq-breakdown-fill { height: 100%; border-radius: 4px; }
   .cq-breakdown-val { font-size: 0.83rem; font-weight: 700; min-width: 40px; text-align: right; }
-  .cq-section-label { font-size:0.75rem; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; margin:0 0 6px 4px; }
-  .cq-bubbles { display:flex; gap:18px; padding:8px 4px 14px; overflow-x:auto; justify-content:center; flex-wrap:wrap; }
-  .cq-bubbles-scroll { justify-content:flex-start; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; padding-bottom:8px; }
+  .cq-bubbles-wrap { position:relative; }
+  .cq-bubbles { display:flex; gap:16px; padding:8px 20px 14px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .cq-bubbles-scroll { justify-content:flex-start; flex-wrap:nowrap; }
   .cq-bubbles::-webkit-scrollbar { display:none; }
   .cq-bubble { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; width:80px; flex-shrink:0; }
   .cq-bubble-ring { width:72px; height:72px; border-radius:50%; padding:3px; background:conic-gradient(var(--accent),#0ea5e9,var(--accent)); transition:transform 0.2s; }
@@ -605,6 +605,8 @@
   .cq-bubble-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
   .cq-bubble-name { font-size:0.68rem; font-weight:700; color:var(--text2); text-align:center; line-height:1.15; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .cq-bubble-sub { font-size:0.58rem; color:var(--text2); text-align:center; }
+  .cq-bubble-sep { width:2px; min-height:50px; background:var(--border); border-radius:1px; flex-shrink:0; align-self:center; margin:0 4px; }
+  .cq-bubble { transition:transform 0.1s ease-out, opacity 0.1s ease-out; }
 
   /* ── Image quiz answers ── */
   .cq-answers-img { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
@@ -822,11 +824,10 @@
     <div id="culture-story" style="display:none;">
       <h1 style="font-size:1.2rem;text-align:center;margin-bottom:4px;">🏛️ Quiz Culture</h1>
       <p class="subtitle" style="text-align:center;margin-bottom:12px;">5 questions par ville · difficulte adaptative</p>
-      <p class="cq-section-label">⭐ Tes destinations</p>
-      <div id="culture-city-cards" class="cq-bubbles"></div>
+      <div id="culture-bubbles-wrap" class="cq-bubbles-wrap">
+        <div id="culture-city-cards" class="cq-bubbles cq-bubbles-scroll"></div>
+      </div>
       <div id="culture-tour-wrap"></div>
-      <p class="cq-section-label" style="margin-top:18px;">🌍 Toutes les villes</p>
-      <div id="culture-all-cities" class="cq-bubbles cq-bubbles-scroll"></div>
     </div>
     <div id="culture-quiz" style="display:none;">
       <div class="culture-difficulty-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--card);border-radius:12px;border:1px solid var(--border);">
@@ -3060,17 +3061,41 @@ function initCultureTab(){
   const scores=JSON.parse(localStorage.getItem('quiz-culture-scores')||'{}');
   var h='';
   top3Cities.forEach(function(city){h+=buildBubble(city,scores);});
-  document.getElementById('culture-city-cards').innerHTML=h;
-  document.getElementById('culture-tour-wrap').innerHTML='<button class="cq-tour-btn" onclick="startTourDuMonde()">🌍 Tour du Monde — Jouer les 3 villes</button>';
+  h+='<div class="cq-bubble-sep"></div>';
   var top3Set={};
   top3Cities.forEach(function(c){top3Set[c]=true;});
   var allCities=Object.keys(CQ).sort();
-  var ah='';
   allCities.forEach(function(city){
     if(top3Set[city])return;
-    ah+=buildBubble(city,scores);
+    h+=buildBubble(city,scores);
   });
-  document.getElementById('culture-all-cities').innerHTML=ah;
+  var row=document.getElementById('culture-city-cards');
+  row.innerHTML=h;
+  document.getElementById('culture-tour-wrap').innerHTML='<button class="cq-tour-btn" onclick="startTourDuMonde()">🌍 Tour du Monde — Jouer les 3 villes</button>';
+  row.removeEventListener('scroll',cqEdgeFade);
+  row.addEventListener('scroll',cqEdgeFade,{passive:true});
+  cqEdgeFade();
+}
+
+function cqEdgeFade(){
+  var row=document.getElementById('culture-city-cards');
+  if(!row)return;
+  var rect=row.getBoundingClientRect();
+  var edgeL=rect.left;
+  var edgeR=rect.right;
+  var fade=60;
+  var bubbles=row.querySelectorAll('.cq-bubble');
+  for(var i=0;i<bubbles.length;i++){
+    var b=bubbles[i];
+    var br=b.getBoundingClientRect();
+    var cx=br.left+br.width/2;
+    var t=1;
+    if(cx<edgeL+fade)t=Math.max(0,(cx-edgeL)/fade);
+    else if(cx>edgeR-fade)t=Math.max(0,(edgeR-cx)/fade);
+    var s=0.6+0.4*t;
+    b.style.transform='scale('+s+')';
+    b.style.opacity=t;
+  }
 }
 
 function startCultureQuiz(city){
