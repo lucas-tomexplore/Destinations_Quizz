@@ -3783,7 +3783,7 @@ function showLeaderboard(){
   if(data.length<=30){
     for(var i=0;i<data.length;i++)visible.push(i);
   } else {
-    for(var i=0;i<10;i++)visible.push(i);
+    for(var i=0;i<100&&i<data.length;i++)visible.push(i);
     if(myIdx>=0){
       for(var j=Math.max(0,myIdx-3);j<=Math.min(data.length-1,myIdx+3);j++){
         if(visible.indexOf(j)===-1)visible.push(j);
