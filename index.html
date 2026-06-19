@@ -574,6 +574,21 @@
   .share-btn { display:inline-flex; align-items:center; gap:5px; padding:7px 14px; border-radius:99px; border:1.5px solid var(--border); background:var(--card); color:var(--text2); font-family:inherit; font-weight:600; font-size:0.75rem; cursor:pointer; transition:all 0.2s; }
   .share-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
   .share-btn svg { width:14px; height:14px; }
+
+  .cq-ranking-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 20px; margin-top:16px; box-shadow:var(--shadow); }
+  .cq-rank-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .cq-rank-icon { font-size:1.8rem; }
+  .cq-rank-title { font-size:0.95rem; font-weight:800; line-height:1.2; }
+  .cq-rank-sub { font-size:0.75rem; color:var(--text2); font-weight:500; }
+  .cq-rank-bar-wrap { margin-bottom:12px; }
+  .cq-rank-bar { height:10px; background:var(--border); border-radius:5px; position:relative; overflow:visible; }
+  .cq-rank-bar-fill { height:100%; border-radius:5px; transition:width 1s ease; }
+  .cq-rank-marker { position:absolute; top:-4px; width:18px; height:18px; border-radius:50%; border:2.5px solid var(--card); box-shadow:0 1px 4px rgba(0,0,0,0.2); transition:left 1s ease; }
+  .cq-rank-labels { display:flex; justify-content:space-between; font-size:0.62rem; color:var(--text2); margin-top:4px; }
+  .cq-rank-stats { display:flex; gap:16px; flex-wrap:wrap; }
+  .cq-rank-stat { text-align:center; flex:1; min-width:60px; }
+  .cq-rank-stat .val { font-size:1.1rem; font-weight:800; }
+  .cq-rank-stat .lbl { font-size:0.62rem; color:var(--text2); text-transform:uppercase; }
   .cq-tour-transition {
     text-align: center; padding: 30px 20px; animation: fadeIn .4s ease;
   }
@@ -831,6 +846,7 @@
         <div id="culture-city-cards" class="cq-bubbles cq-bubbles-scroll"></div>
       </div>
       <div id="culture-tour-wrap"></div>
+      <div id="culture-ranking" class="cq-ranking-card" style="display:none"></div>
     </div>
     <div id="culture-quiz" style="display:none;">
       <div class="culture-difficulty-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--card);border-radius:12px;border:1px solid var(--border);">
@@ -3081,6 +3097,7 @@ function initCultureTab(){
   row.removeEventListener('scroll',cqEdgeFade);
   row.addEventListener('scroll',cqEdgeFade,{passive:true});
   cqEdgeFade();
+  renderRanking();
 }
 
 function cqEdgeFade(){
@@ -3437,6 +3454,73 @@ function showCQResults(){
   var shareCQ='🏛️ Quiz Culture TomExplore\n\n'+em+' '+cqActiveCity+' : '+cqCorrect+'/'+cqAnswered+' ('+pct+'%)\nSerie max : '+cqMaxStreak+' | Niveau : '+CQ_LABELS[cqLevel]+'\n\nTeste tes connaissances sur TomExplore !';
   el.innerHTML='<div class="cq-results-card"><div style="font-size:3.5rem;margin-bottom:10px">'+em+'</div><div style="font-size:1.3rem;font-weight:800;margin-bottom:4px">'+ti+'</div><div style="color:var(--text2);margin-bottom:20px">'+su+'</div><div style="display:flex;justify-content:center;gap:22px;margin-bottom:24px"><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--green)">'+cqCorrect+'/'+cqAnswered+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Correct</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--orange)">'+cqMaxStreak+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Meilleure serie</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:'+CQ_COLORS[cqLevel]+'">'+CQ_LABELS[cqLevel]+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Niveau atteint</div></div></div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="restart-btn" onclick="startCultureQuiz(\''+cqActiveCity+'\')">Rejouer '+cqActiveCity+' ↻</button><button class="share-btn share-btn-active" onclick="shareResult(this.dataset.txt)" data-txt="'+shareCQ.replace(/"/g,'&quot;')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Partager</button><button class="restart-btn" style="background:transparent;color:var(--accent);border:2px solid var(--accent)" onclick="initCultureTab()">← Autres villes</button></div></div>';
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RANKING — users synthetiques + classement
+// ═══════════════════════════════════════════════════════════
+function seededRand(seed){return function(){seed=(seed*16807+0)%2147483647;return(seed-1)/2147483646;};}
+function generateFakeUsers(){
+  var rng=seededRand(42);
+  var users=[];
+  var profiles=[
+    {w:35,cities:[1,2],pctMu:38,pctSig:12},
+    {w:25,cities:[2,4],pctMu:50,pctSig:14},
+    {w:20,cities:[3,8],pctMu:60,pctSig:12},
+    {w:12,cities:[5,18],pctMu:68,pctSig:10},
+    {w:6,cities:[10,40],pctMu:75,pctSig:8},
+    {w:2,cities:[25,80],pctMu:82,pctSig:6}
+  ];
+  for(var i=0;i<500;i++){
+    var r=rng()*100,cum=0,prof=profiles[0];
+    for(var p=0;p<profiles.length;p++){cum+=profiles[p].w;if(r<cum){prof=profiles[p];break;}}
+    var nc=prof.cities[0]+Math.floor(rng()*(prof.cities[1]-prof.cities[0]+1));
+    var u1=rng(),u2=rng();
+    var z=Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+    var avgPct=Math.max(15,Math.min(98,Math.round(prof.pctMu+z*prof.pctSig)));
+    var score=nc*avgPct;
+    users.push(score);
+  }
+  return users.sort(function(a,b){return a-b;});
+}
+var FAKE_USERS=generateFakeUsers();
+
+function getUserCultureScore(){
+  var scores=JSON.parse(localStorage.getItem('quiz-culture-scores')||'{}');
+  var cities=Object.keys(scores);
+  if(!cities.length)return{score:0,cities:0,avgPct:0};
+  var totalPct=0;
+  cities.forEach(function(c){
+    var s=scores[c];
+    totalPct+=s.bestPct||Math.round((s.correct||0)/(s.total||1)*100);
+  });
+  var avgPct=Math.round(totalPct/cities.length);
+  return{score:cities.length*avgPct,cities:cities.length,avgPct:avgPct};
+}
+
+function getUserPercentile(){
+  var u=getUserCultureScore();
+  if(!u.cities)return null;
+  var rank=0;
+  for(var i=0;i<FAKE_USERS.length;i++){if(FAKE_USERS[i]<u.score)rank++;else break;}
+  return{pct:Math.round(rank/FAKE_USERS.length*100),cities:u.cities,avgPct:u.avgPct,score:u.score};
+}
+
+function renderRanking(){
+  var el=document.getElementById('culture-ranking');
+  if(!el)return;
+  var r=getUserPercentile();
+  if(!r){el.style.display='none';return;}
+  el.style.display='block';
+  var topPct=100-r.pct;
+  var icon,title,col;
+  if(topPct<=5){icon='👑';title='Elite culturelle';col='#f59e0b';}
+  else if(topPct<=15){icon='🏆';title='Expert confirme';col='var(--green)';}
+  else if(topPct<=30){icon='🌟';title='Grand voyageur';col='var(--accent)';}
+  else if(topPct<=50){icon='📚';title='Explorateur curieux';col='#6366f1';}
+  else if(topPct<=70){icon='🌱';title='Apprenti explorateur';col='var(--orange)';}
+  else{icon='🗺️';title='Debut de l\'aventure';col='var(--text2)';}
+  el.innerHTML='<div class="cq-rank-header"><div class="cq-rank-icon">'+icon+'</div><div><div class="cq-rank-title">'+title+'</div><div class="cq-rank-sub">Tu fais mieux que '+r.pct+'% des explorateurs</div></div></div><div class="cq-rank-bar-wrap"><div class="cq-rank-bar"><div class="cq-rank-bar-fill" style="width:'+r.pct+'%;background:'+col+'"></div><div class="cq-rank-marker" style="left:calc('+r.pct+'% - 9px);background:'+col+'"></div></div><div class="cq-rank-labels"><span>Debutant</span><span>Expert</span></div></div><div class="cq-rank-stats"><div class="cq-rank-stat"><div class="val" style="color:var(--accent)">'+r.cities+'</div><div class="lbl">Villes</div></div><div class="cq-rank-stat"><div class="val" style="color:var(--green)">'+r.avgPct+'%</div><div class="lbl">Score moyen</div></div><div class="cq-rank-stat"><div class="val" style="color:'+col+'">Top '+topPct+'%</div><div class="lbl">Classement</div></div></div>';
 }
 
 function shareResult(text){
