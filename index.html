@@ -575,6 +575,54 @@
   .share-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
   .share-btn svg { width:14px; height:14px; }
 
+  /* ── Badges ── */
+  .cq-badges-section { margin-top:18px; }
+  .cq-badges-title { font-size:0.75rem; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+  .cq-badges-grid { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+  .cq-badge { width:72px; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .cq-badge-icon { width:60px; height:60px; border-radius:50%; position:relative; display:flex; align-items:center; justify-content:center; transition:transform 0.3s; }
+  .cq-badge:hover .cq-badge-icon { transform:scale(1.1); }
+  .cq-badge-icon .inner { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.4rem; position:relative; z-index:1; }
+  .cq-badge-icon .ring { position:absolute; inset:0; border-radius:50%; }
+  .cq-badge-name { font-size:0.55rem; font-weight:700; color:var(--text); text-align:center; line-height:1.15; }
+  .cq-badge.locked .cq-badge-icon { filter:grayscale(1) opacity(0.3); }
+  .cq-badge.locked .cq-badge-name { color:var(--border); }
+  .cq-badge-icon.b-premier .ring { background:conic-gradient(#86efac,#22c55e,#4ade80,#86efac); }
+  .cq-badge-icon.b-premier .inner { background:linear-gradient(145deg,#f0fdf4,#dcfce7); color:#16a34a; }
+  .cq-badge-icon.b-globe .ring { background:conic-gradient(#7dd3fc,#0ea5e9,#38bdf8,#7dd3fc); }
+  .cq-badge-icon.b-globe .inner { background:linear-gradient(145deg,#f0f9ff,#e0f2fe); color:#0284c7; }
+  .cq-badge-icon.b-citoyen .ring { background:conic-gradient(#67e8f9,#06b6d4,#22d3ee,#67e8f9); }
+  .cq-badge-icon.b-citoyen .inner { background:linear-gradient(145deg,#ecfeff,#cffafe); color:#0891b2; }
+  .cq-badge-icon.b-encyclo .ring { background:conic-gradient(#c4b5fd,#8b5cf6,#a78bfa,#c4b5fd); }
+  .cq-badge-icon.b-encyclo .inner { background:linear-gradient(145deg,#f5f3ff,#ede9fe); color:#7c3aed; }
+  .cq-badge-icon.b-collect .ring { background:conic-gradient(#fde68a,#f59e0b,#fbbf24,#fde68a); }
+  .cq-badge-icon.b-collect .inner { background:linear-gradient(145deg,#fffbeb,#fef3c7); color:#d97706; }
+  .cq-badge-icon.b-maitre .ring { background:conic-gradient(#fde68a,#b45309,#f59e0b,#fde68a); box-shadow:0 0 12px rgba(245,158,11,0.4); }
+  .cq-badge-icon.b-maitre .inner { background:linear-gradient(145deg,#fef3c7,#fde68a); color:#92400e; box-shadow:inset 0 1px 3px rgba(255,255,255,0.6); }
+  .cq-badge-icon.b-extreme .ring { background:conic-gradient(#fca5a5,#dc2626,#ef4444,#fca5a5); }
+  .cq-badge-icon.b-extreme .inner { background:linear-gradient(145deg,#fef2f2,#fee2e2); color:#b91c1c; }
+  .cq-badge-icon.b-tour .ring { background:conic-gradient(#a5b4fc,#4f46e5,#818cf8,#a5b4fc); }
+  .cq-badge-icon.b-tour .inner { background:linear-gradient(145deg,#eef2ff,#e0e7ff); color:#4338ca; }
+  .cq-badge-icon.b-legend .ring { background:conic-gradient(#f9a8d4,#ec4899,#f472b6,#f9a8d4); box-shadow:0 0 10px rgba(236,72,153,0.3); }
+  .cq-badge-icon.b-legend .inner { background:linear-gradient(145deg,#fdf2f8,#fce7f3); color:#be185d; }
+  .cq-badge-icon.b-odyssee .ring { background:conic-gradient(#fde68a,#f59e0b,#ec4899,#8b5cf6,#0ea5e9,#22c55e,#f59e0b,#fde68a); box-shadow:0 0 18px rgba(139,92,246,0.4),0 0 8px rgba(245,158,11,0.3); animation:badgeGlow 3s ease-in-out infinite; }
+  .cq-badge-icon.b-odyssee .inner { background:linear-gradient(145deg,#fefce8,#fdf4ff,#f0f9ff); color:#7c3aed; box-shadow:inset 0 2px 4px rgba(255,255,255,0.7); }
+  @keyframes badgeGlow { 0%,100%{box-shadow:0 0 18px rgba(139,92,246,0.4),0 0 8px rgba(245,158,11,0.3);} 50%{box-shadow:0 0 24px rgba(139,92,246,0.6),0 0 14px rgba(245,158,11,0.5);} }
+
+  /* ── Badge unlock overlay ── */
+  .badge-unlock-overlay { position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); animation:fadeInOverlay 0.3s; }
+  @keyframes fadeInOverlay { from{opacity:0} to{opacity:1} }
+  .badge-unlock-card { background:var(--card); border-radius:24px; padding:36px 32px; text-align:center; max-width:300px; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:badgePop 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+  @keyframes badgePop { from{opacity:0;transform:scale(0.5) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .badge-unlock-card .unlock-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:12px; }
+  .badge-unlock-card .unlock-icon { margin:0 auto 12px; }
+  .badge-unlock-card .unlock-name { font-size:1.1rem; font-weight:800; margin-bottom:4px; }
+  .badge-unlock-card .unlock-desc { font-size:0.82rem; color:var(--text2); margin-bottom:20px; }
+  .badge-unlock-card .unlock-btn { background:var(--accent); color:#fff; border:none; border-radius:99px; padding:10px 28px; font-family:inherit; font-weight:700; font-size:0.85rem; cursor:pointer; }
+  .badge-unlock-particles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .badge-unlock-particles span { position:absolute; width:6px; height:6px; border-radius:50%; animation:particleFly 1s ease-out forwards; }
+  @keyframes particleFly { from{opacity:1;transform:translate(0,0) scale(1)} to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)} }
+
   .cq-ranking-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 20px; margin-top:16px; box-shadow:var(--shadow); }
   .cq-rank-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
   .cq-rank-icon { font-size:1.8rem; }
@@ -847,6 +895,7 @@
       </div>
       <div id="culture-tour-wrap"></div>
       <div id="culture-ranking" class="cq-ranking-card" style="display:none"></div>
+      <div id="culture-badges" class="cq-badges-section" style="display:none"></div>
     </div>
     <div id="culture-quiz" style="display:none;">
       <div class="culture-difficulty-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--card);border-radius:12px;border:1px solid var(--border);">
@@ -3107,6 +3156,7 @@ function initCultureTab(){
   row.addEventListener('scroll',cqEdgeFade,{passive:true});
   cqEdgeFade();
   renderRanking();
+  renderBadges();
 }
 
 function cqEdgeFade(){
@@ -3287,7 +3337,11 @@ function showTourFinalResults(){
   cqTourScores.forEach(function(s){var p=s.total>0?Math.round(s.correct/s.total*100):0;shareTour+='  • '+s.city+' : '+s.correct+'/'+s.total+' ('+p+'%)\n';});
   shareTour+='\nTeste tes connaissances sur TomExplore !';
   el.innerHTML='<div class="cq-results-card"><div style="font-size:3.5rem;margin-bottom:10px">'+em+'</div><div style="font-size:1.3rem;font-weight:800;margin-bottom:4px">'+ti+'</div><div style="color:var(--text2);margin-bottom:20px">🌍 Tour du Monde termine</div><div style="display:flex;justify-content:center;gap:22px;margin-bottom:20px"><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--green)">'+totC+'/'+totA+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Total correct</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--orange)">'+pct+'%</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Score global</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--accent)">'+totS+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Meilleure serie</div></div></div><div style="text-align:left;margin-bottom:20px"><div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px;text-transform:uppercase;font-weight:600">Score par ville</div>'+bk+'</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="restart-btn" onclick="startTourDuMonde()">Rejouer le Tour ↻</button><button class="share-btn share-btn-active" onclick="shareResult(this.dataset.txt)" data-txt="'+shareTour.replace(/"/g,'&quot;')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Partager</button><button class="restart-btn" style="background:transparent;color:var(--accent);border:2px solid var(--accent)" onclick="cqTourMode=false;initCultureTab()">← Retour</button></div></div>';
+  var tourPerfect=totA>0&&totC===totA;
+  var maxLvl=0;cqTourScores.forEach(function(s){if(s.level>maxLvl)maxLvl=s.level;});
+  var tourNewB=checkBadges({maxLevel:maxLvl,maxStreak:totS,tourDone:true,tourPerfect:tourPerfect});
   cqTourMode=false;
+  setTimeout(function(){triggerNewBadges(tourNewB);},600);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -3454,7 +3508,9 @@ function showCQResults(){
     allTotal:(prev.allTotal||0)+cqAnswered
   };
   localStorage.setItem('quiz-culture-scores',JSON.stringify(scores));
+  var newB=checkBadges({maxLevel:cqLevel,maxStreak:cqMaxStreak});
   if(cqTourMode){showTourTransition();return;}
+  setTimeout(function(){triggerNewBadges(newB);},600);
   let em,ti,su;
   if(pct>=80){em='🏆';ti='Incroyable !';su='Tu es un expert de '+cqActiveCity+' !';}
   else if(pct>=60){em='🌟';ti='Tres bien !';su='Tu connais bien '+cqActiveCity+'.';}
@@ -3537,6 +3593,99 @@ function renderRanking(){
   var rankDisplay='Top '+topPct+'%';
   if(r.position<=topN)rankDisplay=r.position+(r.position===1?'er':'e');
   el.innerHTML='<div class="cq-rank-header"><div class="cq-rank-icon">'+icon+'</div><div><div class="cq-rank-title">'+title+'</div><div class="cq-rank-sub">'+subText+'</div></div></div><div class="cq-rank-bar-wrap"><div class="cq-rank-bar"><div class="cq-rank-bar-fill" style="width:'+r.pct+'%;background:'+col+'"></div><div class="cq-rank-marker" style="left:calc('+r.pct+'% - 9px);background:'+col+'"></div></div><div class="cq-rank-labels"><span>Debutant</span><span>Expert</span></div></div><div class="cq-rank-stats"><div class="cq-rank-stat"><div class="val" style="color:var(--accent)">'+r.cities+'</div><div class="lbl">Villes</div></div><div class="cq-rank-stat"><div class="val" style="color:var(--green)">'+r.avgPct+'%</div><div class="lbl">Score moyen</div></div><div class="cq-rank-stat"><div class="val" style="color:'+col+'">'+rankDisplay+'</div><div class="lbl">Classement</div></div></div>';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BADGES
+// ═══════════════════════════════════════════════════════════
+var BADGES=[
+  {id:'premier',name:'Premier pas',desc:'Terminer son premier quiz culture',cls:'b-premier',icon:'🌱'},
+  {id:'globe',name:'Globe-trotteur',desc:'Jouer 10 villes',cls:'b-globe',icon:'🗺️'},
+  {id:'citoyen',name:'Citoyen du monde',desc:'Jouer 30 villes',cls:'b-citoyen',icon:'🌍'},
+  {id:'encyclo',name:'Encyclopedie vivante',desc:'Jouer 60 villes',cls:'b-encyclo',icon:'🏛️'},
+  {id:'collect',name:'Collectionneur',desc:'5 villes a 100%',cls:'b-collect',icon:'⭐'},
+  {id:'maitre',name:'Maitre absolu',desc:'40 villes a 100%',cls:'b-maitre',icon:'👑'},
+  {id:'extreme',name:'Niveau extreme',desc:'Atteindre le niveau 9',cls:'b-extreme',icon:'🧠'},
+  {id:'tour',name:'Tour du monde',desc:'Terminer un Tour du Monde',cls:'b-tour',icon:'🌐'},
+  {id:'legend',name:'Legendaire',desc:'Obtenir une serie de 7+',cls:'b-legend',icon:'🔥'},
+  {id:'odyssee',name:'Odyssee parfaite',desc:'Sans faute sur un Tour du Monde',cls:'b-odyssee',icon:'✨'}
+];
+
+function getUnlockedBadges(){return JSON.parse(localStorage.getItem('quiz-badges')||'[]');}
+function saveBadges(arr){localStorage.setItem('quiz-badges',JSON.stringify(arr));}
+
+function checkBadges(extra){
+  var scores=JSON.parse(localStorage.getItem('quiz-culture-scores')||'{}');
+  var cities=Object.keys(scores);
+  var nCities=cities.length;
+  var nPerfect=cities.filter(function(c){var s=scores[c];return(s.bestPct||0)>=100;}).length;
+  var unlocked=getUnlockedBadges();
+  var newBadges=[];
+  var ext=extra||{};
+  function tryUnlock(id){
+    if(unlocked.indexOf(id)===-1){unlocked.push(id);newBadges.push(id);}
+  }
+  if(nCities>=1)tryUnlock('premier');
+  if(nCities>=10)tryUnlock('globe');
+  if(nCities>=30)tryUnlock('citoyen');
+  if(nCities>=60)tryUnlock('encyclo');
+  if(nPerfect>=5)tryUnlock('collect');
+  if(nPerfect>=40)tryUnlock('maitre');
+  if(ext.maxLevel>=9)tryUnlock('extreme');
+  if(ext.tourDone)tryUnlock('tour');
+  if(ext.maxStreak>=7)tryUnlock('legend');
+  if(ext.tourPerfect)tryUnlock('odyssee');
+  saveBadges(unlocked);
+  return newBadges;
+}
+
+function renderBadges(){
+  var el=document.getElementById('culture-badges');
+  if(!el)return;
+  var unlocked=getUnlockedBadges();
+  if(!unlocked.length&&!Object.keys(JSON.parse(localStorage.getItem('quiz-culture-scores')||'{}')).length){el.style.display='none';return;}
+  el.style.display='block';
+  var h='<div class="cq-badges-title">Badges ('+unlocked.length+'/'+BADGES.length+')</div><div class="cq-badges-grid">';
+  BADGES.forEach(function(b){
+    var has=unlocked.indexOf(b.id)!==-1;
+    h+='<div class="cq-badge'+(has?'':' locked')+'" title="'+b.desc+'">';
+    h+='<div class="cq-badge-icon '+b.cls+'"><div class="ring"></div><div class="inner">'+b.icon+'</div></div>';
+    h+='<div class="cq-badge-name">'+(has?b.name:'???')+'</div></div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+var pendingBadgeQueue=[];
+function showBadgeUnlock(badgeId){
+  var b=BADGES.find(function(x){return x.id===badgeId;});
+  if(!b)return;
+  var overlay=document.createElement('div');
+  overlay.className='badge-unlock-overlay';
+  var particles='<div class="badge-unlock-particles">';
+  var colors=['#f59e0b','#8b5cf6','#ec4899','#22c55e','#0ea5e9','#ef4444'];
+  for(var i=0;i<20;i++){
+    var dx=(Math.random()-0.5)*300;
+    var dy=(Math.random()-0.5)*300;
+    var c=colors[Math.floor(Math.random()*colors.length)];
+    var d=0.5+Math.random()*0.8;
+    particles+='<span style="left:50%;top:50%;background:'+c+';--dx:'+dx+'px;--dy:'+dy+'px;animation-duration:'+d+'s;animation-delay:'+(Math.random()*0.3)+'s"></span>';
+  }
+  particles+='</div>';
+  overlay.innerHTML='<div class="badge-unlock-card">'+particles+'<div class="unlock-label">Nouveau badge !</div><div class="unlock-icon"><div class="cq-badge-icon '+b.cls+'" style="width:80px;height:80px;margin:0 auto"><div class="ring"></div><div class="inner" style="width:64px;height:64px;font-size:2rem">'+b.icon+'</div></div></div><div class="unlock-name">'+b.name+'</div><div class="unlock-desc">'+b.desc+'</div><button class="unlock-btn" onclick="dismissBadgeUnlock(this)">Super !</button></div>';
+  document.body.appendChild(overlay);
+}
+
+function dismissBadgeUnlock(btn){
+  var overlay=btn.closest('.badge-unlock-overlay');
+  if(overlay)overlay.remove();
+  if(pendingBadgeQueue.length)showBadgeUnlock(pendingBadgeQueue.shift());
+}
+
+function triggerNewBadges(newBadges){
+  if(!newBadges||!newBadges.length)return;
+  pendingBadgeQueue=newBadges.slice(1);
+  showBadgeUnlock(newBadges[0]);
 }
 
 function shareResult(text){
