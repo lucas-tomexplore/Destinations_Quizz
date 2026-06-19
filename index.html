@@ -571,6 +571,8 @@
     cursor: pointer; text-align: center; transition: opacity 0.2s;
   }
   .cq-tour-btn:hover { opacity: 0.9; }
+  .share-btn { display:inline-flex; align-items:center; gap:6px; padding:10px 22px; border-radius:99px; border:2px solid var(--accent); background:transparent; color:var(--accent); font-family:inherit; font-weight:700; font-size:0.85rem; cursor:pointer; transition:all 0.2s; }
+  .share-btn:hover { background:var(--accent-soft); }
   .cq-tour-transition {
     text-align: center; padding: 30px 20px; animation: fadeIn .4s ease;
   }
@@ -2569,7 +2571,10 @@ function showResults() {
     <p><em>Le moteur choisit chaque question en fonction des villes candidates du moment. Repondre differemment change le classement des villes, donc change les prochaines questions.</em></p>
   </details>`;
 
-  html += '<button class="restart-btn" onclick="reset()">Recommencer</button></div>';
+  var shareTop3='🧭 Mon top 3 TomExplore :\n\n';
+  top3.forEach(function(r,i){shareTop3+=['🥇','🥈','🥉'][i]+' '+r.city+' ('+(r.score*100).toFixed(0)+'%)\n';});
+  shareTop3+='\nDecouvre tes destinations ideales sur TomExplore !';
+  html += '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px"><button class="restart-btn" onclick="reset()">Recommencer</button><button class="share-btn share-btn-active" onclick="shareResult(this.dataset.txt)" data-txt="'+shareTop3.replace(/"/g,'&quot;')+'">Partager ↗</button></div></div>';
   localStorage.setItem('quiz-last-top3', JSON.stringify(top3.map(r => ({city: r.city, score: r.score}))));
   localStorage.setItem('quiz-last-vecteur', JSON.stringify(vecteur));
   const el = document.getElementById("results");
@@ -3251,7 +3256,10 @@ function showTourFinalResults(){
     var col=p>=80?'var(--green)':p>=60?'var(--orange)':'#ef4444';
     bk+='<div class="cq-breakdown-row"><span class="cq-breakdown-city">'+s.city+'</span><div class="cq-breakdown-bar"><div class="cq-breakdown-fill" style="width:'+p+'%;background:'+col+'"></div></div><span class="cq-breakdown-val">'+s.correct+'/'+s.total+'</span></div>';
   });
-  el.innerHTML='<div class="cq-results-card"><div style="font-size:3.5rem;margin-bottom:10px">'+em+'</div><div style="font-size:1.3rem;font-weight:800;margin-bottom:4px">'+ti+'</div><div style="color:var(--text2);margin-bottom:20px">🌍 Tour du Monde termine</div><div style="display:flex;justify-content:center;gap:22px;margin-bottom:20px"><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--green)">'+totC+'/'+totA+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Total correct</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--orange)">'+pct+'%</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Score global</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--accent)">'+totS+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Meilleure serie</div></div></div><div style="text-align:left;margin-bottom:20px"><div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px;text-transform:uppercase;font-weight:600">Score par ville</div>'+bk+'</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="restart-btn" onclick="startTourDuMonde()">Rejouer le Tour ↻</button><button class="restart-btn" style="background:transparent;color:var(--accent);border:2px solid var(--accent)" onclick="cqTourMode=false;initCultureTab()">← Retour</button></div></div>';
+  var shareTour='🌍 Tour du Monde TomExplore !\n\n'+em+' '+ti+'\nScore : '+totC+'/'+totA+' ('+pct+'%)\n';
+  cqTourScores.forEach(function(s){var p=s.total>0?Math.round(s.correct/s.total*100):0;shareTour+='  • '+s.city+' : '+s.correct+'/'+s.total+' ('+p+'%)\n';});
+  shareTour+='\nTeste tes connaissances sur TomExplore !';
+  el.innerHTML='<div class="cq-results-card"><div style="font-size:3.5rem;margin-bottom:10px">'+em+'</div><div style="font-size:1.3rem;font-weight:800;margin-bottom:4px">'+ti+'</div><div style="color:var(--text2);margin-bottom:20px">🌍 Tour du Monde termine</div><div style="display:flex;justify-content:center;gap:22px;margin-bottom:20px"><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--green)">'+totC+'/'+totA+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Total correct</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--orange)">'+pct+'%</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Score global</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--accent)">'+totS+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Meilleure serie</div></div></div><div style="text-align:left;margin-bottom:20px"><div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px;text-transform:uppercase;font-weight:600">Score par ville</div>'+bk+'</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="restart-btn" onclick="startTourDuMonde()">Rejouer le Tour ↻</button><button class="share-btn share-btn-active" onclick="shareResult(this.dataset.txt)" data-txt="'+shareTour.replace(/"/g,'&quot;')+'">Partager ↗</button><button class="restart-btn" style="background:transparent;color:var(--accent);border:2px solid var(--accent)" onclick="cqTourMode=false;initCultureTab()">← Retour</button></div></div>';
   cqTourMode=false;
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -3425,8 +3433,20 @@ function showCQResults(){
   else if(pct>=60){em='🌟';ti='Tres bien !';su='Tu connais bien '+cqActiveCity+'.';}
   else if(pct>=40){em='👏';ti='Pas mal !';su='Tu as decouvert '+cqActiveCity+'.';}
   else{em='📚';ti='C\'est un debut !';su=cqActiveCity+' a encore des secrets pour toi.';}
-  el.innerHTML='<div class="cq-results-card"><div style="font-size:3.5rem;margin-bottom:10px">'+em+'</div><div style="font-size:1.3rem;font-weight:800;margin-bottom:4px">'+ti+'</div><div style="color:var(--text2);margin-bottom:20px">'+su+'</div><div style="display:flex;justify-content:center;gap:22px;margin-bottom:24px"><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--green)">'+cqCorrect+'/'+cqAnswered+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Correct</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--orange)">'+cqMaxStreak+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Meilleure serie</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:'+CQ_COLORS[cqLevel]+'">'+CQ_LABELS[cqLevel]+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Niveau atteint</div></div></div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="restart-btn" onclick="startCultureQuiz(\''+cqActiveCity+'\')">Rejouer '+cqActiveCity+' ↻</button><button class="restart-btn" style="background:transparent;color:var(--accent);border:2px solid var(--accent)" onclick="initCultureTab()">← Autres villes</button></div></div>';
+  var shareCQ='🏛️ Quiz Culture TomExplore\n\n'+em+' '+cqActiveCity+' : '+cqCorrect+'/'+cqAnswered+' ('+pct+'%)\nSerie max : '+cqMaxStreak+' | Niveau : '+CQ_LABELS[cqLevel]+'\n\nTeste tes connaissances sur TomExplore !';
+  el.innerHTML='<div class="cq-results-card"><div style="font-size:3.5rem;margin-bottom:10px">'+em+'</div><div style="font-size:1.3rem;font-weight:800;margin-bottom:4px">'+ti+'</div><div style="color:var(--text2);margin-bottom:20px">'+su+'</div><div style="display:flex;justify-content:center;gap:22px;margin-bottom:24px"><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--green)">'+cqCorrect+'/'+cqAnswered+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Correct</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:var(--orange)">'+cqMaxStreak+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Meilleure serie</div></div><div style="text-align:center"><div style="font-size:1.8rem;font-weight:800;color:'+CQ_COLORS[cqLevel]+'">'+CQ_LABELS[cqLevel]+'</div><div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase">Niveau atteint</div></div></div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="restart-btn" onclick="startCultureQuiz(\''+cqActiveCity+'\')">Rejouer '+cqActiveCity+' ↻</button><button class="share-btn share-btn-active" onclick="shareResult(this.dataset.txt)" data-txt="'+shareCQ.replace(/"/g,'&quot;')+'">Partager ↗</button><button class="restart-btn" style="background:transparent;color:var(--accent);border:2px solid var(--accent)" onclick="initCultureTab()">← Autres villes</button></div></div>';
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareResult(text){
+  if(navigator.share){
+    navigator.share({text:text}).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(text).then(function(){
+      var btn=document.querySelector('.share-btn-active');
+      if(btn){var old=btn.textContent;btn.textContent='Copie !';setTimeout(function(){btn.textContent=old;},1500);}
+    });
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
