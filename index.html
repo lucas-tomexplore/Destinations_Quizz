@@ -3143,6 +3143,7 @@ function buildBubble(city,scores){
 }
 
 function initCultureTab(){
+  cqTourMode=false;cqTourCities=[];cqTourIdx=0;cqTourScores=[];
   const raw=localStorage.getItem('quiz-last-top3');
   if(!raw){document.getElementById('culture-empty').style.display='block';document.getElementById('culture-story').style.display='none';return;}
   const top3=JSON.parse(raw);
