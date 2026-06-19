@@ -3370,6 +3370,7 @@ function showTourFinalResults(){
   var tourNewB=checkBadges({maxLevel:maxLvl,maxStreak:totS,tourDone:true,tourPerfect:tourPerfect});
   cqTourMode=false;
   setTimeout(function(){triggerNewBadges(tourNewB);},600);
+  refreshLeaderboardIfOpen();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -3539,6 +3540,7 @@ function showCQResults(){
   var newB=checkBadges({maxLevel:cqLevel,maxStreak:cqMaxStreak});
   if(cqTourMode){showTourTransition();return;}
   setTimeout(function(){triggerNewBadges(newB);},600);
+  refreshLeaderboardIfOpen();
   let em,ti,su;
   if(pct>=80){em='🏆';ti='Incroyable !';su='Tu es un expert de '+cqActiveCity+' !';}
   else if(pct>=60){em='🌟';ti='Tres bien !';su='Tu connais bien '+cqActiveCity+'.';}
@@ -3818,6 +3820,11 @@ function showLeaderboard(){
       if(row)row.scrollIntoView({behavior:'smooth',block:'center'});
     },200);
   }
+}
+
+function refreshLeaderboardIfOpen(){
+  var el=document.getElementById('culture-leaderboard');
+  if(el&&el.style.display!=='none'&&el.innerHTML)showLeaderboard();
 }
 
 function hideLeaderboard(){
